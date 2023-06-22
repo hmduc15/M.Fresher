@@ -1,0 +1,6 @@
+.el-popper {
+    background-color: var(--white-color);
+    color: var(--black-color);
+    font-size: 13px;
+    font-family: RobotoRegular;
+}

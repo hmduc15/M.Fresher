@@ -1,0 +1,60 @@
+.popup__container {
+    background-color: var(--white-color);
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    transform-origin: center;
+    border-radius: 4px;
+    z-index: 999;
+    padding: 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 0 20px;
+    transition: all 0.1s ease 0.2s;
+    animation: zoomIn 0.2s;
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.popup__icon {
+    margin-top: 10px;
+}
+
+
+.popup__text {
+    font-family: RobotoRegular;
+    font-size: 15px;
+    line-height: 24px;
+}
+
+.popup__text p {
+    font-family: RobotoBold;
+}
+
+.popup__btn .btn--sm-pop {
+    height: 36px;
+}
+
+.popup__content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px 0;
+    align-items: flex-end;
+}
+
+.popup__btn {
+    float: right;
+}
+
+.mwidth--300 {
+    max-width: 300px;
+}

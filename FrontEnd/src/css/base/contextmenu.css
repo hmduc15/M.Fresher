@@ -1,0 +1,23 @@
+.context__menu {
+    position: absolute;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .16);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: opacity 0.2s linear;
+    animation: animateOpen 0.25s ease;
+    z-index: 21;
+    height: 144px;
+    width: 110px;
+}
+
+@keyframes animateOpen {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+
+    }
+
+}

@@ -1,0 +1,36 @@
+.main__content {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.content__top {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+    padding: 13px 21px 16px 21px;
+}
+
+.content__top--left {
+    display: flex;
+    gap: 0 11px;
+    width: 105%;
+    align-items: flex-end;
+}
+
+.content__top--right {
+    position: relative;
+    display: flex;
+    gap: 0 11px;
+
+}
+
+.content__top--wrapper {
+    position: relative;
+}
+
+
+
+.content__top--wrapper>div>.input__text:first-child {
+    background-color: var(--white-color);
+}

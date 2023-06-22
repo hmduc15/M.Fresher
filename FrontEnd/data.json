@@ -1,0 +1,1244 @@
+{
+  "propertys": [
+    {
+      "propertyId": "TSK12345",
+      "propertyName": "HP Spectre x360",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TSM23456",
+      "propertyName": "MacBook Pro 16",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 3,
+      "propertyPrice": "50.000.000",
+      "propertyWorn": 1500,
+      "propertyPriced": "45.000.000"
+    },
+    {
+      "propertyId": "TSN89012",
+      "propertyName": "Dell Precision 5550",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "45.000.000",
+      "propertyWorn": 1300,
+      "propertyPriced": "40.000.000"
+    },
+    {
+      "propertyId": "TST34567",
+      "propertyName": "Acer Swift 3",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TSU90123",
+      "propertyName": "Asus ROG Zephyrus G14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TSU45678",
+      "propertyName": "HP Envy 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "19.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "17.000.000"
+    },
+    {
+      "propertyId": "TSV01234",
+      "propertyName": "Dell XPS 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 2,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TSV56789",
+      "propertyName": "Lenovo IdeaPad 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "18.000.000",
+      "propertyWorn": 500,
+      "propertyPriced": "16.000.000"
+    },
+    {
+      "propertyId": "TSW23456",
+      "propertyName": "Microsoft Surface Pro 7",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TSW78901",
+      "propertyName": "Acer Aspire 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TSK67890",
+      "propertyName": "Lenovo Yoga C940",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "26.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "23.000.000"
+    },
+    {
+      "propertyId": "TSL24680",
+      "propertyName": "Dell Alienware M15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "40.000.000",
+      "propertyWorn": 1100,
+      "propertyPriced": "36.000.000"
+    },
+    {
+      "propertyId": "TSL97531",
+      "propertyName": "Asus ZenBook Pro Duo",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "38.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "34.000.000"
+    },
+    {
+      "propertyId": "TSM23456",
+      "propertyName": "MacBook Pro 16",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 3,
+      "propertyPrice": "50.000.000",
+      "propertyWorn": 1500,
+      "propertyPriced": "45.000.000"
+    },
+    {
+      "propertyId": "TSM78901",
+      "propertyName": "HP Omen 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TSN89012",
+      "propertyName": "Dell Precision 5550",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "45.000.000",
+      "propertyWorn": 1300,
+      "propertyPriced": "40.000.000"
+    },
+    {
+      "propertyId": "TSQ90123",
+      "propertyName": "Microsoft Surface Book 3",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "42.000.000",
+      "propertyWorn": 1200,
+      "propertyPriced": "38.000.000"
+    },
+    {
+      "propertyId": "TSR56789",
+      "propertyName": "Asus VivoBook S15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 2,
+      "propertyPrice": "22.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "19.000.000"
+    },
+    {
+      "propertyId": "TSS23456",
+      "propertyName": "Lenovo Legion 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "24.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "21.000.000"
+    },
+    {
+      "propertyId": "TST34567",
+      "propertyName": "Acer Swift 3",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TSU90123",
+      "propertyName": "Asus ROG Zephyrus G14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TSU45678",
+      "propertyName": "HP Envy 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "19.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "17.000.000"
+    },
+    {
+      "propertyId": "TSV01234",
+      "propertyName": "Dell XPS 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 2,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TSV56789",
+      "propertyName": "Lenovo IdeaPad 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "18.000.000",
+      "propertyWorn": 500,
+      "propertyPriced": "16.000.000"
+    },
+    {
+      "propertyId": "TSW23456",
+      "propertyName": "Microsoft Surface Pro 7",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TSW78901",
+      "propertyName": "Acer Aspire 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TSK12345",
+      "propertyName": "HP Spectre x360",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TSK67890",
+      "propertyName": "Lenovo Yoga C940",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "26.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "23.000.000"
+    },
+    {
+      "propertyId": "TSL24680",
+      "propertyName": "Dell Alienware M15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "40.000.000",
+      "propertyWorn": 1100,
+      "propertyPriced": "36.000.000"
+    },
+    {
+      "propertyId": "TSL97531",
+      "propertyName": "Asus ZenBook Pro Duo",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "38.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "34.000.000"
+    },
+    {
+      "propertyId": "TSM23456",
+      "propertyName": "MacBook Pro 16",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 3,
+      "propertyPrice": "50.000.000",
+      "propertyWorn": 1500,
+      "propertyPriced": "45.000.000"
+    },
+    {
+      "propertyId": "TSM78901",
+      "propertyName": "HP Omen 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TSN34567",
+      "propertyName": "Acer Predator Helios 300",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 700,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TSN89012",
+      "propertyName": "Dell Precision 5550",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "45.000.000",
+      "propertyWorn": 1300,
+      "propertyPriced": "40.000.000"
+    },
+    {
+      "propertyId": "TSQ45678",
+      "propertyName": "Lenovo ThinkPad X1 Carbon",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "36.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "32.000.000"
+    },
+    {
+      "propertyId": "TSQ90123",
+      "propertyName": "Microsoft Surface Book 3",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "42.000.000",
+      "propertyWorn": 1200,
+      "propertyPriced": "38.000.000"
+    },
+    {
+      "propertyId": "TSR56789",
+      "propertyName": "Asus VivoBook S15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 2,
+      "propertyPrice": "22.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "19.000.000"
+    },
+    {
+      "propertyId": "TSS67890",
+      "propertyName": "Dell G5 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "25.000.000",
+      "propertyWorn": 700,
+      "propertyPriced": "22.000.000"
+    },
+    {
+      "propertyId": "TSS23456",
+      "propertyName": "Lenovo Legion 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "24.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "21.000.000"
+    },
+    {
+      "propertyId": "TST89012",
+      "propertyName": "Microsoft Surface Laptop Go",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "20.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "18.000.000"
+    },
+    {
+      "propertyId": "TST34567",
+      "propertyName": "Acer Swift 3",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TSU90123",
+      "propertyName": "Asus ROG Zephyrus G14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TSU45678",
+      "propertyName": "HP Envy 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "19.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "17.000.000"
+    },
+    {
+      "propertyId": "TSV01234",
+      "propertyName": "Dell XPS 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 2,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TSV56789",
+      "propertyName": "Lenovo IdeaPad 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "18.000.000",
+      "propertyWorn": 500,
+      "propertyPriced": "16.000.000"
+    },
+    {
+      "propertyId": "TSW23456",
+      "propertyName": "Microsoft Surface Pro 7",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TSW78901",
+      "propertyName": "Acer Aspire 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TS753951",
+      "propertyName": "Lenovo Legion Y540",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TS864257",
+      "propertyName": "Asus VivoBook 14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "20.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "17.000.000"
+    },
+    {
+      "propertyId": "TSPQ017",
+      "propertyName": "Dell Inspiron 3467",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Hành chính Kế toán",
+      "propertyQuantity": 1,
+      "propertyPrice": "20.000.000",
+      "propertyWorn": 894,
+      "propertyPriced": "19.106.000"
+    },
+    {
+      "propertyId": "TSD53215",
+      "propertyName": "MacBook Pro 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "35.000.000",
+      "propertyWorn": 1500,
+      "propertyPriced": "30.000.000"
+    },
+    {
+      "propertyId": "TSH96457",
+      "propertyName": "MacBook Air 2020",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 3,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TSI73512",
+      "propertyName": "Lenovo ThinkPad X1 Carbon",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 1200,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TS95123",
+      "propertyName": "Dell G3 Gaming Laptop",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "24.000.000",
+      "propertyWorn": 500,
+      "propertyPriced": "21.000.000"
+    },
+    {
+      "propertyId": "TSJ68452",
+      "propertyName": "HP Pavilion 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "18.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "16.000.000"
+    },
+    {
+      "propertyId": "TS567432",
+      "propertyName": "Acer Aspire 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Hành chính Kế toán",
+      "propertyQuantity": 3,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 700,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TS741258",
+      "propertyName": "Lenovo IdeaPad L340",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "21.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "18.000.000"
+    },
+    {
+      "propertyId": "TS963852",
+      "propertyName": "Dell XPS 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "38.000.000",
+      "propertyWorn": 1300,
+      "propertyPriced": "34.000.000"
+    },
+    {
+      "propertyId": "TS258369",
+      "propertyName": "Microsoft Surface Laptop 4",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "24.000.000"
+    },
+    {
+      "propertyId": "TS951753",
+      "propertyName": "Asus ROG Zephyrus G14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 2,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TS753951",
+      "propertyName": "Lenovo Legion Y540",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TS864257",
+      "propertyName": "Asus VivoBook 14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "20.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "17.000.000"
+    },
+    {
+      "propertyId": "TSPQ017",
+      "propertyName": "Dell Inspiron 3467",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Hành chính Kế toán",
+      "propertyQuantity": 1,
+      "propertyPrice": "20.000.000",
+      "propertyWorn": 894,
+      "propertyPriced": "19.106.000"
+    },
+    {
+      "propertyId": "TSD53215",
+      "propertyName": "MacBook Pro 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "35.000.000",
+      "propertyWorn": 1500,
+      "propertyPriced": "30.000.000"
+    },
+    {
+      "propertyId": "TSH96457",
+      "propertyName": "MacBook Air 2020",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 3,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TSI73512",
+      "propertyName": "Lenovo ThinkPad X1 Carbon",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 1200,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TS95123",
+      "propertyName": "Dell G3 Gaming Laptop",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "24.000.000",
+      "propertyWorn": 500,
+      "propertyPriced": "21.000.000"
+    },
+    {
+      "propertyId": "TSJ68452",
+      "propertyName": "HP Pavilion 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "18.000.000",
+      "propertyWorn": 400,
+      "propertyPriced": "16.000.000"
+    },
+    {
+      "propertyId": "TS567432",
+      "propertyName": "Acer Aspire 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Hành chính Kế toán",
+      "propertyQuantity": 3,
+      "propertyPrice": "16.000.000",
+      "propertyWorn": 700,
+      "propertyPriced": "14.000.000"
+    },
+    {
+      "propertyId": "TS741258",
+      "propertyName": "Lenovo IdeaPad L340",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "21.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "18.000.000"
+    },
+    {
+      "propertyId": "TS963852",
+      "propertyName": "Dell XPS 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "38.000.000",
+      "propertyWorn": 1300,
+      "propertyPriced": "34.000.000"
+    },
+    {
+      "propertyId": "TS258369",
+      "propertyName": "Microsoft Surface Laptop 4",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "24.000.000"
+    },
+    {
+      "propertyId": "TS951753",
+      "propertyName": "Asus ROG Zephyrus G14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 2,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TS753951",
+      "propertyName": "Lenovo Legion Y540",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TS864257",
+      "propertyName": "Asus VivoBook 14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "20.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "17.000.000"
+    },
+    {
+      "propertyId": "TSPQ017",
+      "propertyName": "Dell Inspiron 3467",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Hành chính Kế toán",
+      "propertyQuantity": 1,
+      "propertyPrice": "20.000.000",
+      "propertyWorn": 894,
+      "propertyPriced": "19.106.000"
+    },
+    {
+      "propertyId": "TSD53215",
+      "propertyName": "MacBook Pro 13",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "35.000.000",
+      "propertyWorn": 1500,
+      "propertyPriced": "30.000.000"
+    },
+    {
+      "propertyId": "TSH96457",
+      "propertyName": "MacBook Air 2020",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 3,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TSI73512",
+      "propertyName": "Lenovo ThinkPad X1 Carbon",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 2,
+      "propertyPrice": "30.000.000",
+      "propertyWorn": 1200,
+      "propertyPriced": "27.000.000"
+    },
+    {
+      "propertyId": "TS95123",
+      "propertyName": "Dell G3 Gaming Laptop",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 1,
+      "propertyPrice": "24.000.000",
+      "propertyWorn": 500,
+      "propertyPriced": "21.000.000"
+    },
+    {
+      "propertyId": "TSJ68452",
+      "propertyName": "Asus ROG Zephyrus G14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Sản xuất",
+      "propertyQuantity": 3,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "29.000.000"
+    },
+    {
+      "propertyId": "TS14785",
+      "propertyName": "MSI GS66 Stealth",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "35.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "32.000.000"
+    },
+    {
+      "propertyId": "POI32546",
+      "propertyName": "Acer Predator Helios 300",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "29.000.000",
+      "propertyWorn": 700,
+      "propertyPriced": "26.000.000"
+    },
+    {
+      "propertyId": "MNB87654",
+      "propertyName": "Lenovo Legion 5",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 3,
+      "propertyPrice": "26.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "23.000.000"
+    },
+    {
+      "propertyId": "TS25896",
+      "propertyName": "HP Pavilion Gaming Laptop",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "22.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "19.000.000"
+    },
+    {
+      "propertyId": "TS96325",
+      "propertyName": "Asus TUF Gaming A15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "25.000.000",
+      "propertyWorn": 500,
+      "propertyPriced": "22.000.000"
+    },
+    {
+      "propertyId": "TS4185",
+      "propertyName": "Dell Latitude TS10",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 1,
+      "propertyPrice": "28.000.000",
+      "propertyWorn": 900,
+      "propertyPriced": "25.000.000"
+    },
+    {
+      "propertyId": "TS36985",
+      "propertyName": "HP EliteBook 840",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kinh doanh",
+      "propertyQuantity": 2,
+      "propertyPrice": "31.000.000",
+      "propertyWorn": 1100,
+      "propertyPriced": "28.000.000"
+    },
+    {
+      "propertyId": "TS85236",
+      "propertyName": "Lenovo ThinkPad T14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 1,
+      "propertyPrice": "27.000.000",
+      "propertyWorn": 700,
+      "propertyPriced": "24.000.000"
+    },
+    {
+      "propertyId": "TS74125",
+      "propertyName": "Acer Swift 3",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 3,
+      "propertyPrice": "23.000.000",
+      "propertyWorn": 600,
+      "propertyPriced": "20.000.000"
+    },
+    {
+      "propertyId": "TS96325",
+      "propertyName": "Asus ZenBook 14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Kỹ thuật",
+      "propertyQuantity": 2,
+      "propertyPrice": "26.000.000",
+      "propertyWorn": 700,
+      "propertyPriced": "23.000.000"
+    },
+    {
+      "propertyId": "TSN75369",
+      "propertyName": "Dell XPS 15",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 1,
+      "propertyPrice": "32.000.000",
+      "propertyWorn": 1000,
+      "propertyPriced": "29.000.000"
+    },
+    {
+      "propertyId": "TS25874",
+      "propertyName": "MSI Prestige 14",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 2,
+      "propertyPrice": "29.000.000",
+      "propertyWorn": 800,
+      "propertyPriced": "26.000.000"
+    },
+    {
+      "propertyId": "TSL14785",
+      "propertyName": "HP Spectre x360",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 1,
+      "propertyPrice": "35.000.000",
+      "propertyWorn": 1200,
+      "propertyPriced": "32.000.000"
+    },
+    {
+      "propertyId": "TS001",
+      "propertyName": "HP Spectre x360",
+      "propertyTypeName": "Máy vi tính xách tay",
+      "departmentName": "Phòng Thiết kế",
+      "propertyQuantity": 1,
+      "propertyPrice": "35.000.000",
+      "propertyWorn": 1200,
+      "propertyPriced": "32.000.000"
+    },
+    {
+      "propertyId": "TS123",
+      "propertyName": "Dell E7490",
+      "propertyTypeName": "Máy tính xách tay",
+      "propertyTypeNameId": "MTXT",
+      "propertyQuantity": "1",
+      "propertyPrice": "16.000.000",
+      "propertyWorn": "6,67",
+      "propertyPriced": "13.000.000",
+      "departmentName": "Phòng Kỹ Thuật",
+      "departmentId": "KT",
+      "yearUsed": "3",
+      "yearFollow": "2023",
+      "dateUsed": "20/12/2022",
+      "dateBuy": "20/12/2022"
+    },
+    {
+      "propertyId": "TS121212",
+      "propertyName": "Dell E7490",
+      "propertyTypeName": "Máy tính xách tay",
+      "propertyTypeNameId": "MTXT",
+      "propertyQuantity": "1",
+      "propertyPrice": "16.000.000",
+      "propertyWorn": "6,67",
+      "propertyPriced": "13.000.000",
+      "departmentName": "Phòng Kỹ Thuật",
+      "departmentId": "KT",
+      "yearUsed": "3",
+      "yearFollow": "2023",
+      "dateUsed": "20/12/2022",
+      "dateBuy": "20/12/2022"
+    },
+    {
+      "propertyId": "TS1",
+      "propertyName": "dssd",
+      "propertyTypeName": "Máy tính để bàn",
+      "propertyTypeNameId": {
+        "label": "TS002",
+        "value": "Máy tính để bàn"
+      },
+      "propertyQuantity": "333",
+      "propertyPrice": "33.333",
+      "propertyWorn": "333",
+      "propertyPriced": "3",
+      "departmentName": "Phòng Hành chính Kế Toán",
+      "departmentId": {
+        "label": "BP002",
+        "value": "Phòng Hành chính Kế Toán"
+      },
+      "yearUsed": "3",
+      "yearFollow": "",
+      "dateUsed": "2023-06-08T09:26:38.336Z",
+      "dateBuy": "2023-06-08T09:26:38.322Z"
+    },
+    {
+      "propertyId": "dsadasds",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính xách tay",
+      "propertyTypeNameId": {
+        "label": "TS001",
+        "value": "Máy tính xách tay"
+      },
+      "propertyQuantity": "442344",
+      "propertyPrice": "111.111",
+      "propertyWorn": "423423",
+      "propertyPriced": "444444",
+      "departmentName": "Phòng Hành chính Kế Toán",
+      "departmentId": {
+        "label": "BP002",
+        "value": "Phòng Hành chính Kế Toán"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-11T10:01:00.000Z",
+      "dateBuy": "2023-06-09T10:01:00.000Z"
+    },
+    {
+      "propertyId": "TS0001",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính để bàn",
+      "propertyTypeNameId": {
+        "label": "TS002",
+        "value": "Máy tính để bàn"
+      },
+      "propertyQuantity": "9999",
+      "propertyPrice": "1.000.000",
+      "propertyWorn": "09909",
+      "propertyPriced": "3434343",
+      "departmentName": "Phòng Thư ký",
+      "departmentId": {
+        "label": "BP003",
+        "value": "Phòng Thư ký"
+      },
+      "yearUsed": "20",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T17:19:27.542Z",
+      "dateBuy": "2023-06-09T17:19:27.535Z"
+    },
+    {
+      "propertyId": "TS125",
+      "propertyName": "Dell E7490",
+      "propertyTypeName": "Máy tính xách tay",
+      "propertyTypeNameId": "MTXT",
+      "propertyQuantity": "1",
+      "propertyPrice": "16.000.000",
+      "propertyWorn": "6,67",
+      "propertyPriced": "13.000.000",
+      "departmentName": "Phòng Kỹ Thuật",
+      "departmentId": "KT",
+      "yearUsed": "3",
+      "yearFollow": "2023",
+      "dateUsed": "20/12/2022",
+      "dateBuy": "20/12/2022"
+    },
+    {
+      "propertyId": "TS1512",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính xách tay",
+      "propertyTypeNameId": {
+        "label": "TS001",
+        "value": "Máy tính xách tay"
+      },
+      "propertyQuantity": "9999",
+      "propertyPrice": "1.000.000",
+      "propertyWorn": "09909",
+      "propertyPriced": "3434343",
+      "departmentName": "Phòng Thư ký",
+      "departmentId": {
+        "label": "BP003",
+        "value": "Phòng Thư ký"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T17:36:44.760Z",
+      "dateBuy": "2023-06-09T17:36:44.751Z"
+    },
+    {
+      "propertyId": "TS12",
+      "propertyName": "Tai san 01",
+      "propertyTypeName": "Máy tính để bàn",
+      "propertyTypeNameId": {
+        "label": "TS002",
+        "value": "Máy tính để bàn"
+      },
+      "propertyQuantity": "9999",
+      "propertyPrice": "1.000",
+      "propertyWorn": "4343",
+      "propertyPriced": "8678",
+      "departmentName": "Phòng Kĩ thuật",
+      "departmentId": {
+        "label": "BP001",
+        "value": "Phòng Kĩ thuật"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T17:38:54.604Z",
+      "dateBuy": "2023-06-09T17:38:54.597Z"
+    },
+    {
+      "propertyId": "TS1111",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính xách tay",
+      "propertyTypeNameId": {
+        "label": "TS001",
+        "value": "Máy tính xách tay"
+      },
+      "propertyQuantity": "656",
+      "propertyPrice": "1.000",
+      "propertyWorn": "5464",
+      "propertyPriced": "66666",
+      "departmentName": "Phòng Hành chính Kế Toán",
+      "departmentId": {
+        "label": "BP002",
+        "value": "Phòng Hành chính Kế Toán"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T17:39:58.330Z",
+      "dateBuy": "2023-06-24T17:39:00.000Z"
+    },
+    {
+      "propertyId": "TS333",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính để bàn",
+      "propertyTypeNameId": {
+        "label": "TS002",
+        "value": "Máy tính để bàn"
+      },
+      "propertyQuantity": "9999",
+      "propertyPrice": "1.000",
+      "propertyWorn": "09909",
+      "propertyPriced": "3434343",
+      "departmentName": "Phòng Hành chính Kế Toán",
+      "departmentId": {
+        "label": "BP002",
+        "value": "Phòng Hành chính Kế Toán"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T17:56:05.520Z",
+      "dateBuy": "2023-06-09T17:56:05.511Z"
+    },
+    {
+      "propertyId": "dasdasdas",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính để bàn",
+      "propertyTypeNameId": {
+        "label": "TS002",
+        "value": "Máy tính để bàn"
+      },
+      "propertyQuantity": "9999",
+      "propertyPrice": "100.000",
+      "propertyWorn": "09909",
+      "propertyPriced": "3434343",
+      "departmentName": "Phòng Hành chính Kế Toán",
+      "departmentId": {
+        "label": "BP002",
+        "value": "Phòng Hành chính Kế Toán"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T17:57:35.417Z",
+      "dateBuy": "2023-06-08T17:57:00.000Z"
+    },
+    {
+      "propertyId": "T1221",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Điện thoại",
+      "propertyTypeNameId": {
+        "label": "TS003",
+        "value": "Điện thoại"
+      },
+      "propertyQuantity": "434",
+      "propertyPrice": "100.000",
+      "propertyWorn": "4343",
+      "propertyPriced": "645645",
+      "departmentName": "Phòng Kĩ thuật",
+      "departmentId": {
+        "label": "BP001",
+        "value": "Phòng Kĩ thuật"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T17:59:54.202Z",
+      "dateBuy": "2023-06-05T17:59:00.000Z"
+    },
+    {
+      "propertyId": "dasda11",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính để bàn",
+      "propertyTypeNameId": {
+        "label": "TS002",
+        "value": "Máy tính để bàn"
+      },
+      "propertyQuantity": "657567",
+      "propertyPrice": "100.000",
+      "propertyWorn": "09909",
+      "propertyPriced": "8678",
+      "departmentName": "Phòng Hành chính Kế Toán",
+      "departmentId": {
+        "label": "BP002",
+        "value": "Phòng Hành chính Kế Toán"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T18:02:20.243Z",
+      "dateBuy": "2023-05-30T18:02:00.000Z"
+    },
+    {
+      "propertyId": "TS1323",
+      "propertyName": "Tai san ne",
+      "propertyTypeName": "Máy tính xách tay",
+      "propertyTypeNameId": {
+        "label": "TS001",
+        "value": "Máy tính xách tay"
+      },
+      "propertyQuantity": "9999",
+      "propertyPrice": "1.000",
+      "propertyWorn": "546456",
+      "propertyPriced": "8678",
+      "departmentName": "Phòng Thư ký",
+      "departmentId": {
+        "label": "BP003",
+        "value": "Phòng Thư ký"
+      },
+      "yearUsed": "10",
+      "yearFollow": "",
+      "dateUsed": "2023-06-09T18:05:51.381Z",
+      "dateBuy": "2023-06-09T18:05:51.376Z"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+.main__header {
+    background-color: var(--white-color);
+    height: 56px;
+    line-height: 56px;
+    padding: 0 20px;
+    display: block;
+
+}
+
+.main__header--title {
+    text-align: left;
+    font-size: 20px;
+    font-family: RobotoMedium;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+
+.header--right {
+    display: flex;
+    align-items: center;
+    float: right;
+}
+
+.name__company {
+    font-family: RobotoMedium;
+    font-weight: 500;
+    color: #001031;
+    white-space: nowrap;
+}
+
+.header__icon {
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    gap: 0 10px;
+}
+
+.header__icon:first-child {
+    margin-left: 24px;
+}
+
+.header__icon:hover {
+    background-color: #d1edf4;
+    border-radius: 5px;
+}

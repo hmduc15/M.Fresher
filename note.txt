@@ -1,0 +1,57 @@
+*** 08/06 ****
+Cần sửa:
+ -- xóa tài sản (nút button xóa top-right -> show cảnh báo) -> Done
+ -- border table:  ->   Done
+ -- hover row , checked input có màu row table   -> Done
+ -- thêm tool tip btn main header: ->  Done
+ -- thêm btn quay về trang đầu  -> Done
+ -- thêm input trang -> Done
+ -- hiện button row, tooltip: -> Done
+ -- toast message thêm mới tc -> Done
+ -- sử dụng ctrl chọn nhiều , shilf delete row   -> Done
+ -- validate độ dài input ->> Done
+---------
+
+*** 16/06 ****
+ Đã làm:
+  --   Tạo API thêm, sửa, xóa
+  --   Call API phía Client
+  --   Check Mã trùng khi thêm mới phía Server
+  --   phân trang phía server
+
+Cần sửa: 
+ --   Style btn lại popup confirm -> Done
+ --  content popup confirm -> Done
+ -- style tooltip -> Done
+ -- icon btn table -> Done
+ -- stt căn giữa -> Done
+ -- loading -> Done
+ -- nhập quá số trang -> page cuối --> Done
+ -- time toast mess -> Done
+ -- sửa ctrl + click, shift + click -> Done
+ -- summary table -> Done
+ -- tự sinh mã khi thêm form -> Done
+ -- 
+
+**22/06**
+ Đã làm: 
+   -- Resize
+
+ Cần sửa:
+  -- tăng hieght popup , bỏ <<>>
+  -- tooltip button : xóa ,sửa 
+  -- set min width cột table , cột checkbox, cột số    lượng, money : đáp ứng 100 tỷ, cột năm
+  -- bỏ cột cuối table 
+  -- tăng time toast 
+  -- click chọn được dòng cần xóa, bỏ các dòng đã chọn, shilf
+  -- Dòng đầu tiên combobox in nghiêng 
+  -- check lại check trùng ID  khi thêm mới.
+  -- thêm button cập nhật lại dữ liệu bên cạnh combobox bộ phận sử dụng.
+  --  k fix cứng summary
+  --  table  khi không có bản ghi filter
+  -- validate back
+  -- bỏ boder pageSize
+  -- selected dòng đầu tiên table
+ 
+ 
+   
