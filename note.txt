@@ -53,5 +53,23 @@ Cần sửa:
   -- bỏ boder pageSize
   -- selected dòng đầu tiên table
  
+
+ **29/06**
+Đã làm:
+  -- Xuất excel.
+
+Cần sửa:
+--  Cho icon xóa tài sản, cho nhỏ  button ở popup: done
+ -- set lại width cột STT:  done
+-- set lại width table, k fix cứng.: done
+-- Response 1024 * 768 , 1366 * 768. : done
+--  Sửa tbao trùng mã ts về dạng required.
+-- Sửa lại summary chưa filter thì toàn page, filter tính của bản ghi: done
+--  PageSize bị lệch: done
+--  dbClick dòng lên form sửa: done
+--  mặc định số lượng là 1.: done
+--  phím tắt debug js và server
+--  select value input khi click: done
+
  
    
