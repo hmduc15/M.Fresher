@@ -45,7 +45,7 @@ namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
         /// <summary>
         /// Quantity of Asset
         /// </summary>
-        public int? Quantity { get; set; }
+        public int Quantity { get; set; }
 
         /// <summary>
         /// Year tracked Asset

@@ -61,7 +61,6 @@ export const deleteMultiple = async (dataList) => {
  * @returns list asset
  */
 export const paggingTable = async (pageNumber, pageSize, searchInput, departmentName, categoryName) => {
-
     let queryParams = `pageSize=${pageSize}&pageNumber=${pageNumber}`;
     if (searchInput) {
         queryParams += `&searchInput=${searchInput}`;
@@ -76,9 +75,6 @@ export const paggingTable = async (pageNumber, pageSize, searchInput, department
 
     return res.data;
 }
-
-
-
 
 
 export * as request from "@/services/request"

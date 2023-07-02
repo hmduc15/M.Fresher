@@ -1,9 +1,9 @@
 <template>
-  <PropertyList></PropertyList>
+  <AssetList></AssetList>
 </template>
 
 <script>
-import PropertyList from "@/view/property/PropertyList.vue";
+import AssetList from '@/view/asset/AssetList.vue';
 
 export default {
   name: "TheMainConTent",
@@ -13,7 +13,7 @@ export default {
     };
   },
   components: {
-    PropertyList,
+    AssetList,
   },
   methods: {},
 };

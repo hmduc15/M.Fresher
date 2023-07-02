@@ -43,6 +43,11 @@ namespace MISA.WebFresher0420223.Demo.Tests.Core
             return Task.FromResult<Asset>(null);
         }
 
+        public Task<Stream> GetListExport()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<string> GetNewCodeAsync()
         {
             throw new NotImplementedException();

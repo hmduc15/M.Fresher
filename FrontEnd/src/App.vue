@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <m-sidebar></m-sidebar>
-    <div class="main">
+    <div :class="[`${!isCollapsed ? 'main' : 'main--active'}`]">
       <m-header></m-header>
       <m-content></m-content>
     </div>
@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import TheSidebar from "./layout/TheSidebar.vue";
 import TheMainHeader from "./layout/TheMainHeader.vue";
 import TheMainContent from "./layout/TheMainContent.vue";
@@ -20,9 +22,9 @@ export default {
     "m-content": TheMainContent,
   },
 
-  data: () => ({
-    //
-  }),
+  computed: {
+    ...mapState("sideBar", ["isCollapsed"]),
+  },
 };
 </script>
 <style scoped>

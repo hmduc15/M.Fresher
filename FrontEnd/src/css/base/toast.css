@@ -5,13 +5,13 @@
     border-radius: 4px;
     background-color: var(--white-color);
     right: 10px;
-    top: 20px;
+    top: 18px;
     z-index: 99;
     display: flex;
     align-items: center;
     padding-left: 18px;
     padding-right: 16px;
-    transition: all 0.1s ease 0.6s;
+    transition: all 0.3s ease 10s;
     animation: rightToLeft 0.3s;
     box-shadow: 0 2px 6px rgba(0, 0, 0, .16);
 }

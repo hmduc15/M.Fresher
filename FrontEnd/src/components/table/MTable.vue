@@ -1,8 +1,9 @@
 <template>
-  <div ref="tableRef" class="table__view">
+  <div ref="tableRef" class="table__view" v-move-row="{ moveRow }">
     <div
+      @mousemove.stop="handleResize"
+      @mouseup.capture="handleStopResize"
       class="table__container"
-      :style="{ width: isCollapsed ? '1295px' : '1420px' }"
     >
       <div class="table__content">
         <div class="table__content--header">
@@ -18,17 +19,25 @@
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
               ]"
-              @mousemove.stop="handleResize"
-              @mouseup.capture="handleStopResize"
             >
-              <m-input
-                v-if="column.checkbox && !column.title"
-                type="checkbox"
-                className="table__checkbox"
-                name="ckbox"
-                id="ckbox"
-                :isDisabled="true"
-              ></m-input>
+              <template v-if="column.key === 'checkbox'">
+                <div class="ceil--checkbox">
+                  <m-input
+                    v-if="!isCheckAll"
+                    type="checkbox"
+                    className="table__checkbox"
+                    name="ckbox"
+                    id="ckbox"
+                    @input="handleCheckAll"
+                    @click.stop
+                  ></m-input>
+                  <div
+                    v-else
+                    class="checkbox icon__checked"
+                    @click.stop="handleUnCheckAll"
+                  ></div>
+                </div>
+              </template>
               <template v-else-if="column.title && !column.tooltip">
                 <span>
                   {{ column.title }}
@@ -68,8 +77,7 @@
               'table__body--row',
               { 'table--active': isRowActive(indexRow) },
               {
-                'table--selected':
-                  arrSelected.includes(data) || this.indexRowClick === indexRow,
+                'table--selected': isSelected(data),
               },
               {
                 'row--hovered': this.indexRowHover === indexRow,
@@ -79,8 +87,9 @@
             :key="indexRow"
             @contextmenu.prevent="showContextMenu($event, data)"
             @click="handleClickRow(data, indexRow, $event)"
-            @mouseenter="handleHoverStart(indexRow)"
-            @mouseleave="handleHoverEnd"
+            @mouseenter.stop="handleHoverStart(indexRow)"
+            @mouseleave.stop="handleHoverEnd"
+            @dblclick="handleOpenEdit(data)"
           >
             <div
               class="ceil--item"
@@ -97,7 +106,7 @@
               <template v-if="column.key === 'checkbox'">
                 <div class="ceil--checkbox">
                   <m-input
-                    v-if="!arrSelected.includes(data)"
+                    v-if="!isSelected(data)"
                     type="checkbox"
                     className="table__checkbox"
                     name="ckbox"
@@ -107,7 +116,7 @@
                     @click.stop
                   ></m-input>
                   <div
-                    v-else-if="arrSelected.includes(data)"
+                    v-else-if="isSelected(data)"
                     class="checkbox icon__checked"
                     @click.stop="handleUnCheck(data)"
                   ></div>
@@ -116,6 +125,7 @@
               <template v-else-if="column.key === 'order'">
                 <span>{{ indexRow + 1 }}</span>
               </template>
+
               <template v-else>
                 <span>{{ data[column.key] }}</span>
               </template>
@@ -136,13 +146,22 @@
             :style="[`width: ${widthDefault[index]}px`]"
           >
             <template v-if="column.key === 'Quantity'">
-              <span>100</span>
+              <span>{{
+                this.formatValue(this.dataSummary.total_quantity)
+              }}</span>
             </template>
             <template v-if="column.key === 'Cost'">
-              <span>3.853.732.599</span>
+              <span>{{ this.formatValue(this.dataSummary.total_cost) }}</span>
             </template>
-            <template v-if="column.key === 'DepreciationRate'">
-              <span>687.520.558</span>
+            <template v-if="column.key === 'DepreciationAmount'">
+              <span>{{
+                this.formatValue(this.dataSummary.total_depreciation)
+              }}</span>
+            </template>
+            <template v-if="column.key === 'ResidualPrice'">
+              <span>{{
+                this.formatValue(this.dataSummary.total_residual_price)
+              }}</span>
             </template>
           </div>
         </div>
@@ -153,25 +172,28 @@
           <b>{{ totalRecored }}</b>
           {{ this.$_MISAResources.paging.record }}
         </div>
-        <m-tooltip :content="this.$_MISAResources.paging.rowPerPage">
-          <template #child>
-            <div class="page__size">
-              <m-combobox
-                icon="icon__down--page"
-                :listOptions="listOffset"
-                v-model="this.pageSize"
-                @change="chosePageSize"
-              ></m-combobox>
-            </div>
-          </template>
-        </m-tooltip>
+        <div class="page__size">
+          <m-combobox
+            iconPrefix="icon__down--page"
+            :listOptions="listOffset"
+            v-model="this.pageSize"
+            @change="chosePageSize"
+          ></m-combobox>
+        </div>
         <div class="pagination">
           <m-tooltip :content="this.$_MISAResources.tooltip__btn.firstPage">
             <template #child>
-              <div class="btn__paging" @click="firstPage">
-                <m-button iconButton="icon__prev"></m-button>
-                <m-button iconButton="icon__prev"></m-button>
-              </div>
+              <button
+                :class="[
+                  { 'btn--notallowed': this.currentPage === 1 },
+                  { 'btn--hover': this.currentPage > 1 },
+                  'btn__paging',
+                ]"
+                @click="firstPage"
+              >
+                <div class="icon__prev"></div>
+                <div class="icon__prev"></div>
+              </button>
             </template>
           </m-tooltip>
           <m-tooltip :content="this.$_MISAResources.tooltip__btn.prevPage">
@@ -183,12 +205,11 @@
               ></m-button>
             </template>
           </m-tooltip>
-
           <div class="page__container">
             <m-input
               type="text"
               v-model="pageInput"
-              className="input__paging"
+              :className="['input__paging']"
               @input="pageInput = this.handleInputPage(pageInput)"
             ></m-input>
           </div>
@@ -204,14 +225,25 @@
           </m-tooltip>
           <m-tooltip :content="this.$_MISAResources.tooltip__btn.lastPage">
             <template #child>
-              <div class="btn__paging" @click="lastPage">
-                <m-button iconButton="icon__next"></m-button>
-                <m-button iconButton="icon__next"></m-button>
-              </div>
+              <button
+                :class="[
+                  { 'btn--notallowed': this.currentPage === this.totalPage },
+                  { 'btn--hover': this.currentPage < this.totalPage },
+                  'btn__paging',
+                ]"
+                @click="lastPage"
+              >
+                <div class="icon__next"></div>
+                <div class="icon__next"></div>
+              </button>
             </template>
           </m-tooltip>
         </div>
       </div>
+      <div
+        class="empty__data icon--empty"
+        v-if="dataTable.data?.length === 0 && !isLoading"
+      ></div>
       <div class="fixed__content">
         <div class="fixed__content--header">
           <span>{{ this.$_MISAResources.table.title.action }}</span>
@@ -230,8 +262,7 @@
             :class="[
               {
                 'table--active': isRowActive(indexRow),
-                'table--selected':
-                  arrSelected.includes(data) || this.indexRowClick === indexRow,
+                'table--selected': isSelected(data),
                 'row--hovered': this.indexRowHover === indexRow,
               },
             ]"
@@ -249,10 +280,10 @@
               ></m-button>
               <m-button
                 className="btn__row btn__message"
-                iconButton="icon__delete--red"
+                iconButton="icon__duplicate"
                 :title="this.$_MISAResources.tooltip__btn.delete"
                 posTooltip="top"
-                @click="handleDeleteRow(data)"
+                @click="handleDuplicate(data)"
               ></m-button>
             </div>
           </div>
@@ -268,8 +299,8 @@
     <div
       ref="menu"
       :style="{
-        top: pos.y + 'px',
-        left: pos.x - 55 + 'px',
+        top: pos.y + 5 + 'px',
+        left: pos.x - 60 + 'px',
       }"
       class="context__menu"
       v-show="isShowMenu"
@@ -300,6 +331,7 @@
           className="btn__context"
           iconButton="icon__duplicate"
           content="Nhân bản"
+          @click="handleBtnDuplicate(dataSelected)"
         >
         </m-button>
       </div>
@@ -313,6 +345,7 @@ import { mapActions, mapState } from "vuex";
 import { format } from "@/utils/format";
 import Enum from "@/utils/enum";
 
+import { directive } from "vue-tippy";
 import MSkeleton from "../base/MSkeleton.vue";
 import MTooltip from "../base/MTooltip.vue";
 import MInput from "../base/MInput.vue";
@@ -322,6 +355,11 @@ import MButton from "../base/MButton.vue";
 export default {
   name: "MTable",
   props: ["columns", "state", "dataTable"],
+
+  directives: {
+    tippy: directive,
+  },
+
   components: {
     // TableHeader,
     "m-button": MButton,
@@ -334,6 +372,7 @@ export default {
   data() {
     return {
       assetClone: [],
+      dataSummary: {},
       posMenu: { x: 0, y: 0 },
       dataRow: null,
       dataSelected: null,
@@ -343,12 +382,15 @@ export default {
       pageSize: 20,
       arrSelected: [],
       isChecked: false,
+      isCheckAll: false,
       isActive: true,
       indexActive: -1,
       indexRowClick: -1,
       indexShiftClick: -1,
       indexCtrlClick: -1,
       indexRowHover: -1,
+      isShiftClick: false,
+      isDbClick: false,
       pageInput: 1,
       listOffset: [
         {
@@ -365,11 +407,11 @@ export default {
         },
       ],
       rowLoading: 12,
-      widthDefault: [60, 80, 130, 200, 200, 200, 120, 160, 200, 160, 110, 100],
+      widthDefault: [45, 50, 110, 200, 180, 170, 80, 140, 110, 130, 110, 50],
       indexResize: null,
       startX: 0,
       startWidth: 0,
-      minWidth: 80,
+      minWidth: 100,
       debounce: null,
     };
   },
@@ -378,19 +420,15 @@ export default {
     this.$nextTick(() => {
       this.widthSkeleton = this.$refs.tableRef?.offsetWidth;
     });
-
-    // listener event when component mounted
-    document.addEventListener("keydown", this.handleKeyDown);
-    document.addEventListener("keyup", this.handleKeyUp);
-  },
-
-  beforeUnmount() {
-    // remove events before component unmount
-    document.removeEventListener("keydown", this.handleKeyDown);
-    document.removeEventListener("keyup", this.handleKeyUp);
   },
 
   watch: {
+    reLoad(newValue) {
+      if (newValue) {
+        this.currentPage = 1;
+      }
+    },
+
     currentPage(newPage) {
       this.pageInput = newPage;
     },
@@ -399,14 +437,21 @@ export default {
       this.assetClone = newData.data.map((item) => {
         return {
           ...item,
-          Cost: this.formartValueMoney(item.Cost),
+          Cost: this.formatValue(item.Cost),
+          Quantity: this.formatValue(item.Quantity),
+          DepreciationAmount: this.formatValue(
+            Math.round(item.DepreciationAmount)
+          ),
+          DepreciationYear: this.formatValue(Math.round(item.DepreciationYear)),
+
+          ResidualPrice: this.formatValue(Math.round(item.ResidualPrice)),
         };
       });
+      this.dataSummary = newData.summaryData;
     },
   },
 
   computed: {
-    ...mapState("sideBar", ["isCollapsed"]),
     ...mapState("formDialog", ["isShow"]),
     ...mapState("contextMenu", ["isShowMenu", "dataCMenu", "pos"]),
     ...mapState("property", [
@@ -414,13 +459,31 @@ export default {
       "listSelected",
       "loadingTime",
       "isLoading",
+      "reLoad",
     ]),
 
+    /**
+     * Function check selected row
+     * Author:  HMDUC (25/06/2023)
+     */
+    isSelected() {
+      return (data) => {
+        return this.listSelected.find(
+          (asset) => asset.AssetId === data.AssetId
+        );
+      };
+    },
+
+    /**
+     * Function check active row
+     * Author:  HMDUC (25/06/2023)
+     */
     isRowActive() {
       return (index) => {
         return this.indexActive === index;
       };
     },
+
     /**
      * Function return totalrecord
      * Author: HMDUC(26/05/2023)
@@ -429,26 +492,6 @@ export default {
       return this.propertyList.data;
     },
 
-    /**
-     * Function return pagination page
-     * Author: HMDUC (27/05/2023)
-     */
-    pages() {
-      let pages = [];
-      for (let i = 1; i <= this.totalPage; i++) {
-        if (
-          i === this.currentPage ||
-          i === this.totalPage ||
-          i === this.currentPage + 1 ||
-          (i == this.currentPage - 1 && i == this.totalPage - 2)
-        ) {
-          pages.push(i);
-        } else if (i === this.currentPage + 2) {
-          pages.push("input");
-        }
-      }
-      return pages;
-    },
     /**
      * Function return total record
      * Author: HMDUC(26/05/2023)
@@ -494,9 +537,8 @@ export default {
       if (this.indexResize != null) {
         const width = event.pageX - this.startX;
         this.widthDefault[this.indexResize] = this.startWidth + width;
-        if (this.widthDefault[this.indexResize] <= this.minWidth) {
+        if (this.widthDefault[this.indexResize] < this.minWidth) {
           this.widthDefault[this.indexResize] = this.minWidth;
-          return;
         }
       }
     },
@@ -547,10 +589,22 @@ export default {
      * Function format money before binding Ui
      * Author: HMDUC (10/06/2023)
      * @param {*} value
+     * @returns 155555 -> 155.555
      */
-    formartValueMoney(value) {
+    formatValue(value) {
       let money = format.formatMoney(value);
       return money;
+    },
+
+    /**
+     * Function format number float
+     * Author: HMDUC (10/06/2023)
+     * @param {*} value
+     * @returns 2.33 -> 2,33
+     */
+    formatFloat(value) {
+      let float = format.formatFloat(value);
+      return float;
     },
 
     /**
@@ -563,18 +617,20 @@ export default {
     handleClickRow(data, index, event) {
       if (event.ctrlKey) {
         //  event ctrl + click
-        this.handleCtrlClick(data, index, event);
+        this.handleSelected(data, index, event);
       } else if (event.shiftKey) {
+        //event shift + click
         this.handleShiftClick(index, event);
-      } else if (this.listSelected.length > 0) {
+      } else if (this.isShiftClick) {
         this.arrSelected = this.arrSelected.filter(
           (item) => item.AssetCode === data.AssetCode
         );
         this.setListSelected(this.arrSelected);
-        this.indexRowClick = index;
+        this.isShiftClick = false;
         this.indexCtrlClick = index;
       } else {
-        this.indexRowClick = index;
+        //normal click
+        this.handleSelected(data, index, event);
       }
     },
     /**
@@ -582,7 +638,7 @@ export default {
      * Author: HMDUC (08/06/2023)
      * @param {*} data
      */
-    handleCtrlClick(data, index, e) {
+    handleSelected(data, index, e) {
       e.preventDefault();
       this.indexCtrlClick = index;
       if (!this.arrSelected.includes(data)) {
@@ -603,22 +659,29 @@ export default {
     handleShiftClick(index, e) {
       e.preventDefault();
       this.indexShiftClick = index;
+      this.isShiftClick = true;
       let rows = [];
-      console.log(this.indexCtrlClick);
 
       if (this.indexShiftClick > this.indexCtrlClick) {
         rows = this.assetClone.slice(
-          this.indexCtrlClick,
+          this.indexCtrlClick + 1,
           this.indexShiftClick + 1
         );
       } else {
-        rows = this.assetClone.slice(
-          this.indexShiftClick,
-          this.indexCtrlClick + 1
-        );
+        rows = this.assetClone.slice(this.indexShiftClick, this.indexCtrlClick);
       }
       this.arrSelected.push(...rows);
       this.setListSelected(this.arrSelected);
+    },
+
+    /**
+     * Function handle dbClick open form edit
+     * Author: HMDUC (19/06/2023)
+     * @param {*} data
+     */
+    handleOpenEdit(data) {
+      this.isDbClick = true;
+      this.openForm(data);
     },
 
     /**
@@ -626,15 +689,15 @@ export default {
      * Author: HMDUC (04/06/2023)
      * @param {} event
      */
-    handleKeyDown(event) {
-      if (event.keyCode == Enum.KEY__CODE.ARROW_UP) {
-        // Arrow up key
-        this.moveRow(-1);
-      } else if (event.keyCode == Enum.KEY__CODE.ARROW_DOWN) {
-        // Arrow down key
-        this.moveRow(1);
-      }
-    },
+    // handleKeyDown(event) {
+    //   if (event.keyCode == Enum.KEY__CODE.ARROW_UP) {
+    //     // Arrow up key
+    //     this.moveRow(-1);
+    //   } else if (event.keyCode == Enum.KEY__CODE.ARROW_DOWN) {
+    //     // Arrow down key
+    //     this.moveRow(1);
+    //   }
+    // },
 
     /**
      * fucntion move row up or down by keyboard
@@ -651,6 +714,27 @@ export default {
         });
       }
     },
+
+    /**
+     * Function handle button Check All
+     * Author: HMDUC (04/06/2023)
+     */
+    handleCheckAll() {
+      this.isCheckAll = true;
+      this.arrSelected = [...this.assetClone];
+      this.setListSelected(this.arrSelected);
+    },
+
+    /**
+     * Function handle button UnCheck All
+     * Author: HMDUC (04/06/2023)
+     */
+    handleUnCheckAll() {
+      this.isCheckAll = false;
+      this.arrSelected.length = 0;
+      this.setListSelected([]);
+    },
+
     /**
      * function checked property to delete
      * Author: HMDUC (02/06/2023)
@@ -695,7 +779,18 @@ export default {
      */
     handleDeleteRow(data) {
       var arr = [data];
-      this.$emit("showPopup", arr);
+      this.$emit("showPopup", arr, "confirm");
+    },
+
+    /**
+     * Function handle btn Duplicate
+     * Author: HMDUC (27/05/2023)
+     * @param {*} data
+     */
+    handleDuplicate(data) {
+      this.setIsShow(true);
+      this.$emit("getData", data);
+      this.setFormMode(Enum.FORM__MODE.DUPLICATE);
     },
 
     /**
@@ -709,7 +804,7 @@ export default {
       this.setShowMenu(true);
       this.setPos({ x: clientX, y: clientY });
 
-      //add event click mouse right
+      //add event click mouse left
       document.addEventListener("click", this.hideContextMenu);
     },
     /**
@@ -743,14 +838,24 @@ export default {
     },
     /**
      * Function handle btnDelete contextmenu
-     * Author: HMDUC (28/05/2/2023)
+     * Author: HMDUC (28/05/2023)
      */
     handleBtnDelete(data) {
       const arrDataSelected = [];
       arrDataSelected.push(data);
-      this.$emit("showPopup", arrDataSelected);
+      this.$emit("showPopup", arrDataSelected, "confirm");
       this.isShowPopup = true;
       this.dataSelected = data;
+    },
+
+    /**
+     * Function handle btnDuplicate contextmenu
+     * Author: HMDUC (28/05/2023)
+     */
+    handleBtnDuplicate(data) {
+      this.setIsShow(true);
+      this.$emit("getData", data);
+      this.setFormMode(Enum.FORM__MODE.DUPLICATE);
     },
     /**
      * Function handle cancel popup
@@ -767,7 +872,7 @@ export default {
      * @return value input number
      */
     handleInputPage(value) {
-      this.pageInput = value.replace(/\D/g, "");
+      this.pageInput = value.replace(/[0a-zA-Z!@#$%^&*()]/g, "");
 
       clearTimeout(this.debounce);
       this.debounce = setTimeout(() => {
@@ -775,7 +880,7 @@ export default {
           this.currentPage = this.pageInput;
         } else if (this.pageInput > this.totalPage) {
           this.currentPage = this.totalPage;
-        } else {
+        } else if (this.pageInput === 0) {
           this.currentPage = 1;
         }
         if (this.pageInput.length > 0) {
@@ -786,25 +891,34 @@ export default {
       return this.pageInput;
     },
 
+    /**
+     * Function chose page size
+     * @param {*} value
+     * Author: HMDUC (08/06/2023)
+     */
     chosePageSize(value) {
       this.$emit("pageSize", value);
     },
 
     /**
      * function prev firtpage
-     * Author: HMDUC (08/06/2s023)
+     * Author: HMDUC (08/06/2023)
      */
     firstPage() {
-      this.currentPage = 1;
-      this.$emit("prevPage", this.currentPage);
+      if (this.currentPage > 1) {
+        this.currentPage = 1;
+        this.$emit("prevPage", this.currentPage);
+      }
     },
     /**
      * function next lastpage
      * Author: HMDUC (08/06/2023)
      */
     lastPage() {
-      this.currentPage = this.totalPage;
-      this.$emit("nextPage", this.currentPage);
+      if (this.currentPage < this.totalPage) {
+        this.currentPage = this.totalPage;
+        this.$emit("nextPage", this.currentPage);
+      }
     },
     /**
      * Function handle next page
@@ -831,6 +945,8 @@ export default {
 </script>
 
 <style>
+@import "@/css/base/button.css";
 @import "@/css/base/table.css";
 @import "@/css/base/contextmenu.css";
+@import "@/css/base/layout.css";
 </style>

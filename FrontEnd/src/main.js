@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import store from './store/store';
-import clickOutside from './directive/clickOutside';
 import escEvent from './directive/esc';
+import moveRow from './directive/moveRow';
 import { MISAResources } from './utils/resource';
 import vueRouter from './router/router';
 import App from './App.vue'
@@ -15,8 +15,7 @@ import "../src/css/base/combobox.css";
 const app = createApp(App);
 
 
-
-app.directive('outside', clickOutside);
+app.directive('move-row', moveRow)
 app.directive('esc', escEvent);
 
 // declare component globaly

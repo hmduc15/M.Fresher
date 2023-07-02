@@ -9,10 +9,13 @@ using System.Threading.Tasks;
 namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
 {
     public class AssetUpdateDto
-    {
+    {  
 
+        /// <summary>
+        /// Id Asset
+        /// </summary>
+        public  Guid AssetId{ get; set; }
 
-      
         /// <summary>
         /// Code Asset
         /// </summary>
@@ -23,23 +26,22 @@ namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
         /// </summary>
         public string? AssetName { get; set; }
 
+  
         /// <summary>
-        /// Id Department
+        /// Id department
         /// </summary>
-        [Required]
         public Guid DepartmentId { get; set; }
 
-        /// <summary>
-        /// Code department
-        /// </summary>
-        public string? DepartmentCode { get; set; }
 
         /// <summary>
-        /// Name department
+        /// Depreciation
         /// </summary>
-        public string? DepartmentName { get; set; }
-
         public float? DepreciationRate { get; set; }
+        
+        /// <summary>
+        /// Depreciation Year
+        /// </summary>
+        public Decimal DepreciationYear { get; set; }
 
         /// <summary>
         /// Id category
@@ -47,15 +49,6 @@ namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
         [Required]
         public Guid CategoryId { get; set; }
 
-        /// <summary>
-        /// Code category
-        /// </summary>
-        public string? CategoryCode { get; set; }
-
-        /// <summary>
-        /// Name category
-        /// </summary>
-        public string? CategoryName { get; set; }
 
         /// <summary>
         /// Date buy Asset
@@ -70,7 +63,7 @@ namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
         /// <summary>
         /// Quantity of Asset
         /// </summary>
-        public int? Quantity { get; set; }
+        public int Quantity { get; set; }
 
         /// <summary>
         /// Year tracked Asset

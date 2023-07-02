@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
+using MISA.WebFresher042023.Demo.Core.Enum;
 using MISA.WebFresher042023.Demo.Core.Interface.Service;
 
 namespace MISA.WebFresher042023.Demo.Controllers
@@ -10,11 +11,11 @@ namespace MISA.WebFresher042023.Demo.Controllers
     {
 
         protected readonly IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> _baseService;
- 
 
-        public BaseController(IBaseService<TEntityDto,TEntityInsertDto,TEntityUpdateDto> baseService)
+
+        public BaseController(IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> baseService)
         {
-           
+
             _baseService = baseService;
         }
 
@@ -29,9 +30,9 @@ namespace MISA.WebFresher042023.Demo.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var EntityDto = await _baseService.GetAllAsync();
+            var entityDto = await _baseService.GetAllAsync();
 
-            return Ok(EntityDto);
+            return StatusCode(StatusCodes.Status200OK, entityDto);
         }
 
 
@@ -50,7 +51,7 @@ namespace MISA.WebFresher042023.Demo.Controllers
         {
             var entityDto = await _baseService.GetByIdAsync(id);
 
-            return Ok(entityDto);
+            return StatusCode(StatusCodes.Status200OK, entityDto);
         }
 
         /// <summary>
@@ -66,15 +67,15 @@ namespace MISA.WebFresher042023.Demo.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync(TEntityInsertDto entityInsertDto)
         {
-           var rowsAffected = await _baseService.InsertAsync(entityInsertDto);
+            var rowsAffected = await _baseService.InsertAsync(entityInsertDto);
 
             if (rowsAffected == 0)
             {
-                return StatusCode(400);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
             else
             {
-                return StatusCode(201);
+                return StatusCode(StatusCodes.Status201Created, rowsAffected);
             }
         }
 
@@ -96,11 +97,11 @@ namespace MISA.WebFresher042023.Demo.Controllers
 
             if (rowAffected == 0)
             {
-                return StatusCode(400);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
             else
             {
-                return Ok(200);
+                return StatusCode(StatusCodes.Status200OK);
             }
         }
 
@@ -120,12 +121,11 @@ namespace MISA.WebFresher042023.Demo.Controllers
             var rowAffect = await _baseService.DeleteAsync(id);
             if (rowAffect > 0)
             {
-                return StatusCode(204);
-
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             else
             {
-                return StatusCode(400);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
 
         }
@@ -146,11 +146,11 @@ namespace MISA.WebFresher042023.Demo.Controllers
 
             if (rowsAffected < 0)
             {
-                return StatusCode(400);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
             else
             {
-                return Ok(204);
+                return StatusCode(StatusCodes.Status204NoContent);
             }
         }
 

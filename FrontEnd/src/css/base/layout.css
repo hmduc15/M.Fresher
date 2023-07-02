@@ -3,7 +3,27 @@
 
 :root {
     --width-sidebar: 70px;
+    --width-sidebar-active: 200px;
 }
+
+
+.sidebar--active {
+    flex: 0 0 var(--width-sidebar-active);
+}
+
+
+.main {
+    width: calc(100% - var(--width-sidebar));
+    background-color: var(--blue-color-third);
+    position: relative;
+}
+
+.main--active {
+    width: calc(100% - var(--width-sidebar-active));
+    background-color: var(--blue-color-third);
+    position: relative;
+}
+
 
 .container {
     width: 100%;
@@ -17,14 +37,4 @@
 .sidebar {
     width: var(--width-sidebar);
     background-color: var(--sidebar-color);
-}
-
-.sidebar--active {
-    flex: 0 0 200px;
-}
-
-.main {
-    width: calc(100% - var(--width-sidebar));
-    background-color: var(--blue-color-third);
-    position: relative;
 }

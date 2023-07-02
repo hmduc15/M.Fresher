@@ -69,5 +69,7 @@ namespace MISA.WebFresher042023.Demo.Core.Interface.Service
         /// Author: HMDUC (16/06/2023)
         Task<int> DeleteMulAsync(List<Guid> ids);
 
+ 
+
     }
 }

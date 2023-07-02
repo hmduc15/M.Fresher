@@ -1,6 +1,7 @@
 ﻿using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
 using MISA.WebFresher042023.Demo.Core.Entity;
 
+
 namespace MISA.WebFresher042023.Demo.Core.Interface.Service
 {
 
@@ -31,6 +32,13 @@ namespace MISA.WebFresher042023.Demo.Core.Interface.Service
         /// </returns>
         /// Author: HMDUC (19/06/2023)
         Task<object> GetPagging(int pageSize, int pageNumber, string searchInput, string m_DepartmentName, string m_CategoryName);
+
+        /// <summary>
+        /// Funtion get ListAsset to Export Excel
+        /// </summary>
+        /// <returns></returns>
+        /// Author: HMDUC (29/06/2023)
+        Task<Stream> ExportExcel();
     }
 
 

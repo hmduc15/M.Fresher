@@ -4,6 +4,7 @@
     :content="content"
     :placement="placement"
     :effect="effect"
+    :show-after="delay"
   >
     <slot name="child"></slot>
   </el-tooltip>
@@ -14,7 +15,7 @@ import { ElTooltip } from "element-plus";
 
 export default {
   name: "MTooltip",
-  props: ["placement", "content", "className", "effect"],
+  props: ["placement", "content", "className", "effect", "delay"],
   component: {
     "el-tooltip": ElTooltip,
   },

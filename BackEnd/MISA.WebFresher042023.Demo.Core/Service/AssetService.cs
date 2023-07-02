@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
 using MISA.WebFresher042023.Demo.Core.Entity;
 using MISA.WebFresher042023.Demo.Core.Interface.Repository;
 using MISA.WebFresher042023.Demo.Core.Interface.Service;
-using MISA.WebFresher042023.Demo.Core.MISAException;
-using MISA.WebFresher042023.Demo.Core.Resources;
+using OfficeOpenXml;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace MISA.WebFresher042023.Demo.Core.Service
 {
@@ -21,19 +22,6 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             _assetRepository = assetRepository;
 
         }
-
-        /// <summary>
-        /// Funtion get Entity Code of new Enity 
-        /// </summary>
-        /// <returns>AssetCode</returns>
-        /// Author: HMDUC (19/06/2023)
-        public async Task<string> GetNewCodeAsync()
-        {
-            var code = await _assetRepository.GetNewCodeAsync();
-
-            return code;
-        }
-
 
         /// <summary>
         /// Function Get List Asset Pagging 
@@ -53,5 +41,75 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             return respone;
         }
+
+
+        /// <summary>
+        /// Funtion Export Excel
+        /// </summary>
+        /// <returns>package Stream</returns>
+        /// Author: HMDUC (29/06/2023)
+       public async Task<Stream> ExportExcel()
+        {
+            var stream = await _assetRepository.GetListExport();
+
+            return stream;
+        }
+
+
+        /// <summary>
+        /// Funtion get Entity Code of new Enity 
+        /// </summary>
+        /// <returns>AssetCode</returns>
+        /// Author: HMDUC (19/06/2023)
+        public async Task<string> GetNewCodeAsync()
+        {
+            var code = await _assetRepository.GetNewCodeAsync();
+
+
+            var prefixCode = Regex.Replace(code, @"\d", "");
+            var suffixCode = Regex.Replace(code, @"[^0-9]", "");
+            var assetCode = GenerateCode(prefixCode, suffixCode);
+
+            var asset = await _assetRepository.GetByCodeAsync(assetCode);
+
+            while (asset != null)
+            {
+                assetCode = GenerateCode(prefixCode, suffixCode);
+                break;
+            }
+
+            return assetCode;
+        }
+
+
+        /// <summary>
+        /// Funtion Generate new AssetCode
+        /// </summary>
+        /// <param name="prefixCode"></param>
+        /// <param name="suffixCode"></param>
+        /// <returns>AssetCode</returns>
+        private string GenerateCode(string prefixCode, string suffixCode)
+        {
+            if (!string.IsNullOrEmpty(suffixCode))
+            {
+                var numberSuffix = (int.Parse(suffixCode) + 1).ToString();
+                var preZero = "";
+
+                for (int i = 0; i < suffixCode.Length - numberSuffix.Length; i++)
+                {
+                    preZero = preZero + "0";
+                }
+                return prefixCode + preZero + numberSuffix;
+
+            }
+            else
+            {
+                int suffixTemp = 1;
+                return prefixCode + suffixTemp.ToString();
+            }
+        }
+
+ 
     }
+
 }

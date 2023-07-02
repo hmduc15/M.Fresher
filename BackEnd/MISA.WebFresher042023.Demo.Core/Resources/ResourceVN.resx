@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Author_Excel" xml:space="preserve">
+    <value>Hoàng Minh Đức</value>
+  </data>
   <data name="Empty_Code" xml:space="preserve">
     <value>Mã tài sản không được phép để trống.</value>
   </data>
@@ -149,5 +152,8 @@
   </data>
   <data name="Error_Validate_Dev" xml:space="preserve">
     <value>Lỗi nhập dữ liệu do người dùng.</value>
+  </data>
+  <data name="Title_Excel" xml:space="preserve">
+    <value>Danh sách tài sản</value>
   </data>
 </root>

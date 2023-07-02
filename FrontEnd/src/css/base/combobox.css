@@ -130,12 +130,6 @@
     border-radius: 4px;
 }
 
-.el-select-dropdown__item:first-child {
-    font-style: italic;
-}
-
-
-
 .select__option:hover {
     background-color: rgba(26, 164, 200, .09);
 }
@@ -148,6 +142,13 @@
     position: absolute;
     right: 8px;
     top: 25%;
+}
+
+.text--empty {
+    font-family: RobotoMedium;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px 0;
 }
 
 .select__device {
@@ -380,6 +381,8 @@
 .el-input__inner::placeholder, .el-input__inner {
     color: var(--black-color) !important;
     font-family: RobotoRegular;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .el-input__wrapper {
@@ -395,7 +398,22 @@
 }
 
 .el-input__suffix-inner {
-    display: none !important;
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -72px -338px;
+    width: 12px;
+    height: 8px;
+}
+
+.el-select .el-input .el-select__caret.el-icon {
+    display: none;
+}
+
+.el-input__suffix {
+    align-items: center;
+}
+
+.el-input__inner {
+    margin-left: -5px;
+    text-overflow: ellipsis;
 }
 
 .el-select .el-input.is-focus .el-input__wrapper {
@@ -417,8 +435,8 @@
 }
 
 .select__icon--r {
-    right: 10px;
-    top: calc(50% - 1px);
+    right: 8px;
+    top: calc(50% - 2px);
 }
 
 .label__input {
@@ -433,11 +451,28 @@
     color: var(--gray-color)
 }
 
+.input--error {
+    border: 1px solid var(--red-color);
+}
+
+
 .input__wrapper>.select__wrapper>.select-trigger>.el-input>.el-input__wrapper {
     padding-left: 12px !important;
 }
 
-.input__wrapper>.select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__inner::placeholder {
-    font-style: italic;
-    color: var(--placeholder-color) !important;
+.select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__inner::placeholder {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Responsive */
+@media only screen and (max-width: 1367px) {
+    .select__wrapper {
+        width: 160px;
+    }
+
+    .select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__inner::placeholder {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }

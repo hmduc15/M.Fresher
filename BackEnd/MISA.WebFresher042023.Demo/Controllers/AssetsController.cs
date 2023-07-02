@@ -59,5 +59,22 @@ namespace MISA.WebFresher042023.Demo.Controllers
                 return Ok(assetPaggingList);
             }
         }
+
+        /// <summary>
+        /// Function get file excel
+        /// </summary>
+        /// <returns> File</returns>
+        /// Author: HMDUC (29/06/2023)
+        [HttpGet("Export")]
+        public async Task<IActionResult> GetListExport()
+        {
+            var stream = await _assetService.ExportExcel();
+            string excelName = $"AssetList_{DateTime.Now.ToString("ddMMyyyyHHmmss")}.xlsx";
+
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+
+        }
+
+
     }
 }

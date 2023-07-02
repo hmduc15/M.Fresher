@@ -6,6 +6,25 @@
     background-position: center;
 }
 
+.icon__reload {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -110px -68px;
+    width: 20px;
+    height: 16px;
+}
+
+.icon--empty {
+    background-image: url(../../assets/icon/image_empty.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
+
+.icon__notice--b {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -377px -110px;
+    width: 14px;
+    height: 18px;
+}
+
 .icon__ques {
     background-image: url(../../assets/icon/ques.svg);
     width: 24px;
@@ -107,6 +126,7 @@
     background: url(../../assets/icon/qlts-icon.svg) no-repeat -156px -68px;
     width: 16px;
     height: 16px;
+    transform: scale(0.86);
 }
 
 .icon__plus {

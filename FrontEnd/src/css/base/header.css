@@ -44,3 +44,7 @@
     background-color: #d1edf4;
     border-radius: 5px;
 }
+
+.select__year>.select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__suffix {
+    display: none;
+}

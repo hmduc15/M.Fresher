@@ -1,19 +1,26 @@
 .form__wrapper {
     position: absolute;
-    top: 50%;
+    top: 55%;
     right: 50%;
     transform: translate(50%, -50%);
+    height: 100%;
+    overflow: auto;
+}
+
+.input__wrapper>.select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__suffix {
+    display: none;
 }
 
 .form__container {
     background-color: var(--white-color);
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    overflow: hidden;
+    overflow: auto;
 }
 
+
 .form__body {
-    padding: 20px 16px 0;
+    padding: 20px 18px 0;
 }
 
 .form__title {
@@ -24,9 +31,15 @@
     position: relative;
 }
 
+.form--row {
+    display: flex;
+    gap: 0 20px;
+}
+
 .form__input--container {
     display: flex;
     gap: 0 22px;
+    flex-direction: column;
 
 }
 

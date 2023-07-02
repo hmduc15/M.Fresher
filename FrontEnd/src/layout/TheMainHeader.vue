@@ -1,10 +1,16 @@
 <template>
   <div class="main__header">
-    <p class="main__header--title header--left">Danh sách tài sản</p>
+    <p class="main__header--title header--left">
+      {{ this.$_MISAResources.page__title.ListAsset }}
+    </p>
     <div class="header--right">
-      <p class="name__company">Sở tài chính</p>
+      <p class="organization">
+        {{ this.$_MISAResources.organization.Finance }}
+      </p>
       <div class="select__year">
-        <p class="select__text--static">Năm</p>
+        <p class="select__text--static">
+          {{ this.$_MISAResources.content__button.year }}
+        </p>
         <m-combobox
           v-model="yearSelected"
           :listOptions="listYearOpt"
@@ -12,8 +18,8 @@
           @change="changeYear"
         ></m-combobox>
         <div class="select__icon">
-          <m-button iconButton="icon__up" @click="prevYear"></m-button>
-          <m-button iconButton="icon__down " @click="nextYear"></m-button>
+          <m-button iconButton="icon__up" @click="nextYear"></m-button>
+          <m-button iconButton="icon__down " @click="prevYear"></m-button>
         </div>
       </div>
       <m-button
@@ -79,7 +85,7 @@ export default {
         },
       ],
       indexYear: 1,
-      yearSelected: 2023,
+      yearSelected: 2022,
     };
   },
   watch: {

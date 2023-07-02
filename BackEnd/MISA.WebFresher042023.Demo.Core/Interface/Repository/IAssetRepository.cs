@@ -33,5 +33,14 @@ namespace MISA.WebFresher042023.Demo.Core.Interface.Repository
         /// </returns>
         /// Author: HMDUC (19/06/2023)
         Task<object> GetPagging(int pageSize, int pageNumber, string searchInput, string m_DepartmentName, string m_CategoryName);
+
+
+        /// <summary>
+        /// Funtion get ListAsset to Export Excel
+        /// </summary>
+        /// <returns></returns>
+        /// Author: HMDUC (29/06/2023)
+
+        Task<Stream> GetListExport();
     }
 }

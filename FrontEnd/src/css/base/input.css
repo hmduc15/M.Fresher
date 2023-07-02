@@ -16,6 +16,7 @@
 
 .input__text[disabled] {
     background-color: #E0E0E0;
+    cursor: not-allowed;
 }
 
 
@@ -27,6 +28,7 @@
     background-color: var(--white-color);
     color: var(--black-color);
     font-family: RobotoRegular;
+    font-size: 14px;
 }
 
 .input--error {
@@ -113,8 +115,6 @@
 }
 
 
-
-/*reset css input datetime picker*/
 .dp__input {
     border-color: var(--gray-color) !important;
 }
@@ -133,12 +133,15 @@
     font-family: RobotoRegular !important;
 }
 
-.dp__input_icon {
-    display: none !important;
-}
+
 
 .date__input_icon {
-    position: absolute;
-    top: 40%;
-    right: 15px;
+    margin-right: 15px;
+}
+
+/* Responsive */
+@media screen and (max-width: 1367px) {
+    .input--default {
+        width: 160px;
+    }
 }

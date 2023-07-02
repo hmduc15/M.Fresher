@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div class="input">
-    <label v-if="isLabel" class="label__input" :for="id">
+    <label v-if="isLabel" class="label__input" :for="id" @click="handleFocus">
       {{ this.$_MISAResources.label__input[name] }}
       <span v-if="required"> * </span>
     </label>
@@ -35,7 +35,10 @@
         :disabled="isDisabled"
         @input="handleInput($event)"
         @blur="required ? validate() : ''"
+        @focus="handleFocus"
         :maxlength="maxLength"
+        :isFocus="isFocus"
+        :tabindex="tabIndex"
       />
       <div v-show="isError" class="input__text--err">
         {{ this.labelError }}
@@ -46,14 +49,33 @@
       <!-- Date input template with default value -->
       <VueDatePicker
         v-model="modelValue"
-        :class="className"
         :format="dateFormat"
         :name="name"
+        :day-names="['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']"
+        locale="vi"
         @update:model-value="handleDate"
         auto-apply
       >
+        <template #input-icon>
+          <div class="date__input_icon icon__date"></div
+        ></template>
+        <template #dp-input="{ value, onEnter }">
+          <input
+            ref="inputRef"
+            :class="[
+              className,
+              required ? '' : 'input--gray',
+              number ? 'input__number--r' : '',
+              isError ? 'input--error' : '',
+            ]"
+            type="text"
+            :value="value"
+            :isFocus="isFocus"
+            @blur="required ? validate() : ''"
+            @keydown.enter="onEnter"
+          />
+        </template>
       </VueDatePicker>
-      <div class="date__input_icon icon__date"></div>
     </template>
   </div>
 </template>
@@ -71,6 +93,7 @@ export default {
     VueDatePicker,
   },
   props: [
+    "tabIndex",
     "number",
     "type",
     "className",
@@ -121,9 +144,41 @@ export default {
     }
   },
 
+  mounted() {
+    this.focusFirstInput();
+  },
+
   methods: {
     ...mapActions("toastMessage", ["setIsShowToast", "setContentToast"]),
 
+    /**
+     * Function handle event focus
+     * Author: HMDUC (29/05/2023)
+     */
+    handleFocus() {
+      this.$nextTick(() => {
+        this.$refs.inputRef.focus();
+        this.$refs.inputRef.select();
+      });
+    },
+
+    /**
+     * Function handle event focus first input
+     * Author: HMDUC (29/05/2023)
+     */
+    focusFirstInput() {
+      if (this.isFocus) {
+        this.$nextTick(() => {
+          this.$refs.inputRef.focus();
+          this.$refs.inputRef.select();
+        });
+      }
+    },
+
+    /**
+     * Function handle input value
+     * Author: HMDUC (29/05/2023)
+     */
     handleInput(e) {
       this.$emit("update:modelValue", e.target.value);
       if (e.target.value) {
@@ -131,19 +186,32 @@ export default {
       }
     },
 
+    /**
+     * Function handle input type date
+     * Author: HMDUC (29/05/2023)
+     */
     handleDate(date) {
       this.updateModelValue(date);
     },
 
+    /**
+     * Function update model value
+     * Author: HMDUC (29/05/2023)
+     * @param {*} value
+     */
     updateModelValue(value) {
       this.$emit("update:modelValue", value);
     },
 
+    /**
+     * Function check validate input
+     * Author: HMDUC (29/05/2023)
+     */
     validate() {
       const self = this;
       const value = self.modelValue;
       const nameLabel = this.$_MISAResources.label__input[self.name];
-      if (!Validate.isEmtyOrNull(value)) {
+      if (!Validate.isEmptyOrNull(value)) {
         self.isError = true;
         self.labelError = nameLabel;
         this.$nextTick(() => {

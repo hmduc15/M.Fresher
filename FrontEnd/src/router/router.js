@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import PropertyList from "@/view/property/PropertyList.vue";
+import AssetList from '@/view/asset/AssetList'
 
 const routers = [
     {
@@ -8,7 +8,7 @@ const routers = [
     },
     {
         path: '/tai-san',
-        component: PropertyList,
+        component: AssetList,
         meta: { title: 'Tài sản' }
     },
     {

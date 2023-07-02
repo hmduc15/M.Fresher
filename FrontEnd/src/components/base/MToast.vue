@@ -1,7 +1,13 @@
 <template>
   <div v-if="isShow" class="toast__container">
     <div class="toast__icon">
-      <template v-if="type === 'success' || type === 'success__add'">
+      <template
+        v-if="
+          type === 'success' ||
+          type === 'success__add' ||
+          type === 'success__update'
+        "
+      >
         <div class="icon__circle">
           <div :class="types[type].icon"></div>
         </div>
@@ -26,6 +32,10 @@ export default {
   data() {
     return {
       types: {
+        success__update: {
+          icon: "icon__check",
+          content: this.$_MISAResources.toast__content.UpdateSuccess,
+        },
         success: {
           icon: "icon__check",
           content: this.$_MISAResources.toast__content.DeleteSuccess,
@@ -43,7 +53,7 @@ export default {
           content: this.$_MISAResources.toast__content.InsertError,
         },
         notice: {
-          icon: "icon__notice",
+          icon: "icon__notice--b",
         },
         warning: {
           icon: "icon__warning",

@@ -1,5 +1,9 @@
-﻿using MISA.WebFresher042023.Demo.Core.MISAException;
+﻿using MISA.WebFresher042023.Demo.Core.Enum;
+using MISA.WebFresher042023.Demo.Core.MISAException;
 using MISA.WebFresher042023.Demo.Core.Resources;
+using System.Diagnostics;
+using System.Net;
+using System.Text.Json;
 
 namespace MISA.WebFresher042023.Demo.Middleware
 {
@@ -29,6 +33,7 @@ namespace MISA.WebFresher042023.Demo.Middleware
 
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+
             context.Response.ContentType = "application/json";
 
             if (exception is NotFoundException)
@@ -38,13 +43,13 @@ namespace MISA.WebFresher042023.Demo.Middleware
                 await context.Response.WriteAsync(
                     text: new BaseException()
                     {
-                        ErrorCode =  ((NotFoundException)exception).ErrorCode,
-                        UserMsg= exception.Message,
+                        ErrorCode = ((NotFoundException)exception).ErrorCode,
+                        UserMsg = exception.Message,
                         DevMsg = ResourceVN.Error_Validate_Dev,
                     }.ToString() ?? ""
                     );
             }
-            else if(exception is ValidateException)
+            else if (exception is ValidateException)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
@@ -65,9 +70,9 @@ namespace MISA.WebFresher042023.Demo.Middleware
                     text: new BaseException()
                     {
                         ErrorCode = context.Response.StatusCode,
-                        UserMsg =ResourceVN.Error_Exception ,
+                        UserMsg = ResourceVN.Error_Exception,
                         DevMsg = exception.Message,
-                        TraceId = context.TraceIdentifier   
+                        TraceId = context.TraceIdentifier
                     }.ToString() ?? ""
                     );
             }

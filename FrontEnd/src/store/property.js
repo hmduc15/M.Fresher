@@ -7,8 +7,13 @@ const property = {
         isLoading: false,
         propertyList: [],
         listSelected: [],
+        reLoad: false,
     },
     mutations: {
+        setReload(state, reLoad) {
+            state.reLoad = reLoad;
+        },
+
         setLoading(state, isLoading) {
             state.isLoading = isLoading
         },
@@ -32,12 +37,14 @@ const property = {
             const startTime = new Date().getTime();
             let responseTime = 0;
             commit("setLoading", true);
+            commit("setReload", true);
             try {
                 const res = await request.paggingTable(pageNumber, pageSize, searchInput, departmentName, categoryName);
                 const endTime = new Date().getTime();
                 responseTime = endTime - startTime;
                 commit("setLoadingTime", responseTime);
                 commit("setPropertyList", res);
+
             } catch (err) {
                 console.log(err);
             } finally {
@@ -50,20 +57,25 @@ const property = {
         * function delete property by id
         * Author: HMDUC(29/05/2023)
         */
-        async delete({ dispatch }, id) {
+        async delete({ dispatch, commit }, id) {
+            commit("setReload", true)
             try {
                 const res = await request.deleteProperty(id);
                 //update data after delete
+                commit("setReload", true);
                 dispatch("getPropertyList");
                 return res.status;
             } catch (err) {
                 return err.response.status;
+            } finally {
+                commit("setReload", false)
             }
         },
 
-        async deleteMulti({ dispatch }, listId) {
+        async deleteMulti({ dispatch, commit }, listId) {
             try {
                 const res = await request.deleteMultiple(listId);
+                commit("setReload", true)
                 dispatch("getPropertyList");
                 return res.status;
             } catch (err) {
@@ -110,6 +122,9 @@ const property = {
         },
         isLoading(state) {
             return state.isLoading;
+        },
+        reLoad(state) {
+            return state.reLoad;
         }
     }
 }

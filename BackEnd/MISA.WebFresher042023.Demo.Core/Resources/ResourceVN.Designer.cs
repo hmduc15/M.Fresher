@@ -61,6 +61,15 @@ namespace MISA.WebFresher042023.Demo.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hoàng Minh Đức.
+        /// </summary>
+        public static string Author_Excel {
+            get {
+                return ResourceManager.GetString("Author_Excel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mã tài sản không được phép để trống..
         /// </summary>
         public static string Empty_Code {
@@ -156,6 +165,15 @@ namespace MISA.WebFresher042023.Demo.Core.Resources {
         public static string Error_Validate_Dev {
             get {
                 return ResourceManager.GetString("Error_Validate_Dev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Danh sách tài sản.
+        /// </summary>
+        public static string Title_Excel {
+            get {
+                return ResourceManager.GetString("Title_Excel", resourceCulture);
             }
         }
     }

@@ -1,3 +1,8 @@
+/**
+ * Declare enum project
+ * Author: HMDUC(01/06/2023)
+ * 
+ */
 export default {
     //key code keyboard
     KEY__CODE: {
@@ -12,6 +17,7 @@ export default {
         //Key Shift
         SHIFT: 16,
     },
+
     //format date
     FORMAT__DATE: {
         // type VI
@@ -19,15 +25,19 @@ export default {
         // type EN
         EN: "MM/dd/yyyy"
     },
+
     //form mode
     FORM__MODE: {
         // form add
         ADD: "add",
         // form edit
         EDIT: "edit",
+        //form duplicate,
+        DUPLICATE: "duplicate"
     },
+
     //Status code response
-    REQ_CODE: {
+    REQ__CODE: {
         //Success
         SUCCESS: 200,
         // Add success  

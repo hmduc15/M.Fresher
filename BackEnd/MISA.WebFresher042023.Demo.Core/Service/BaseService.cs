@@ -29,11 +29,17 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             var entityList = await _baseRepository.GetAllAsync();
             var entityDtos = new List<TEnityDto>();
 
+            //if(entitylist == null)
+            //{
+            //    return null;
+            //}
+
             foreach (var entity in entityList)
             {
                 var entityDto = _mapper.Map<TEnityDto>(entity);
                 entityDtos.Add(entityDto);
             }
+
 
             return entityDtos;
 
@@ -97,11 +103,11 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             //Get EntityInsertDto Code of param entityInsertDto
             var entityCode = entityInsertDto?.GetType().GetProperty(columnCode)?.GetValue(entityInsertDto)?.ToString();
-            var entityName = entityInsertDto.GetType().GetProperty(columnName)?.GetValue(entityInsertDto)?.ToString();
+            var entityName = entityInsertDto?.GetType().GetProperty(columnName)?.GetValue(entityInsertDto)?.ToString();
 
             var entityByCode = await this.GetByCodeAsync(entityCode);
 
-            var errorData = new Dictionary<string?, string>();
+            var errorData = new Dictionary<string, string>();
 
 
             //check validate data
@@ -112,28 +118,29 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             //check validate busines
             this.CheckValidateBusiness(errorData, entityInsertDto);
 
-           
-
-
             //check duplicate entitycode
             if (entityByCode != null)
             {
-                errorData.Add(columnCode, Resources.ResourceVN.Error_Dupli_Code);
+                errorData.Add(entityCode, Resources.ResourceVN.Error_Dupli_Code);
             }
 
+            //Throw Exception
             if (errorData.Count > 0)
             {
                 throw new ValidateException(errorData, (int)MISACode.Validate);
             }
 
+            //Initial Data for Entity
             var entity = _mapper.Map<TEntity>(entityInsertDto);
             var columnId = $"{tableName}Id";
 
-            //Initial GuiId for Column Entity Id 
             var entityId = typeof(TEntity).GetProperty($"{columnId}");
-            if (entityId != null)
+            var createdDate = typeof(TEntity).GetProperty("CreatedDate");
+
+            if (entityId != null && createdDate != null)
             {
                 entityId.SetValue(entity, Guid.NewGuid());
+                createdDate.SetValue(entity, DateTime.Now);
             }
 
             var rowEffected = await _baseRepository.InsertAsync(entity);
@@ -151,41 +158,51 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// Author: HMDUC (19/06/2023)
         public async Task<int> UpdateAsync(TEntityUpdateDto entityUpdateDto)
         {
+            var errorData = new Dictionary<string, string>();
+
             //Get table Name   
             var tableName = typeof(TEntityUpdateDto).Name.Replace("UpdateDto", "");
 
             // Get column Entity
-            var columnCode = $"{tableName}Code";
             var columnName = $"{tableName}Name";
+            var columnCode = $"{tableName}Code";
+            var columnId = $"{tableName}Id";
 
             //Get EntityInsertDto Field of param entityInsertDto
-            var entityCode = entityUpdateDto?.GetType().GetProperty(columnCode)?.GetValue(entityUpdateDto)?.ToString();
-            var entityName = entityUpdateDto.GetType().GetProperty(columnName)?.GetValue(entityUpdateDto)?.ToString();
-
-            var entityByCode = await this.GetByCodeAsync(entityCode);
-            var errorData = new Dictionary<string?, string>();
+            var entityId = Guid.Parse(entityUpdateDto?.GetType().GetProperty(columnId)?.GetValue(entityUpdateDto)?.ToString() ?? "id");
+            var entityCode = entityUpdateDto?.GetType().GetProperty(columnCode)?.GetValue(entityUpdateDto)?.ToString() ?? "code";
+            var entityName = entityUpdateDto?.GetType().GetProperty(columnName)?.GetValue(entityUpdateDto)?.ToString();
 
             //check validate data
-            this.CheckNull(errorData, entityCode, columnCode, Resources.ResourceVN.Empty_Code);
             this.CheckNull(errorData, entityName, columnName, Resources.ResourceVN.Empty_Name);
-            this.CheckLength(errorData, entityCode, columnCode, Resources.ResourceVN.Error_Length_Code);
+            this.CheckNull(errorData, entityName, columnCode, Resources.ResourceVN.Empty_Code);
 
-            
+            //check validate business
+            var entityById = await this.GetByIdAsync(entityId);
+            var codeTemp = entityById?.GetType().GetProperty(columnCode)?.GetValue(entityById)?.ToString();
 
-            //check Duplicate EntityCode
-            if (entityByCode != null)
-           {
-                errorData.Add(columnCode, Resources.ResourceVN.Error_Dupli_Code);
+            if (!entityCode.Equals(codeTemp))
+            {
+                var entityByCode = await this.GetByCodeAsync(entityCode);
+                if (entityByCode != null)
+                {
+                    errorData.Add(entityCode, Resources.ResourceVN.Error_Dupli_Code);
+                }
             }
-
 
             if (errorData.Count > 0)
             {
                 throw new ValidateException(errorData, 400);
             }
 
-
             var entity = _mapper.Map<TEntity>(entityUpdateDto);
+
+            //Initial data ModifiedDate
+            var modifiedDate = typeof(TEntity).GetProperty("ModifiedDate");
+            if (modifiedDate != null)
+            {
+                modifiedDate.SetValue(entity, DateTime.Now);
+            }
 
             var rowEffected = await _baseRepository.UpdateAsync(entity);
 
@@ -239,7 +256,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="entityField"></param>
         /// <param name="errMessage"></param>
         /// Author: HMDUC (22/06/2023)
-        private void CheckNull(Dictionary<string, string> errData, string? value, string? entityField, string? errMessage)
+        private void CheckNull(Dictionary<string, string> errData, string? value, string entityField, string errMessage)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -255,7 +272,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="entityField"></param>
         /// <param name="errorMessage"></param>
         /// Author: HMDUC (22/06/2023)
-        private void CheckLength(Dictionary<string, string> errData, string? value, string? entityField, string? errorMessage)
+        private void CheckLength(Dictionary<string, string> errData, string value, string entityField, string errorMessage)
         {
             if (value?.Length > 20)
             {
@@ -270,22 +287,22 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="entityInsertDto"></param>
         /// <param name="errorMessage"></param>
         /// Author: HMDUC (22/06/2023)
-        private void CheckValidateBusiness(Dictionary<string,string> errData,TEntityInsertDto entityInsertDto)
+        private void CheckValidateBusiness(Dictionary<string, string> errData, TEntityInsertDto entityInsertDto)
         {
-            var purchaseDate = entityInsertDto.GetType().GetProperty("PurchaseDate").GetValue(entityInsertDto).ToString();
-            var productionYear = entityInsertDto.GetType().GetProperty("ProductionYear").GetValue(entityInsertDto).ToString();
-            
-            if(DateTime.Parse(purchaseDate) > DateTime.Now)
+            var purchaseDate = entityInsertDto?.GetType().GetProperty("PurchaseDate")?.GetValue(entityInsertDto)?.ToString();
+            var productionYear = entityInsertDto?.GetType().GetProperty("ProductionYear")?.GetValue(entityInsertDto)?.ToString();
+
+            if (DateTime.Parse(purchaseDate) > DateTime.Now)
             {
-                errData.Add("PurchaseDate",Resources.ResourceVN.Error_PurchaseDate );
+                errData.Add("PurchaseDate", Resources.ResourceVN.Error_PurchaseDate);
             }
-            if(DateTime.Parse(productionYear) > DateTime.Now)
+            if (DateTime.Parse(productionYear) > DateTime.Now)
             {
                 errData.Add("ProductionYear", Resources.ResourceVN.Error_ProductionYear);
             }
-            if(DateTime.Parse(purchaseDate) > DateTime.Parse(productionYear))
+            if (DateTime.Parse(purchaseDate) > DateTime.Parse(productionYear))
             {
-                errData.Add("ProductionAndPurchaseDate",Resources.ResourceVN.Error_PurchaseDateAndProductionYear);
+                errData.Add("ProductionAndPurchaseDate", Resources.ResourceVN.Error_PurchaseDateAndProductionYear);
             }
 
 
