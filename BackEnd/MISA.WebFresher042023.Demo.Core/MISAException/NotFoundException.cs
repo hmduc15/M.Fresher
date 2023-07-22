@@ -1,5 +1,9 @@
 ﻿namespace MISA.WebFresher042023.Demo.Core.MISAException
 {
+
+    /// <summary>
+    /// Lỗi không tìm thấy
+    /// </summary>
     public class NotFoundException : Exception
     {
         public int ErrorCode { get; set; }

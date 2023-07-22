@@ -6,59 +6,64 @@ namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
     public class AssetInsertDto
     {
         /// <summary>
-        /// Code Asset
+        /// Mã tài sản
         /// </summary>
         public string? AssetCode { get; set; }
 
         /// <summary>
-        /// Name Asset
+        /// Tên tài sản
         /// </summary>
         public string? AssetName { get; set; }
 
         /// <summary>
-        /// Id Department
+        /// Id bộ phận sử dụng
         /// </summary>
         [Required]
         public Guid DepartmentId { get; set; }
 
        /// <summary>
-       /// DepreciationRate
+       /// Tỷ lệ hao mòn của tài sản
        /// </summary>
         public float? DepreciationRate { get; set; }
 
         /// <summary>
-        /// Id category
+        /// Id loại tài sản
         /// </summary>
         [Required]
         public Guid CategoryId { get; set; }
 
         /// <summary>
-        /// Date buy Asset
+        /// Ngày mua tài sản
         /// </summary>
         public DateTime? PurchaseDate { get; set; }
 
         /// <summary>
-        /// Cost of Asset
+        /// Nguyên giá
         /// </summary>
         public decimal? Cost { get; set; }
 
         /// <summary>
-        /// Quantity of Asset
+        /// Hao mòn năm của tài sản
+        /// </summary>
+        public Decimal DepreciationYear { get; set; }
+
+        /// <summary>
+        /// Số lượng của tài sản
         /// </summary>
         public int Quantity { get; set; }
 
         /// <summary>
-        /// Year tracked Asset
+        /// Năm theo dõi tài sản trên phần mềm
         /// </summary>
         public int? TrackedYear { get; set; }
 
         /// <summary>
-        /// Life time of Asset
+        /// Số năm sử dụng
         /// </summary>
         public int? LifeTime { get; set; }
 
         /// <summary>
-        /// Year use Asset
+        ///  NĂm sử dụng
         /// </summary>
         public DateTime? ProductionYear { get; set; }
 

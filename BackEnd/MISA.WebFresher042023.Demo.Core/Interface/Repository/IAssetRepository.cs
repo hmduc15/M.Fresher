@@ -13,21 +13,26 @@ namespace MISA.WebFresher042023.Demo.Core.Interface.Repository
     /// </summary>
     public interface IAssetRepository : IBaseRepository<Asset>
     {
+
+
+
+        public bool CheckExistAssetCode(string? assetCode, Guid? id = null);
+
         /// <summary>
-        /// Funtion get Entity Code of new Enity 
+        /// Hàm lấy ra mã tài sản mới từ db 
         /// </summary>
         /// <returns>AssetCode</returns>
         /// Author: HMDUC (19/06/2023)
         Task<string> GetNewCodeAsync();
 
         /// <summary>
-        /// Function Get List Asset Pagging 
+        /// Hàm phân trang + tìm kiếm  
         /// </summary>
-        /// <param name="pageSize">pageSize</param>
-        /// <param name="pageNumber">pageNumer</param>
-        /// <param name="searchInput">search</param>
-        /// <param name="m_DepartmentName">DepartmentName</param>
-        /// <param name="m_CategoryName">CategoryName</param>
+        /// <param name="pageSize">Số dòng</param>
+        /// <param name="pageNumber">Số trang</param>
+        /// <param name="searchInput">Mã tài sản hoặc tên tài sản</param>
+        /// <param name="m_DepartmentName">Tên bộ phận sử dụng</param>
+        /// <param name="m_CategoryName">Tên loại tài sản</param>
         /// <returns>
         ///  Object {ListAsset, totalPage}
         /// </returns>
@@ -36,11 +41,10 @@ namespace MISA.WebFresher042023.Demo.Core.Interface.Repository
 
 
         /// <summary>
-        /// Funtion get ListAsset to Export Excel
+        /// Hàm lấy ra danh sách tài sản phục vụ export Excel
         /// </summary>
         /// <returns></returns>
         /// Author: HMDUC (29/06/2023)
-
         Task<Stream> GetListExport();
     }
 }

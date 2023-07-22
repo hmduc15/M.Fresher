@@ -14,73 +14,55 @@ namespace MISA.WebFresher042023.Demo.Core.Interface.Repository
     public interface IBaseRepository<TEntity>
     {
         /// <summary>
-        ///  Function Get list Record
+        ///  Hàm lấy ra danh sách tài sản từ DB
         /// </summary>
-        /// <returns>List Asset</returns>
         /// Author: HMDUC (16/06/2023)
         Task<List<TEntity>> GetAllAsync();
 
         /// <summary>
-        /// Function  Get Record by Id
+        /// Hàm lấy ra tài sản theo Id
         /// </summary>
-        /// <param name="Id"></param>
-        /// <returns>Entity</returns>
+        /// <param name="Id">Id của tài sản</param>
         /// Author: HMDUC (16/06/2023)
         Task<TEntity> GetByIdAsync(Guid id);
 
         /// <summary>
-        ///  Functio Get  by Code
+        /// Hàm lấy ra tài sản theo mã loại tài sản
         /// </summary>
-        /// <param name="Code"></param>
+        /// <param name="Code">Mã tài sản</param>
         /// <returns></returns>
         /// Author: HMDUC (16/06/2023)
         Task<TEntity> GetByCodeAsync(string code);
 
-       
-
         /// <summary>
-        /// Function Insert a record 
+        /// Hàm thêm mới tài sản
         /// </summary>
-        /// <param name="asset"></param>
-        /// <returns>
-        /// New Entity
-        /// </returns>
+        /// <param name="TEntity">Tài sản</param>
         /// Author: HMDUC (16/06/2023)
         Task<int> InsertAsync(TEntity entity);
 
         /// <summary>
-        /// Function Update Asset
+        /// Hàm cập nhật tài sản
         /// </summary>
-        /// <param name="asset"></param>
-        /// <returns>
-        ///  Asset
-        /// </returns>
+        /// <param name="TEntity">Tài sản được cập nhật</param>
         ///  Author: HMDUC (16/06/2023)
         Task<int> UpdateAsync(TEntity entity);
 
-
         /// <summary>
-        /// Function Delete  by ID
+        /// Hàm xóa tài sản theo Id
         /// </summary>
-        /// <param name="Id"></param>
-        /// <returns>
-        ///  Count Row Affect
-        /// </returns>
+        /// <param name="Id">Id của tài sản</param>
         /// Author: HMDUC (16/06/2023)
-
         Task<int> DeleteEntityAsync(Guid id);
 
         /// <summary>
-        /// Function Delete Multiple 
+        /// Hàm xóa nhiều tài sản
         /// </summary>
-        /// <param name="ids">List Id</param>
-        /// <returns>
-        /// Count Row Affect
-        /// </returns>
+        /// <param name="ids">Danh sạch Id của tài sản</param>
         /// Author: HMDUC (16/06/2023)
         Task<int> DeleteEntityMulAsync(List<Guid> ids);
 
-      
+
 
     }
 }

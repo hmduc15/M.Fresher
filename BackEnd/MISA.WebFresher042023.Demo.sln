@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MISA.WebFresher042023.Demo.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MISA.WebFresher042023.Demo.Infrastructure", "MISA.WebFresher042023.Demo.Infrastructure\MISA.WebFresher042023.Demo.Infrastructure.csproj", "{459CD0E6-1323-4878-8795-5B32F8D54B1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MISA.WebFresher0420223.Demo.Tests", "MISA.WebFresher0420223.Demo.Tests\MISA.WebFresher0420223.Demo.Tests.csproj", "{C01D48CF-9930-476E-B988-CEC8D613F0C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MISA.WebFresher0420223.Demo.Tests", "MISA.WebFresher0420223.Demo.Tests\MISA.WebFresher0420223.Demo.Tests.csproj", "{C01D48CF-9930-476E-B988-CEC8D613F0C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MISA.WebFresher042023.Demo.Domain", "MISA.WebFresher042023.Demo.Domain\MISA.WebFresher042023.Demo.Domain.csproj", "{690C3B34-04FF-462B-B1E4-FFF69C3A956B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MISA.WebFresher042023.Demo.Application", "MISA.WebFresher042023.Demo.Application\MISA.WebFresher042023.Demo.Application.csproj", "{B5AD393D-6EF9-4CF2-8094-9FD0DBFB4BEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{C01D48CF-9930-476E-B988-CEC8D613F0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C01D48CF-9930-476E-B988-CEC8D613F0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C01D48CF-9930-476E-B988-CEC8D613F0C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{690C3B34-04FF-462B-B1E4-FFF69C3A956B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{690C3B34-04FF-462B-B1E4-FFF69C3A956B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{690C3B34-04FF-462B-B1E4-FFF69C3A956B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{690C3B34-04FF-462B-B1E4-FFF69C3A956B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5AD393D-6EF9-4CF2-8094-9FD0DBFB4BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5AD393D-6EF9-4CF2-8094-9FD0DBFB4BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5AD393D-6EF9-4CF2-8094-9FD0DBFB4BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5AD393D-6EF9-4CF2-8094-9FD0DBFB4BEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

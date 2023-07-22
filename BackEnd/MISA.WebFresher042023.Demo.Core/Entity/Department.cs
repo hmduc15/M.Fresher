@@ -9,20 +9,20 @@ namespace MISA.WebFresher042023.Demo.Core.Entity
     public class Department : BaseEntity
     {
         /// <summary>
-        /// Id Departmnet
+        /// Id bộ phận sử dụng
         /// </summary>
         [Required]
         public Guid DepartmentId { get; set; }
 
         /// <summary>
-        /// Code Department
+        /// Mã bộ phận sử dụng
         /// </summary>
 
         [Required]
         public string DepartmentCode { get; set; }
 
         /// <summary>
-        /// Name Department
+        /// Tên bộ phận sử dụng
         /// </summary>
         /// 
 
@@ -30,7 +30,7 @@ namespace MISA.WebFresher042023.Demo.Core.Entity
         public string DepartmentName { get; set; } 
 
         /// <summary>
-        /// Description 
+        /// Mô tả 
         /// </summary>
         public string? Description { get; set; }
 

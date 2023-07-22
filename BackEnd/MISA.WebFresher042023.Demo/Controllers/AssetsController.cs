@@ -21,30 +21,34 @@ namespace MISA.WebFresher042023.Demo.Controllers
             _assetService = assetService;
         }
 
+
         /// <summary>
-        /// Function get EntityCode of new Entity
+        /// API lấy ra mã tài sản mới
         /// </summary>
-        /// <returns>EntityCode</returns>
+        /// <returns>Mã tài sản </returns>
         /// Author: HMDUC (19/06/2023)
+        #region GetNewCode
         [HttpGet("NewCode")]
         public async Task<IActionResult> GetNewCodeAsync()
         {
             var newAssetCode = await _assetService.GetNewCodeAsync();
 
             return Ok(newAssetCode);
-        }
+        } 
+        #endregion
+
 
 
         /// <summary>
-        ///  Funtion Get list Asset Pagging
+        ///  API phân trang
         /// </summary>
-        /// <param name="pageSize">pageSize</param>
-        /// <param name="pageNumber">pageNumber</param>
+        /// <param name="pageSize">Số dòng hiển thị</param>
+        /// <param name="pageNumber">Số trang</param>
         /// <returns>
-        ///   {Assets, totalRecord}
+        ///   Object chứa DS tài sản 
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-
+        #region GetPaging
         [HttpGet("PaggingList")]
         public async Task<object> GetPagging(int pageSize, int pageNumber, string searchInput, string m_DepartmentName, string m_CategoryName)
         {
@@ -59,12 +63,14 @@ namespace MISA.WebFresher042023.Demo.Controllers
                 return Ok(assetPaggingList);
             }
         }
+        #endregion
 
         /// <summary>
-        /// Function get file excel
+        /// API tải xuống file Excel
         /// </summary>
-        /// <returns> File</returns>
+        /// <returns> File excel</returns>
         /// Author: HMDUC (29/06/2023)
+        #region GetListExport
         [HttpGet("Export")]
         public async Task<IActionResult> GetListExport()
         {
@@ -73,7 +79,8 @@ namespace MISA.WebFresher042023.Demo.Controllers
 
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
 
-        }
+        } 
+        #endregion
 
 
     }

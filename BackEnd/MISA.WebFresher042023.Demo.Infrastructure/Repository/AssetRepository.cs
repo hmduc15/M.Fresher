@@ -15,6 +15,9 @@ using System;
 using OfficeOpenXml.Style;
 using System.Reflection;
 using System.Drawing;
+using AutoMapper;
+using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
+using System.Data.Common;
 
 namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 {
@@ -23,107 +26,99 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
     /// </summary>
     public class AssetRepository : BaseRepository<Asset>, IAssetRepository
     {
+
+
+        #region Constructor
         public AssetRepository(IConfiguration configuration) : base(configuration)
         {
 
-        }
+        } 
+        #endregion
+
 
         /// <summary>
-        /// Function Get List Asset Pagging 
+        /// Hàm check trùng mã tài sản
         /// </summary>
-        /// <param name="pageSize">pageSize</param>
-        /// <param name="pageNumber">pageNumer</param>
-        /// <param name="searchInput">search</param>
-        /// <param name="m_DepartmentName">DepartmentName</param>
-        /// <param name="m_CategoryName">CategoryName</param>
+        /// <param name="assetCode">Mã tài sản cần check</param>
+        /// <param name="assetId">ID tài sản</param>
+        /// <returns>
+        /// True: trùng
+        /// False: không trùng
+        /// </returns>
+        #region CheckExistCode
+        public bool CheckExistAssetCode(string? assetCode, Guid? assetId = null)
+        {
+            var sqlCommand = "Proc_Asset_CheckDuplicate";
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@M_AssetId", assetId);
+            parameters.Add("@M_AssetCode", assetCode);
+
+            var result = _connection.QueryFirstOrDefault<bool>(sqlCommand, parameters, commandType: CommandType.StoredProcedure);
+
+            return result;
+
+        } 
+        #endregion
+
+        /// <summary>
+        /// Hàm phân trang va tìm kiếm
+        /// </summary>
+        /// <param name="pageSize">Số dòng hiển  thị</param>
+        /// <param name="pageNumber">Số trang</param>
+        /// <param name="searchInput">Từ khóa cần tìm kiếm</param>
+        /// <param name="m_DepartmentName">Tên bộ phận sử dụng</param>
+        /// <param name="m_CategoryName">Tên loại tài sản</param>
         /// <returns>
         ///  Object {ListAsset, totalPage}
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-        public async Task<object> GetPagging(int pageSize, int pageNumber, string? searchInput, string? m_DepartmentName, string? m_CategoryName)
+        #region GetPagging
+        public async Task<object> GetPagging(int pageSize, int pageNumber, string? searchInput, string? M_DepartmentName, string? M_CategoryName)
         {
-            var sqlConnection = new MySqlConnection(_connectionString);
             var sqlCommandPagging = "Proc_Asset_Pagging";
-            var sqlCommandAll = $"CALL Proc_Asset_GetAll";
+
 
             DynamicParameters? parameters = new DynamicParameters();
             parameters.Add("@pageSize", pageSize);
             parameters.Add("@pageNumber", pageNumber);
             parameters.Add("@searchInput", searchInput);
-            parameters.Add("@m_DepartmentName", m_DepartmentName);
-            parameters.Add("@m_CategoryName", m_CategoryName);
+            parameters.Add("@M_DepartmentName", M_DepartmentName);
+            parameters.Add("@M_CategoryName", M_CategoryName);
             parameters.Add("@totalRecord", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@totalRow", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            var assetsPagging = await sqlConnection.QueryAsync<Asset>(sqlCommandPagging, parameters, commandType: System.Data.CommandType.StoredProcedure);
-            var assetAll = await sqlConnection.QueryAsync<Asset>(sqlCommandAll);
+            var result = await _connection.QueryMultipleAsync(sqlCommandPagging, parameters, commandType: CommandType.StoredProcedure);
+
+            //Get assetPagging
+            var assetPagging = await result.ReadAsync<Asset>();
+
+            //Get assetAll
+            var assetAll = await result.ReadAsync<Asset>();
 
 
             int totalRowTable = parameters.Get<int>("totalRecord");
             int totalRow = parameters.Get<int>("totalRow");
-            decimal totalCost = 0;
-            float totalDepreciation = 0;
-            float toltalResidualPrice = 0;
-            var listAsset = totalRowTable > totalRow ? assetsPagging : assetAll;
-
-
-            CalculateDepreciationAndResidual(assetsPagging);
-            CalculateDepreciationAndResidual(listAsset);
-
-
-            foreach (var asset in listAsset)
-            {
-
-                totalCost += (decimal)asset.Cost;
-                totalDepreciation += (float)asset.DepreciationAmount;
-                toltalResidualPrice += (float)asset.ResidualPrice;
-            }
 
             var response = new
             {
-                data = assetsPagging,
+                data = assetPagging.ToList(),
                 totalRecord = totalRowTable,
                 totalRow = totalRow,
-                summaryData = new
-                {
-                    total_quantity = listAsset.Sum(asset => asset.Quantity),
-                    total_cost = totalCost,
-                    total_depreciation = totalDepreciation,
-                    total_residual_price = toltalResidualPrice,
-
-                }
+                dataSumaryAll = assetAll.ToList(),
             };
 
             return response;
-        }
+        } 
+        #endregion
 
 
         /// <summary>
-        /// Funtion calculate  Depreciation Year/ Amount, Residual Price
+        /// Hàm lấy mã tài sản mới nhất phục vụ thêm mới tài sản
         /// </summary>
-        /// <param name="assets"></param>
+        /// <returns>Mã tài sản</returns>
         /// Author: HMDUC (19/06/2023)
-        private void CalculateDepreciationAndResidual(IEnumerable<Asset> assets)
-        {
-            foreach (var asset in assets)
-            {
-                //Giá trị hao mòn năm = 
-                asset.DepreciationYear = decimal.Round((decimal)(1 / (float)asset.LifeTime * (float)asset.Cost), 3);
-
-                //Hao mòn lũy kế 
-                asset.DepreciationAmount = (decimal)((float)asset.DepreciationYear * (float)(DateTime.Now.Year - asset.TrackedYear));
-
-                //Giá trị còn lại
-                asset.ResidualPrice = (decimal)((float)asset.Quantity * (float)asset.Cost - (float)asset.DepreciationAmount);
-            }
-        }
-
-
-        /// <summary>
-        /// Funtion get EntityCode of new Entity 
-        /// </summary>
-        /// <returns>AssetCode</returns>
-        /// Author: HMDUC (19/06/2023)
+        #region GetNewCode
         public async Task<string> GetNewCodeAsync()
         {
             //Get tableName Entity
@@ -143,13 +138,15 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 
             return string.Join(",", newCode);
 
-        }
+        } 
+        #endregion
 
         /// <summary>
-        /// Function get List Asset to Export Excel
+        /// Hàm export excel
         /// </summary>
-        /// <returns></returns>
+        /// <returns>file</returns>
         /// Author: HMDUC (29/06/2023)
+        #region GetListExport
         public async Task<Stream> GetListExport()
         {
             //connect mysql
@@ -160,6 +157,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             await sqlConnection.OpenAsync();
 
             var listExport = await sqlConnection.QueryAsync<Asset>(sql: sqlCommand);
+
 
             //close connection
             await sqlConnection.CloseAsync();
@@ -178,15 +176,17 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             stream.Position = 0;
 
             return package.Stream;
-        }
+        } 
+        #endregion
 
 
         /// <summary>
-        /// Binding data for Excel
+        /// Hàm binding data từ Entity lên Excel
         /// </summary>
-        /// <param name="workSheet"></param>
-        /// <param name="assets"></param>
+        /// <param name="workSheet">worket sheet</param>
+        /// <param name="assets">Tài sản cần xuất file Excel</param>
         /// Author: HMDUC (29/06/2023)
+        #region BindingData Entity to Excel
         private void BindingFormatExcel(ExcelWorksheet workSheet, IEnumerable<Asset> assets)
         {
 
@@ -195,8 +195,14 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 
             int columnIndex = 1;
 
+            //Get header excel
             foreach (var col in excelColummnProperties)
             {
+                if (col.Name.EndsWith("Id") || col.Name == "DepreciationYear" || col.Name == "DepreciationAmount" || col.Name == "ResidualPrice")
+                {
+                    continue;
+                }
+
                 var excelColumnName = (col.GetCustomAttributes(typeof(ExcelColumnAttribute), true)[0] as ExcelColumnAttribute)?.ColumnName;
                 workSheet.Cells[1, columnIndex].Value = excelColumnName;
                 columnIndex++;
@@ -211,10 +217,11 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
                 range.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                 range.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 range.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
             }
 
 
-            //style header row
+            //style header 
             using (var range = workSheet.Cells[$"A1:{lastColumnName}1"])
             {
                 range.Style.Font.Bold = true;
@@ -225,13 +232,23 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             }
 
 
+            // Binding data to Sheet
             int rowIndex = 2;
             foreach (var asset in assets)
             {
                 columnIndex = 1;
                 foreach (var col in excelColummnProperties)
                 {
+
+                    //Remove Property Id, DepreciationYear, DepreciationAmount, ResidualPrice
+                    if (col.Name.EndsWith("Id") || col.Name == "DepreciationYear" || col.Name == "DepreciationAmount" || col.Name == "ResidualPrice")
+                    {
+                        continue;
+                    }
+
                     var colValue = col.GetValue(asset);
+
+                    //Get Type Data Original 
                     var colType = Nullable.GetUnderlyingType(col.PropertyType) ?? col.PropertyType;
                     var value = "";
 
@@ -239,7 +256,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
                     {
                         case "DateTime":
                             value = (colValue as DateTime?)?.ToString("dd/MM/yyyy");
-                            workSheet.Cells[rowIndex, columnIndex].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                            workSheet.Cells[rowIndex, columnIndex].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                             break;
                         case "Decimal":
                             value = (colValue as Decimal?)?.ToString();
@@ -258,6 +275,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
                             break;
 
                     }
+
                     workSheet.Cells[rowIndex, columnIndex].Value = value;
                     columnIndex++;
                 }
@@ -267,14 +285,17 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 
             workSheet.Cells.AutoFitColumns();
         }
+        #endregion
 
         /// <summary>
-        /// Declare list ExcelColumn Attribbute
+        /// Định nghĩa list ExcelColumn Attribbute
         /// </summary>
         /// Author: HMDUC (29/06/2023)
+        #region Field
         private readonly List<PropertyInfo> excelColummnProperties = typeof(Asset)
-       .GetProperties()
-       .Where(c => c.GetCustomAttributes(typeof(ExcelColumnAttribute), true).Length > 0)
-       .ToList();
+     .GetProperties()
+     .Where(c => c.GetCustomAttributes(typeof(ExcelColumnAttribute), true).Length > 0)
+     .ToList(); 
+        #endregion
     }
 }

@@ -12,7 +12,6 @@ namespace MISA.WebFresher042023.Demo.Controllers
 
         protected readonly IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> _baseService;
 
-
         public BaseController(IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> baseService)
         {
 
@@ -20,13 +19,13 @@ namespace MISA.WebFresher042023.Demo.Controllers
         }
 
         /// <summary>
-        /// Get List Entity 
+        ///  API lấy ra tất các entity
         /// </summary>
         /// <returns>
         /// 200 - List Entity
-        /// 204 - No data
         /// </returns> 
         /// Author: HMDUC (19/06/2023)
+        #region GetAll 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -34,18 +33,18 @@ namespace MISA.WebFresher042023.Demo.Controllers
 
             return StatusCode(StatusCodes.Status200OK, entityDto);
         }
+        #endregion
 
 
         /// <summary>
-        ///  Function Get Entity by Code
+        ///  API lấy ra entity theo ID
         /// </summary>
-        /// <param name="Entity">id</param>
+        /// <param name="id"> Id Entity</param>
         /// <returns>
-        /// 201 - success
-        /// 204 - no data
+        /// 200 - success
         /// </returns>
         /// Author: HMDUC (12/06/2023)
-
+        #region GetById
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
@@ -53,17 +52,18 @@ namespace MISA.WebFresher042023.Demo.Controllers
 
             return StatusCode(StatusCodes.Status200OK, entityDto);
         }
+        #endregion
 
         /// <summary>
-        ///  Function Add new Entity
+        ///  API thêm mới Entity
         /// </summary>
-        /// <param name="EntityInsertDto">EntityInsertDto</param>
+        /// <param name="TEntityInsertDto">entityInsertDto</param>
         /// <returns>
         /// 400 - error
         /// 201 - success
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-
+        #region AddEntity
         [HttpPost]
         public async Task<IActionResult> AddAsync(TEntityInsertDto entityInsertDto)
         {
@@ -78,18 +78,19 @@ namespace MISA.WebFresher042023.Demo.Controllers
                 return StatusCode(StatusCodes.Status201Created, rowsAffected);
             }
         }
+        #endregion
 
 
         /// <summary>
-        ///  Function update Entity
+        ///  API update Entity
         /// </summary>
-        /// <param name="EntityUpdateDto">EntityUpdateDto</param>
+        /// <param name="TEntityUpdateDto">entityUpdateDto</param>
         /// <returns>
         ///  200 - update success
         ///  400 - error validate
         /// </returns>
         /// Author: HMDUC (13/06/2023)
-
+        #region UpdateEntity
         [HttpPut]
         public async Task<IActionResult> UpdateAsync(TEntityUpdateDto entityUpdateDto)
         {
@@ -104,17 +105,18 @@ namespace MISA.WebFresher042023.Demo.Controllers
                 return StatusCode(StatusCodes.Status200OK);
             }
         }
+        #endregion
 
         /// <summary>
-        ///  Funtion Delete Entity By Id
+        ///  API xóa Entity theo Id
         /// </summary>
-        /// <param name="EntityId">Entity Id</param>
+        /// <param name="id">Entity id</param>
         /// <returns>
         ///  204 - success
         ///  400 - bad request
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-
+        #region DeleteEntity
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
@@ -129,16 +131,18 @@ namespace MISA.WebFresher042023.Demo.Controllers
             }
 
         }
+        #endregion
 
         /// <summary>
-        ///  Funtion Delete multiple Entity By Id
+        ///  API xóa nhiều Entity theo List Id
         /// </summary>
-        /// <param name="ids">Ids</param>
+        /// <param name="ids">Danh sách Id</param>
         /// <returns>
         ///  204 - success
         ///  400 - bad request
         /// </returns>
         /// Author: HMDUC (12/06/2023)
+        #region DeleteMultiple
         [HttpDelete("DeleteMultiple")]
         public async Task<IActionResult> DeleteMultiple(List<Guid> ids)
         {
@@ -152,7 +156,8 @@ namespace MISA.WebFresher042023.Demo.Controllers
             {
                 return StatusCode(StatusCodes.Status204NoContent);
             }
-        }
+        } 
+        #endregion
 
     }
 }

@@ -3,61 +3,61 @@
 namespace MISA.WebFresher042023.Demo.Core.Entity
 {
     /// <summary>
-    /// Declare Category Entity
+    /// Loại tài sản
     /// Author: HMDUC (15/6/2023)
     /// </summary>
     public class Category
     {
         /// <summary>
-        /// Id Category
+        ///  Id loại tài sản
         /// </summary>
         [Required]
         public Guid CategoryId { get; set; }
 
         /// <summary>
-        /// Code Category
+        /// Mã loại tài sản
         /// </summary>
         public string? CategoryCode { get; set; }
 
         /// <summary>
-        /// Name Category
+        /// Tên loại tài sản
         /// </summary>
         public string? CategoryName { get; set; }
 
         /// <summary>
-        /// DepreciationRate Category Asset
+        /// Tỷ lệ hao mòn của loại tài sản
         /// </summary>
         public float? DepreciationRate { get; set; }
 
         /// <summary>
-        /// LifeTime
+        /// Năm sử dụng
         /// </summary>
         public int? LifeTime { get; set; }
 
         /// <summary>
-        /// Description
+        /// Mô tả
         /// </summary>
         /// 
         public string? Description { get; set; }
 
         /// <summary>
-        /// Person created Category
+        /// Người tạo mã loại tài sản
         /// </summary>
         /// 
         public string? CreatedBy { get; set; }
 
         /// <summary>
-        /// Date created Category
+        /// Ngày tạo mã loại tài sản
         /// </summary>
         public DateTime? CreatedDate { get; set; }
 
         /// <summary>
-        /// Person modified Category
+        /// Người sửa mã loại tài sản
         /// </summary>
         public string? ModifiedBY { get; set; }
 
         /// <summary>
-        /// Date modified Category
+        /// Ngày sửa mã loại tài sản
         /// </summary>
         public DateTime? ModifiedDate { get; set; }
     }

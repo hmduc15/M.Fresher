@@ -5,6 +5,7 @@ using MISA.WebFresher042023.Demo.Core.Interface.Repository;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,116 +14,108 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 {
     public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     {
+        #region Field
         protected readonly string? _connectionString;
 
-        public BaseRepository(IConfiguration configuration) 
+        protected readonly DbConnection _connection;
+        #endregion
+
+        #region Constructor
+        public BaseRepository(IConfiguration configuration)
         {
             _connectionString = configuration["ConnectionString"];
+            _connection = new MySqlConnection(_connectionString);
         }
+        #endregion
 
         /// <summary>
-        ///  Function Get list Record
+        ///  Hàm lấy ra danh sách Entity từ DB
         /// </summary>
-        /// <returns>List Asset</returns>
+        /// <returns>Danh sách Entity</returns>
         /// Author: HMDUC (19/06/2023)
+        #region GetAllAsync
         public async Task<List<TEntity>> GetAllAsync()
         {
             //Get tableName Entity
             var tableName = typeof(TEntity).Name;
 
             //connect mysql
-            var sqlConnection = new MySqlConnection(_connectionString);
             var sqlCommand = $"CALL Proc_{tableName}_GetAll";
 
-            //opent connection
-            await sqlConnection.OpenAsync();
 
-            var assets = await sqlConnection.QueryAsync<TEntity>(sql: sqlCommand);
+            var assets = await _connection.QueryAsync<TEntity>(sql: sqlCommand);
 
-            await sqlConnection.CloseAsync();
 
             return assets.ToList();
 
-        } 
-  
+        }
+        #endregion
+
         /// <summary>
-        ///  Functio Get  by Code
+        ///  Hàm lấy Entity theo mã từ DB
         /// </summary>
-        /// <param name="Code"></param>
-        /// <returns></returns>
+        /// <param name="code">Mã Entity</param>
+        /// <returns>Entity</returns>
         /// Author: HMDUC (19/06/2023)
+        #region GetByCodeAsync
         public async Task<TEntity> GetByCodeAsync(string code)
         {
             //Get tableName Entity
-            var tableName = typeof (TEntity).Name;
+            var tableName = typeof(TEntity).Name;
 
-            var sqlConnection = new MySqlConnection(_connectionString);
+            //Sql command line
             var sqlCommand = $"SELECT * FROM {tableName} WHERE {tableName}Code = @code";
-
-            //open connection
-            await sqlConnection.OpenAsync();
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@code", code);
 
-            var entity = await sqlConnection.QueryFirstOrDefaultAsync<TEntity>(sql: sqlCommand, param: parameters);
-
-            await sqlConnection.CloseAsync();
+            var entity = await _connection.QueryFirstOrDefaultAsync<TEntity>(sql: sqlCommand, param: parameters);
 
             return entity;
-        }
+        } 
+        #endregion
 
         /// <summary>
-        /// Function  Get Record by Id
+        /// Hàm lấy Entity theo Id
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="Id">Id của Entity</param>
         /// <returns>Entity</returns>
         /// Author: HMDUC (19/06/2023)
+        #region GetByIdAsync
         public async Task<TEntity> GetByIdAsync(Guid id)
         {
             //Get tableName Entity
             var tableName = typeof(TEntity).Name;
 
-            //connect mysql
-            var sqlConnection = new MySqlConnection(_connectionString);  
+            //Sql command line
             var sqlCommand = $"SELECT * FROM {tableName} WHERE {tableName}Id = @id";
-          
-            //open connection
-            await sqlConnection.OpenAsync();  
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@id", id);
 
-            var entity = await sqlConnection.QueryFirstOrDefaultAsync<TEntity>(sql: sqlCommand, param: parameters);
-            
-            //close connection
-            await sqlConnection.CloseAsync();   
+            var entity = await _connection.QueryFirstOrDefaultAsync<TEntity>(sql: sqlCommand, param: parameters);
 
             return entity;
-        }
+        } 
+        #endregion
 
 
         /// <summary>
-        /// Function Insert a record 
+        /// Hàm thêm mới Entity
         /// </summary>
         /// <param name="entity">entity</param>
         /// <returns>
-        /// Row Affected
+        /// Row Affected: Số dòng bị ảnh hưởng 
         /// </returns>
         /// Author: HMDUC (19/06/2023)
+        #region InsertAsync
         public async Task<int> InsertAsync(TEntity entity)
         {
             //Get tableName Entity
             var tableName = typeof(TEntity).Name;
 
-            //connect sql
-            var sqlConnection = new MySqlConnection(_connectionString);
-
-            //open connection
-            await sqlConnection.OpenAsync();
-
             var sqlCommandProc = $"Proc_{tableName}_Insert";
-            var sqlCommand = sqlConnection.CreateCommand();
+            var sqlCommand = (MySqlCommand)_connection.CreateCommand();
             sqlCommand.CommandText = sqlCommandProc;
             sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -139,36 +132,32 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             }
 
 
-            var rowAffected = await sqlConnection.ExecuteAsync(sql: sqlCommandProc, param: parameters, commandType: System.Data.CommandType.StoredProcedure);
+            var rowAffected = await _connection.ExecuteAsync(sql: sqlCommandProc, param: parameters, commandType: System.Data.CommandType.StoredProcedure);
 
-            //close connecion
-            await sqlConnection.CloseAsync();
 
             return rowAffected;
 
-        }
+        } 
+        #endregion
 
         /// <summary>
-        /// Function Update Asset
+        /// Hàm cập nhật Entity
         /// </summary>
         /// <param name="asset"></param>
         /// <returns>
-        ///  Asset
+        ///  Rows effected: Số dòng bị ảnh hưởng
         /// </returns>
         ///  Author: HMDUC (19/06/2023)
+        #region UpdateAsync
         public async Task<int> UpdateAsync(TEntity entity)
         {
             //Get tableName Entity
             var tableName = typeof(TEntity).Name;
 
-            //connect sql
-            var sqlConnection = new MySqlConnection(_connectionString);
-
-            //open connection
-            await sqlConnection.OpenAsync();
-
+            //Sql command line
             var sqlCommandProc = $"Proc_{tableName}_Update";
-            var sqlCommand = sqlConnection.CreateCommand();
+
+            var sqlCommand = (MySqlCommand)_connection.CreateCommand();
             sqlCommand.CommandText = sqlCommandProc;
             sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -178,79 +167,91 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             foreach (MySqlParameter param in sqlCommand.Parameters)
             {
                 var paramKey = param.ParameterName;
-                var propValue = paramKey.Replace("@m_", "");
-                var paramValue = entity.GetType().GetProperty(propValue)?.GetValue(entity);
+                var propValue = paramKey.Replace("@M_", "");
+                var paramValue = entity?.GetType().GetProperty(propValue)?.GetValue(entity);
 
                 parameters.Add(paramKey, paramValue);
             }
 
 
-            var rowAffected = await sqlConnection.ExecuteAsync(sql: sqlCommandProc, param: parameters, commandType: System.Data.CommandType.StoredProcedure);
-
-            //close connecion
-            await sqlConnection.CloseAsync();
+            var rowAffected = await _connection.ExecuteAsync(sql: sqlCommandProc, param: parameters, commandType: System.Data.CommandType.StoredProcedure);
 
             return rowAffected;
-        }
+        } 
+        #endregion
 
 
 
         /// <summary>
-        /// Function Delete  by ID
+        /// Hàm xóa Entity theo Id
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="Id">ID của Entity</param>
         /// <returns>
-        ///  Count Row Affect
+        ///  rowsAffected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
+        #region DeleteEnityAsync
         public async Task<int> DeleteEntityAsync(Guid id)
         {
             //Get tableName Entity
-            var tableName = typeof (TEntity).Name;  
+            var tableName = typeof(TEntity).Name;
 
-            //connect sql
-            var sqlConnection = new MySqlConnection(_connectionString);
+            //Sql command line
             var sqlCommand = $"DELETE FROM {tableName} WHERE {tableName}Id = @id";
-
-            //open connection
-            await sqlConnection.OpenAsync();
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@id", id);
 
-            int rowsAffected = await sqlConnection.ExecuteAsync(sql: sqlCommand, param: parameters);
+            int rowsAffected = await _connection.ExecuteAsync(sql: sqlCommand, param: parameters);
 
-            //close connection
-            await sqlConnection.CloseAsync();
 
             return rowsAffected;
-        }
+        } 
+        #endregion
 
 
         /// <summary>
-        /// Function Delete Multiple 
+        /// Hàm xóa nhiều theo danh sách Id
         /// </summary>
-        /// <param name="ids">List Id</param>
+        /// <param name="ids">Danh sách  Id</param>
         /// <returns>
-        /// Count Row Affect
+        /// rowsAffected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
+        #region DeleteMultipleAsync
         public async Task<int> DeleteEntityMulAsync(List<Guid> ids)
         {
             //Get tableName Entity
             var tableName = typeof(TEntity).Name;
 
-            //connect sql
-            var sqlConnection = new MySqlConnection(_connectionString);
-            var sqlCommand = $"Proc_{tableName}_DeleteMulti";
+            using (_connection)
+            {
+                //Use transaction
+                using (var transaction = _connection.BeginTransaction())
+                {
+                    try
+                    {
+                        var sqlCommand = $"Proc_{tableName}_DeleteMulti";
 
-            DynamicParameters parameters = new DynamicParameters();
-            var paramString = string.Join(",", ids);
-            parameters.Add("@ids", paramString);
+                        DynamicParameters parameters = new DynamicParameters();
+                        var paramString = string.Join(",", ids);
+                        parameters.Add("@ids", paramString);
 
-            int rowsAffected = await sqlConnection.ExecuteAsync(sql: sqlCommand, param: parameters, commandType: System.Data.CommandType.StoredProcedure);
+                        int rowsAffected = await _connection.ExecuteAsync(sql: sqlCommand, param: parameters, commandType: System.Data.CommandType.StoredProcedure, transaction: transaction);
 
-            return rowsAffected;
-        }
+                        transaction.Commit();
+
+                        return rowsAffected;
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return 0;
+                    }
+                }
+            }
+
+        } 
+        #endregion
     }
 }

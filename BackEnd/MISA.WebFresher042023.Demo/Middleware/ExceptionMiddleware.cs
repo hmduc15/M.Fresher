@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace MISA.WebFresher042023.Demo.Middleware
 {
     /// <summary>
-    /// Function handle Exception Middleware
+    /// Function xử lý lỗi ở Middleware
     /// </summary>
     /// Author: HMDUC (16/06/2023)
     public class ExceptionMiddleware
@@ -19,7 +19,7 @@ namespace MISA.WebFresher042023.Demo.Middleware
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context /* other dependencies */)
+        public async Task Invoke(HttpContext context )
         {
             try
             {
@@ -31,11 +31,19 @@ namespace MISA.WebFresher042023.Demo.Middleware
             }
         }
 
+        /// <summary>
+        /// Hàm xử lys lỗi khi FE gọi API , và trả về lỗi cho FE
+        /// </summary>
+        /// <param name="context">Http context</param>
+        /// <param name="exception">Kiểu lỗi</param>
+        /// Author: HMDUC (16/06/2023)
+        #region HandleException
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
 
             context.Response.ContentType = "application/json";
 
+            //Lỗi không tìm thấy
             if (exception is NotFoundException)
             {
                 context.Response.StatusCode = StatusCodes.Status404NotFound;
@@ -49,6 +57,7 @@ namespace MISA.WebFresher042023.Demo.Middleware
                     }.ToString() ?? ""
                     );
             }
+            //Lỗi validate dữ liệu 
             else if (exception is ValidateException)
             {
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -62,6 +71,7 @@ namespace MISA.WebFresher042023.Demo.Middleware
                     }.ToString() ?? ""
                     );
             }
+            // Lỗi liên quan đến Server
             else
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -76,6 +86,7 @@ namespace MISA.WebFresher042023.Demo.Middleware
                     }.ToString() ?? ""
                     );
             }
-        }
+        } 
+        #endregion
     }
 }

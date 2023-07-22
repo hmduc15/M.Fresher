@@ -9,8 +9,14 @@ using System.Threading.Tasks;
 
 namespace MISA.WebFresher042023.Demo.Core.Mapper
 {
+    /// <summary>
+    /// Kế thừa Profile của Mapper
+    /// </summary>
     public class DepartmentProfile : Profile
     {
+        /// <summary>
+        /// Tạo các hàm mapper theo form mode
+        /// </summary>
         public DepartmentProfile()
         {
             CreateMap<Department, DepartmentDto>();

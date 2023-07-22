@@ -4,30 +4,34 @@ using MISA.WebFresher042023.Demo.Core.Enum;
 using MISA.WebFresher042023.Demo.Core.Interface.Repository;
 using MISA.WebFresher042023.Demo.Core.Interface.Service;
 using MISA.WebFresher042023.Demo.Core.MISAException;
-using System.Windows.Markup;
 
 namespace MISA.WebFresher042023.Demo.Core.Service
 {
-    public abstract class BaseService<TEntity, TEnityDto, TEntityInsertDto, TEntityUpdateDto> : IBaseService<TEnityDto, TEntityInsertDto, TEntityUpdateDto>
+    public abstract class BaseService<TEntity, TEntityDto, TEntityInsertDto, TEntityUpdateDto> : IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto>
     {
+        #region Field
         protected readonly IBaseRepository<TEntity> _baseRepository;
         protected readonly IMapper _mapper;
+        #endregion
 
+        #region Constructor
         protected BaseService(IBaseRepository<TEntity> baseRepository, IMapper mapper)
         {
             _mapper = mapper;
             _baseRepository = baseRepository;
         }
+        #endregion
 
         /// <summary>
-        ///  Function Get list Record
+        ///  Hàm lấy ra danh sách EntityDto từ Db
         /// </summary>
-        /// <returns>List Asset</returns>
+        /// <returns>List EntityDto</returns>
         /// Author: HMDUC (19/06/2023)
-        public async Task<List<TEnityDto>> GetAllAsync()
+        #region GetAllAsync
+        public async Task<List<TEntityDto>> GetAllAsync()
         {
             var entityList = await _baseRepository.GetAllAsync();
-            var entityDtos = new List<TEnityDto>();
+            var entityDtos = new List<TEntityDto>();
 
             //if(entitylist == null)
             //{
@@ -36,7 +40,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             foreach (var entity in entityList)
             {
-                var entityDto = _mapper.Map<TEnityDto>(entity);
+                var entityDto = _mapper.Map<TEntityDto>(entity);
                 entityDtos.Add(entityDto);
             }
 
@@ -44,14 +48,16 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             return entityDtos;
 
         }
+        #endregion
 
         /// <summary>
-        /// Function  Get Record by Id
+        /// Hàm lấy EntityDto theo Id
         /// </summary>
-        /// <param name="Id"></param>
-        /// <returns>Entity</returns>
+        /// <param name="Id">ID entity</param>
+        /// <returns>entityDto</returns>
         /// Author: HMDUC (19/06/2023)
-        public async Task<TEnityDto> GetByIdAsync(Guid id)
+        #region GetByIdAsync
+        public async Task<TEntityDto> GetByIdAsync(Guid id)
         {
             var entity = await _baseRepository.GetByIdAsync(id);
 
@@ -60,78 +66,61 @@ namespace MISA.WebFresher042023.Demo.Core.Service
                 throw new NotFoundException(Resources.ResourceVN.Error_NotExit_Asset, 404);
             }
 
-            var entityDto = _mapper.Map<TEnityDto>(entity);
+            var entityDto = _mapper.Map<TEntityDto>(entity);
 
             return entityDto;
 
         }
+        #endregion
 
         /// <summary>
-        ///  Functio Get  by Code
+        ///  Hàm lấy EntityDto theo Code
         /// </summary>
-        /// <param name="Code"></param>
-        /// <returns></returns>
+        /// <param name="Code">Mã Entity</param>
+        /// <returns>entityDto</returns>
         /// Author: HMDUC (19/06/2023)
-        public async Task<TEnityDto> GetByCodeAsync(string code)
+        #region GetByCodeAsync
+        public async Task<TEntityDto> GetByCodeAsync(string code)
         {
             var entity = await _baseRepository.GetByCodeAsync(code);
 
 
-            var entityDto = _mapper.Map<TEnityDto>(entity);
+            var entityDto = _mapper.Map<TEntityDto>(entity);
 
             return entityDto;
 
         }
+        #endregion
 
         /// <summary>
-        /// Function Insert a record 
+        /// Hàm thêm mới EntityInsertDto
         /// </summary>
-        /// <param name="entity">entity</param>
+        /// <param name="entityInsertDto">TEntityInsertDto</param>
         /// <returns>
-        /// Row Affected
+        /// Row Affected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
+        #region InsertAsync
         public async Task<int> InsertAsync(TEntityInsertDto entityInsertDto)
         {
+            var errorData = new Dictionary<string, string>();
+            var entity = _mapper.Map<TEntity>(entityInsertDto);
+
             //Get table Name   
             var tableName = typeof(TEntityInsertDto).Name.Replace("InsertDto", "");
 
-            // Get column EntityCode
+            // Check validate data
+            ValidateEntityData(entity);
+
+            //Check duplicate
             var columnCode = $"{tableName}Code";
-            var columnName = $"{tableName}Name";
+            var entityCode = entity?.GetType().GetProperty(columnCode)?.GetValue(entity)?.ToString();
+            CheckDuplicate(entity, entityCode);
 
-
-            //Get EntityInsertDto Code of param entityInsertDto
-            var entityCode = entityInsertDto?.GetType().GetProperty(columnCode)?.GetValue(entityInsertDto)?.ToString();
-            var entityName = entityInsertDto?.GetType().GetProperty(columnName)?.GetValue(entityInsertDto)?.ToString();
-
-            var entityByCode = await this.GetByCodeAsync(entityCode);
-
-            var errorData = new Dictionary<string, string>();
-
-
-            //check validate data
-            this.CheckNull(errorData, entityCode, columnCode, Resources.ResourceVN.Empty_Code);
-            this.CheckNull(errorData, entityName, columnName, Resources.ResourceVN.Empty_Name);
-            this.CheckLength(errorData, entityCode, columnCode, Resources.ResourceVN.Error_Length_Code);
-
-            //check validate busines
-            this.CheckValidateBusiness(errorData, entityInsertDto);
-
-            //check duplicate entitycode
-            if (entityByCode != null)
-            {
-                errorData.Add(entityCode, Resources.ResourceVN.Error_Dupli_Code);
-            }
-
-            //Throw Exception
-            if (errorData.Count > 0)
-            {
-                throw new ValidateException(errorData, (int)MISACode.Validate);
-            }
+            //Check Validate Business
+            this.CheckValidateBusiness(entity);
 
             //Initial Data for Entity
-            var entity = _mapper.Map<TEntity>(entityInsertDto);
             var columnId = $"{tableName}Id";
 
             var entityId = typeof(TEntity).GetProperty($"{columnId}");
@@ -147,55 +136,33 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             return rowEffected;
         }
+        #endregion
 
         /// <summary>
-        /// Function Update a record 
+        /// Hàm cập nhật EntityInsertDto
         /// </summary>
-        /// <param name="entity">entity</param>
+        /// <param name="entityUpdateDto">TEntityUpdateDto</param>
         /// <returns>
-        /// Row Affected
+        /// Row Affected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
+        #region UpdateAsync
         public async Task<int> UpdateAsync(TEntityUpdateDto entityUpdateDto)
         {
             var errorData = new Dictionary<string, string>();
+            var entity = _mapper.Map<TEntity>(entityUpdateDto);
 
             //Get table Name   
             var tableName = typeof(TEntityUpdateDto).Name.Replace("UpdateDto", "");
 
-            // Get column Entity
-            var columnName = $"{tableName}Name";
+            // Check validate data
+            ValidateEntityData(entity);
+
+            //Check duplicate
             var columnCode = $"{tableName}Code";
-            var columnId = $"{tableName}Id";
+            var entityCode = entity?.GetType().GetProperty(columnCode)?.GetValue(entity)?.ToString();
+            CheckDuplicate(entity, entityCode, false);
 
-            //Get EntityInsertDto Field of param entityInsertDto
-            var entityId = Guid.Parse(entityUpdateDto?.GetType().GetProperty(columnId)?.GetValue(entityUpdateDto)?.ToString() ?? "id");
-            var entityCode = entityUpdateDto?.GetType().GetProperty(columnCode)?.GetValue(entityUpdateDto)?.ToString() ?? "code";
-            var entityName = entityUpdateDto?.GetType().GetProperty(columnName)?.GetValue(entityUpdateDto)?.ToString();
-
-            //check validate data
-            this.CheckNull(errorData, entityName, columnName, Resources.ResourceVN.Empty_Name);
-            this.CheckNull(errorData, entityName, columnCode, Resources.ResourceVN.Empty_Code);
-
-            //check validate business
-            var entityById = await this.GetByIdAsync(entityId);
-            var codeTemp = entityById?.GetType().GetProperty(columnCode)?.GetValue(entityById)?.ToString();
-
-            if (!entityCode.Equals(codeTemp))
-            {
-                var entityByCode = await this.GetByCodeAsync(entityCode);
-                if (entityByCode != null)
-                {
-                    errorData.Add(entityCode, Resources.ResourceVN.Error_Dupli_Code);
-                }
-            }
-
-            if (errorData.Count > 0)
-            {
-                throw new ValidateException(errorData, 400);
-            }
-
-            var entity = _mapper.Map<TEntity>(entityUpdateDto);
 
             //Initial data ModifiedDate
             var modifiedDate = typeof(TEntity).GetProperty("ModifiedDate");
@@ -208,15 +175,17 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             return rowEffected;
         }
+        #endregion
 
         /// <summary>
-        /// Function delete entity by id
+        /// Hàm xóa Entity theo Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Id Entity</param>
         /// <returns>
-        ///  Row Affected
+        ///  Row Affected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
+        #region DeleteAsync
         public async Task<int> DeleteAsync(Guid id)
         {
             var res = await _baseRepository.GetByIdAsync(id);
@@ -231,82 +200,98 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             return rowAffected;
         }
+        #endregion
 
         /// <summary>
-        /// Function Delete Mul Async
+        /// Hàm xóa nhiều theo danh sách Id
         /// </summary>
-        /// <param name="ids">ids</param>
+        /// <param name="ids">Danh sách Id</param>
         /// <returns>
-        /// RowsAffected
+        /// RowsAffected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (20/06/2023)
+        #region DeleteMulAsync
         public async Task<int> DeleteMulAsync(List<Guid> ids)
         {
             var rowsAffected = await _baseRepository.DeleteEntityMulAsync(ids);
 
             return rowsAffected;
         }
-
+        #endregion
 
         /// <summary>
-        /// Funtion check null Entity Field
+        /// Hàm Validate data
         /// </summary>
-        /// <param name="errData"></param>
-        /// <param name="value"></param>
-        /// <param name="entityField"></param>
-        /// <param name="errMessage"></param>
-        /// Author: HMDUC (22/06/2023)
-        private void CheckNull(Dictionary<string, string> errData, string? value, string entityField, string errMessage)
+        /// <param name="entity">TEntity</param>
+        /// <exception cref="ValidateException"></exception>
+        /// Author: HMDUC (20/06/2023)
+        #region ValidaeEnityData
+        private void ValidateEntityData(TEntity entity)
         {
-            if (string.IsNullOrEmpty(value))
+            var tableName = typeof(TEntity).Name;
+            var columnCode = $"{tableName}Code";
+            var columnName = $"{tableName}Name";
+
+            var entityCode = entity?.GetType().GetProperty(columnCode)?.GetValue(entity)?.ToString();
+            var entityName = entity?.GetType().GetProperty(columnName)?.GetValue(entity)?.ToString();
+
+            var errorData = new Dictionary<string, string>();
+
+            CheckNull(errorData, entityCode, columnCode, Resources.ResourceVN.Empty_Code);
+            CheckNull(errorData, entityName, columnName, Resources.ResourceVN.Empty_Name);
+            CheckLength(errorData, entityCode, columnCode, Resources.ResourceVN.Error_Length_Code, 20);
+
+            if (errorData.Count > 0)
             {
-                errData.Add(entityField, errMessage);
+                throw new ValidateException(errorData, (int)MISACode.Validate);
             }
+        } 
+        #endregion
+
+        /// <summary>
+        /// Hàm check trùng mã tài sản 
+        /// </summary>
+        /// <param name="entity">TEntity</param>
+        /// <param name="code">Mã Entity</param>
+        /// <param name="isInsert">Check Insert or Update</param>
+        /// Author: HMDUC (22/06/2023)
+        protected virtual void CheckDuplicate(TEntity entity, string? code, bool isInsert = true)
+        {
         }
 
         /// <summary>
-        /// Function check Length Entity Field
+        /// Hàm check null Entity Field 
         /// </summary>
-        /// <param name="errData"></param>
-        /// <param name="value"></param>
-        /// <param name="entityField"></param>
-        /// <param name="errorMessage"></param>
+        /// <param name="errData">List Danh sách lỗi</param>
+        /// <param name="value">Giá trị cần check</param>
+        /// <param name="entityField">Tên Entity Field cần check</param>
+        /// <param name="errMessage">Message lỗi</param>
         /// Author: HMDUC (22/06/2023)
-        private void CheckLength(Dictionary<string, string> errData, string value, string entityField, string errorMessage)
+        protected virtual void CheckNull(Dictionary<string, string> errData, string? value, string? entityField, string errMessage)
         {
-            if (value?.Length > 20)
-            {
-                errData.Add(entityField, errorMessage);
-            }
+
         }
 
         /// <summary>
-        /// Function check validate business
+        ///  Hàm check length Entity Field
         /// </summary>
-        /// <param name="errData"></param>
-        /// <param name="entityInsertDto"></param>
-        /// <param name="errorMessage"></param>
+        /// <param name="errData">List Danh sách lỗi</param>
+        /// <param name="value">Giá trị cần check</param>
+        /// <param name="entityField">Tên Entity Field cần check</param>
+        /// <param name="errMessage">Message lỗi</param>
         /// Author: HMDUC (22/06/2023)
-        private void CheckValidateBusiness(Dictionary<string, string> errData, TEntityInsertDto entityInsertDto)
+        protected virtual void CheckLength(Dictionary<string, string> errData, string? value, string entityField, string errorMessage, int maxLength)
         {
-            var purchaseDate = entityInsertDto?.GetType().GetProperty("PurchaseDate")?.GetValue(entityInsertDto)?.ToString();
-            var productionYear = entityInsertDto?.GetType().GetProperty("ProductionYear")?.GetValue(entityInsertDto)?.ToString();
-
-            if (DateTime.Parse(purchaseDate) > DateTime.Now)
-            {
-                errData.Add("PurchaseDate", Resources.ResourceVN.Error_PurchaseDate);
-            }
-            if (DateTime.Parse(productionYear) > DateTime.Now)
-            {
-                errData.Add("ProductionYear", Resources.ResourceVN.Error_ProductionYear);
-            }
-            if (DateTime.Parse(purchaseDate) > DateTime.Parse(productionYear))
-            {
-                errData.Add("ProductionAndPurchaseDate", Resources.ResourceVN.Error_PurchaseDateAndProductionYear);
-            }
-
 
         }
 
+        /// <summary>
+        /// Hàm check validate nghiệp vụ
+        /// </summary>
+        /// <param name="entity">Entity cần check</param>
+        /// Author: HMDUC (22/06/2023)
+        protected virtual void CheckValidateBusiness(TEntity entity)
+        {
+        }
     }
 }

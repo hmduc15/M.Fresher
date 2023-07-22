@@ -12,76 +12,76 @@ namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
     {  
 
         /// <summary>
-        /// Id Asset
+        /// Id tài sản
         /// </summary>
         public  Guid AssetId{ get; set; }
 
         /// <summary>
-        /// Code Asset
+        /// Mã tài sản
         /// </summary>
         public string? AssetCode { get; set; }
 
         /// <summary>
-        /// Name Asset
+        /// Tên tài sản
         /// </summary>
         public string? AssetName { get; set; }
 
   
         /// <summary>
-        /// Id department
+        /// Id bộ phận sử dụng
         /// </summary>
         public Guid DepartmentId { get; set; }
 
 
         /// <summary>
-        /// Depreciation
+        /// Tỷ lệ hao mòn 
         /// </summary>
         public float? DepreciationRate { get; set; }
         
         /// <summary>
-        /// Depreciation Year
+        /// Giá trị hao mòn năm
         /// </summary>
         public Decimal DepreciationYear { get; set; }
 
         /// <summary>
-        /// Id category
+        /// Id loại tài sản
         /// </summary>
         [Required]
         public Guid CategoryId { get; set; }
 
 
         /// <summary>
-        /// Date buy Asset
+        /// Ngày mua tài sản
         /// </summary>
         public DateTime? PurchaseDate { get; set; }
 
         /// <summary>
-        /// Cost of Asset
+        /// Nguyên giá
         /// </summary>
         public decimal? Cost { get; set; }
 
         /// <summary>
-        /// Quantity of Asset
+        /// Số lượng
         /// </summary>
         public int Quantity { get; set; }
 
         /// <summary>
-        /// Year tracked Asset
+        ///  Năm theo dõi
         /// </summary>
         public int? TrackedYear { get; set; }
 
         /// <summary>
-        /// Life time of Asset
+        /// Số năm  sử dụng
         /// </summary>
         public int? LifeTime { get; set; }
 
         /// <summary>
-        /// Year use Asset
+        /// Năm sử dụng
         /// </summary>
         public DateTime? ProductionYear { get; set; }
 
         /// <summary>
-        /// Time update
+        /// TThời gian cập nhật
         /// </summary>
         public DateTime? ModifiedDate { get; set; }
 

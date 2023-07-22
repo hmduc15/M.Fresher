@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MISA.WebFresher042023.Demo.Core.MISAAttribute;
 using static MISA.WebFresher042023.Demo.Core.MISAAttribute.CustomAttribute;
+using MISA.WebFresher042023.Demo.Core.Resources;
+using System.ComponentModel;
 
 namespace MISA.WebFresher042023.Demo.Core.Entity;
 
@@ -11,118 +13,118 @@ namespace MISA.WebFresher042023.Demo.Core.Entity;
 public class Asset : BaseEntity
 {
     /// <summary>
-    ///  Id Asset
+    ///  Id tài sản
     /// </summary>
     [Required]
     [ExcelColumn("AssetId")]
     public Guid AssetId { get; set; }
 
     /// <summary>
-    /// Code Asset
+    /// Mã tài sản
     /// </summary>
     [ExcelColumn("AssetCode")]
     public string? AssetCode { get; set; }
 
     /// <summary>
-    /// Name Asset
+    /// Tên tài sản
     /// </summary>
     [ExcelColumn("AssetName")]
     public string? AssetName { get; set; }
 
     /// <summary>
-    /// Id Department
+    /// Id bộ phạn sử dụng
     /// </summary>
     [Required]
     [ExcelColumn("DepartmentId")]
     public Guid DepartmentId { get; set; }
 
     /// <summary>
-    /// Code department
+    /// Mã bộ phận sử dụng
     /// </summary>
     [ExcelColumn("DepartmentCode")]
     public string? DepartmentCode { get; set; }
 
     /// <summary>
-    /// Name department
+    /// Tên bộ phận sử dụng
     /// </summary>
     [ExcelColumn("DepartmentName")]
     public string? DepartmentName { get; set; }
 
     /// <summary>
-    /// DepreciationRate
+    /// Tỷ lệ hao mòn
     /// </summary>
     [ExcelColumn("DepreciationRate")]
     public float DepreciationRate { get; set; }
 
     /// <summary>
-    /// Id category
+    /// Id loại tài sản
     /// </summary>
     [Required]
     [ExcelColumn("CategoryId")]
     public Guid CategoryId { get; set; }
 
     /// <summary>
-    /// Code category
+    /// Mã loại tài sản
     /// </summary>
     [ExcelColumn("CategoryCode")]
     public string? CategoryCode { get; set; }
 
     /// <summary>
-    /// Name category
+    /// Tên tài sản
     /// </summary>
     [ExcelColumn("CategoryName")]
     public string? CategoryName { get; set; }
 
     /// <summary>
-    /// Date buy Asset
+    /// Ngày mua tài sản
     /// </summary>
     [ExcelColumn("PurchaseDate")]
     public DateTime? PurchaseDate { get; set; }
 
     /// <summary>
-    /// Cost of Asset
+    /// Nguyên giá
     /// </summary>
     [ExcelColumn("Cost")]
     public decimal Cost { get; set; }
 
     /// <summary>
-    /// Quantity of Asset
+    /// Số lượng
     /// </summary>
     [ExcelColumn("Quantity")]
     public int Quantity { get; set; }
 
     /// <summary>
-    /// Year tracked Asset
+    /// NĂm theo dõi
     /// </summary>
     [ExcelColumn("TrackedYear")]
     public int TrackedYear { get; set; }
 
     /// <summary>
-    /// Life time of Asset
+    /// Số năm sử dụng 
     /// </summary>
     [ExcelColumn("LifeTime")]
     public int LifeTime { get; set; }
 
     /// <summary>
-    /// Rate Deprecication / year
+    /// Hao mòn năm
     /// </summary>
     [ExcelColumn("DepreciationYear")]
     public Decimal DepreciationYear { get; set; }
        
     /// <summary>
-    /// Depreciation Amount
+    /// Hao mòn/ khấu hao lũy kế
     /// </summary>
     [ExcelColumn("DepreciationAmount")]
     public Decimal DepreciationAmount { get; set; }   
 
     /// <summary>
-    /// Residual Price
+    /// Giá trị còn lại
     /// </summary>
     [ExcelColumn("ResidualPrice")]
     public Decimal ResidualPrice { get; set; }
 
     /// <summary>
-    /// Year use Asset
+    ///  Năm sử dụng
     /// </summary>
     [ExcelColumn("ProductionYear")]
     public DateTime? ProductionYear { get; set; }

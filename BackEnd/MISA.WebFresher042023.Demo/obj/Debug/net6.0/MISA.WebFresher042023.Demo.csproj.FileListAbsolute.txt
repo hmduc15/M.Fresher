@@ -52,3 +52,4 @@ D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo\bin\Debug\net6.0\runtim
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo\bin\Debug\net6.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo\bin\Debug\net6.0\Newtonsoft.Json.dll

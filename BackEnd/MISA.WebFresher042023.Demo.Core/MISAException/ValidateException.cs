@@ -1,5 +1,8 @@
 ﻿namespace MISA.WebFresher042023.Demo.Core.MISAException
 {
+    /// <summary>
+    /// Lỗi dữ liệu được truyền lên từ User
+    /// </summary>
     public class ValidateException : Exception
     {
         public int ErrorCode { get; set; }

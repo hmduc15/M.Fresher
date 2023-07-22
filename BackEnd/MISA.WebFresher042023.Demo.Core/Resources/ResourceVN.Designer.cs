@@ -88,7 +88,25 @@ namespace MISA.WebFresher042023.Demo.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mã tài sản bị trùng. Vui lòng nhập lại..
+        ///   Looks up a localized string similar to Tỷ lệ hao mòn phải bằng 1/Số năm sử dụng..
+        /// </summary>
+        public static string Error_DepreciationRate {
+            get {
+                return ResourceManager.GetString("Error_DepreciationRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Giá trị hao mòn năm phải nhỏ hơn hoặc bằng nguyên giá..
+        /// </summary>
+        public static string Error_DepreciationYear {
+            get {
+                return ResourceManager.GetString("Error_DepreciationYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mã tài sản bị trùng vui lòng nhập lại..
         /// </summary>
         public static string Error_Dupli_Code {
             get {

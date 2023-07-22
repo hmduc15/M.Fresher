@@ -10,22 +10,22 @@ namespace MISA.WebFresher042023.Demo.Core.Entity
     {
 
         /// <summary>
-        /// Person created Asset
+        /// Người thêm tài sản
         /// </summary>
         public string? CreatedBy { get; set; }
 
         /// <summary>
-        /// Date created Asset
+        /// Ngày thêm tài sản
         /// </summary>
         public DateTime? CreatedDate { get; set; }
 
         /// <summary>
-        /// Person modified Asset
+        ///  Người sửa tài sản
         /// </summary>
         public string? ModifiedBY { get; set; }
 
         /// <summary>
-        /// Date modified Asset
+        /// Thời gian sửa tài sản
         /// </summary>
         public DateTime? ModifiedDate { get; set; }
 
