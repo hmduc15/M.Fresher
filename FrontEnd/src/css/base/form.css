@@ -52,6 +52,9 @@
     line-height: 56px;
     padding-right: 16px;
     text-align: right;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
 }
 
 .btn--form {
@@ -95,4 +98,12 @@
 
 .filter__form .select__list li {
     width: 563px;
+}
+
+
+/* Responsive */
+@media only screen and (max-width: 1367px) {
+    .form__wrapper {
+        top: 60%;
+    }
 }

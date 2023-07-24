@@ -11,11 +11,12 @@
       </button>
     </template>
   </m-tooltip>
-  <button v-else :type="type" :class="className">
+  <button v-else :type="type" :class="className" @focus="handleFocus">
     <div :class="iconButton"></div>
     <div v-if="content" class="text__btn">
       {{ content }}
     </div>
+    <div v-if="iconSeccond" :class="iconSeccond" class="iconSeccond"></div>
   </button>
 </template>
 
@@ -24,6 +25,11 @@ import MTooltip from "./MTooltip.vue";
 
 export default {
   name: "MButton",
+  data() {
+    return {
+      isFocus: false,
+    };
+  },
   props: [
     "className",
     "iconButton",
@@ -32,9 +38,15 @@ export default {
     "type",
     "posTooltip",
     "isEffect",
+    "iconSeccond",
   ],
   components: {
     "m-tooltip": MTooltip,
+  },
+  methods: {
+    handleFocus() {
+      this.isFocus = true;
+    },
   },
 };
 </script>

@@ -17,6 +17,7 @@
     :filterable="isFilter"
     @focus="handleFocus"
     @blur="required ? validate() : handleBlur()"
+    :tabindex="tabIndex"
   >
     <template v-slot:prefix>
       <div
@@ -43,8 +44,7 @@
     ></m-option>
   </m-select>
   <div v-show="isError" class="input__text--err">
-    {{ this.labelError }}
-    {{ this.$_MISAResources.text__error["input_err"] }}
+    {{ this.errMesage }}
   </div>
 </template>
 
@@ -75,6 +75,7 @@ export default {
       isFocus: false,
       isError: false,
       labelError: null,
+      errMesage: null,
     };
   },
   setup() {
@@ -96,6 +97,7 @@ export default {
      */
     handleFocus() {
       this.isFocus = true;
+      this.isError = false;
     },
 
     /**
@@ -120,6 +122,7 @@ export default {
       this.handleUpdateOpt(value);
       this.$emit("change", value);
     },
+
     /**
      * function emit date when select
      * @param {*} date
@@ -128,6 +131,7 @@ export default {
     handleDate(date) {
       this.updateModelValue(date);
     },
+
     /**
      * function update localModelValue
      * @param {*} date
@@ -151,16 +155,15 @@ export default {
      * Author: HMDUC (01/06/2023)
      */
     validate() {
+      this.isFocus = !this.isFocus;
       const self = this;
       const value = self.modelValue;
       const nameLabel = this.$_MISAResources.label__input[self.name];
-      self.labelError = nameLabel;
+      self.errMesage =
+        nameLabel + " " + this.$_MISAResources.text__error.inputErr;
 
       if (!Validate.isEmptyOrNull(value)) {
         self.isError = true;
-        this.$nextTick(() => {
-          this.$refs.selectRef?.focus();
-        });
         return self.isError;
       }
     },

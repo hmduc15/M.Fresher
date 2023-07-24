@@ -360,7 +360,7 @@
 }
 
 .el-select-dropdown__wrap {
-    max-height: 192px;
+    max-height: 160px;
 }
 
 .el-select-dropdown__item span {
@@ -378,12 +378,14 @@
     display: none;
 }
 
+
 .el-input__inner::placeholder, .el-input__inner {
-    color: var(--black-color) !important;
     font-family: RobotoRegular;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: var(--black-color)
 }
+
 
 .el-input__wrapper {
     padding-left: 36px !important;
@@ -460,15 +462,35 @@
     padding-left: 12px !important;
 }
 
-.select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__inner::placeholder {
-    overflow: hidden;
-    text-overflow: ellipsis;
+.input__wrapper>.select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__inner::placeholder {
+    font-style: italic;
+    color: var(--placeholder-color);
+}
+
+.el-select-dropdown {
+    max-width: 260px;
+}
+
+.el-select__popper {
+    z-index: 300 !important;
 }
 
 /* Responsive */
 @media only screen and (max-width: 1367px) {
     .select__wrapper {
+        width: 220px;
+    }
+}
+
+/* Responsive */
+@media only screen and (max-width: 1025px) {
+    .select__wrapper {
         width: 160px;
+    }
+
+    .el-input__wrapper {
+        padding-left: 26px !important;
+        padding-right: 2px !important;
     }
 
     .select__wrapper>.select-trigger>.el-input>.el-input__wrapper>.el-input__inner::placeholder {

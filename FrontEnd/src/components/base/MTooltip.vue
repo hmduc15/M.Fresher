@@ -4,7 +4,7 @@
     :content="content"
     :placement="placement"
     :effect="effect"
-    :show-after="delay"
+    :hide-after="0"
   >
     <slot name="child"></slot>
   </el-tooltip>

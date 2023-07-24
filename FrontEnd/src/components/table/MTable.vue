@@ -1,5 +1,8 @@
 <template>
-  <div ref="tableRef" class="table__view" v-move-row="{ moveRow }">
+  <div
+    ref="tableRef"
+    :class="['table__view', { 'table--nopaging': !isShowPagging }]"
+  >
     <div
       @mousemove.stop="handleResize"
       @mouseup.capture="handleStopResize"
@@ -68,24 +71,25 @@
           class="table__content--body"
           ref="tBody"
           @scroll="hanldeScroll($event)"
+          v-move-row="{ moveRow }"
         >
           <div
+            v-for="(data, indexRow) in assetClone"
+            :key="indexRow"
             class="row--item"
             ref="rowItem"
             :row-index="indexRow"
             :class="[
               'table__body--row',
-              { 'table--active': isRowActive(indexRow) },
               {
                 'table--selected': isSelected(data),
               },
               {
-                'row--hovered': this.indexRowHover === indexRow,
+                'row--hovered':
+                  this.indexRowHover === indexRow || isContextMenu(indexRow),
               },
             ]"
-            v-for="(data, indexRow) in assetClone"
-            :key="indexRow"
-            @contextmenu.prevent="showContextMenu($event, data)"
+            @contextmenu.prevent="showContextMenu($event, data, indexRow)"
             @click="handleClickRow(data, indexRow, $event)"
             @mouseenter.stop="handleHoverStart(indexRow)"
             @mouseleave.stop="handleHoverEnd"
@@ -102,6 +106,7 @@
                 `${column.key === 'order' ? 'align--center' : ''}`,
               ]"
               :style="[`width: ${widthDefault[index]}px`]"
+              :title="data[column.key]"
             >
               <template v-if="column.key === 'checkbox'">
                 <div class="ceil--checkbox">
@@ -125,14 +130,17 @@
               <template v-else-if="column.key === 'order'">
                 <span>{{ indexRow + 1 }}</span>
               </template>
-
               <template v-else>
                 <span>{{ data[column.key] }}</span>
               </template>
             </div>
           </div>
         </div>
-        <div class="table__content--summary">
+        <div
+          class="table__content--summary"
+          v-if="isShowSummary"
+          ref="summaryTable"
+        >
           <div
             class="ceil--item"
             v-for="(column, index) in columns"
@@ -166,7 +174,7 @@
           </div>
         </div>
       </div>
-      <div class="table__paging">
+      <div class="table__paging" v-if="isShowPagging">
         <div class="total_record">
           {{ this.$_MISAResources.paging.total + ":" }}
           <b>{{ totalRecored }}</b>
@@ -199,7 +207,11 @@
           <m-tooltip :content="this.$_MISAResources.tooltip__btn.prevPage">
             <template #child>
               <m-button
-                className="btn__prev"
+                :className="[
+                  'btn__prev',
+                  { 'btn--notallowed': this.currentPage === 1 },
+                  { 'btn--hover': this.currentPage > 1 },
+                ]"
                 iconButton="icon__prev"
                 @click="prevPage"
               ></m-button>
@@ -208,15 +220,19 @@
           <div class="page__container">
             <m-input
               type="text"
-              v-model="pageInput"
+              v-model="currentPage"
               :className="['input__paging']"
-              @input="pageInput = this.handleInputPage(pageInput)"
+              @input="currentPage = this.handleInputPage(currentPage)"
             ></m-input>
           </div>
           <m-tooltip :content="this.$_MISAResources.tooltip__btn.nextPage">
             <template #child>
               <m-button
-                className="btn__next"
+                :className="[
+                  'btn__next',
+                  { 'btn--notallowed': this.currentPage === this.totalPage },
+                  { 'btn--hover': this.currentPage < this.totalPage },
+                ]"
                 iconButton="icon__next"
                 @click="nextPage"
               >
@@ -253,7 +269,6 @@
           ref="fBody"
           @scroll="hanldeScroll($event)"
         >
-          <!-- Loading -->
           <div
             class="fixed__row--item"
             v-for="(data, indexRow) in assetClone"
@@ -261,13 +276,13 @@
             :row-index="indexRow"
             :class="[
               {
-                'table--active': isRowActive(indexRow),
                 'table--selected': isSelected(data),
-                'row--hovered': this.indexRowHover === indexRow,
+                'row--hovered':
+                  this.indexRowHover === indexRow || isContextMenu(indexRow),
               },
             ]"
             @click="handleClickRow(data, indexRow, $event)"
-            @mouseenter="handleHoverStart(indexRow)"
+            @mouseenter.s="handleHoverStart(indexRow)"
             @mouseleave="handleHoverEnd"
           >
             <div class="fixed__ceil--item">
@@ -281,14 +296,26 @@
               <m-button
                 className="btn__row btn__message"
                 iconButton="icon__duplicate"
-                :title="this.$_MISAResources.tooltip__btn.delete"
+                :title="this.$_MISAResources.tooltip__btn.duplicate"
                 posTooltip="top"
                 @click="handleDuplicate(data)"
+              ></m-button>
+              <m-button
+                className="btn__row btn__delete--table"
+                iconButton="icon__delete--red"
+                :title="this.$_MISAResources.tooltip__btn.delete"
+                posTooltip="top"
+                @click="handleDelete(data)"
               ></m-button>
             </div>
           </div>
         </div>
-        <div class="fixed__content--summary"></div>
+        <div
+          class="fixed__content--summary"
+          v-if="isShowSummary"
+          ref="summaryFixed"
+          name="summary"
+        ></div>
       </div>
       <div class="loading__container" v-if="isLoading">
         <div class="row--item" v-for="index in rowLoading" :key="index">
@@ -297,10 +324,12 @@
       </div>
     </div>
     <div
-      ref="menu"
+      ref="contextmenu"
       :style="{
-        top: pos.y + 5 + 'px',
-        left: pos.x - 60 + 'px',
+        top: pos.y + 'px',
+        left: pos.x + 'px',
+        width: widthContextMenu + 'px',
+        height: heightContextMenu + 'px',
       }"
       class="context__menu"
       v-show="isShowMenu"
@@ -308,30 +337,23 @@
       <div class="context__button">
         <m-button
           className="btn__context"
-          iconButton="icon__plus--bl"
-          content="Thêm"
-          @click="handleBtnAdd"
-        >
-        </m-button>
-        <m-button
-          className="btn__context"
           iconButton="icon__edit"
           content="Sửa"
-          @click="handleBtnEdit(dataSelected)"
+          @click="contextBtnEdit(dataSelected)"
         >
         </m-button>
         <m-button
           className="btn__context"
           iconButton="icon__delete--black"
           content="Xóa"
-          @click="handleBtnDelete(dataSelected)"
+          @click="contextBtnDelete(dataSelected)"
         >
         </m-button>
         <m-button
           className="btn__context"
           iconButton="icon__duplicate"
           content="Nhân bản"
-          @click="handleBtnDuplicate(dataSelected)"
+          @click="contextBtnDuplicate(dataSelected)"
         >
         </m-button>
       </div>
@@ -341,11 +363,10 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-
 import { format } from "@/utils/format";
 import Enum from "@/utils/enum";
+import { request } from "@/services/request";
 
-import { directive } from "vue-tippy";
 import MSkeleton from "../base/MSkeleton.vue";
 import MTooltip from "../base/MTooltip.vue";
 import MInput from "../base/MInput.vue";
@@ -354,14 +375,9 @@ import MButton from "../base/MButton.vue";
 
 export default {
   name: "MTable",
-  props: ["columns", "state", "dataTable"],
-
-  directives: {
-    tippy: directive,
-  },
+  props: ["columns", "state", "dataTable", "numberPage"],
 
   components: {
-    // TableHeader,
     "m-button": MButton,
     "m-input": MInput,
     "m-tooltip": MTooltip,
@@ -378,18 +394,19 @@ export default {
       dataSelected: null,
       dataDislay: null,
       isShowPopup: false,
-      currentPage: 1,
       pageSize: 20,
       arrSelected: [],
       isChecked: false,
       isCheckAll: false,
       isActive: true,
+      indexContextMenu: -1,
       indexActive: -1,
       indexRowClick: -1,
       indexShiftClick: -1,
       indexCtrlClick: -1,
       indexRowHover: -1,
       isShiftClick: false,
+      isCtrlClick: false,
       isDbClick: false,
       pageInput: 1,
       listOffset: [
@@ -407,12 +424,16 @@ export default {
         },
       ],
       rowLoading: 12,
-      widthDefault: [45, 50, 110, 200, 180, 170, 80, 140, 110, 130, 110, 50],
+      widthDefault: [45, 50, 110, 200, 180, 170, 80, 140, 110, 130, 110],
       indexResize: null,
       startX: 0,
       startWidth: 0,
       minWidth: 100,
       debounce: null,
+      currentPage: this.numberPage,
+      newAssetCode: null,
+      widthContextMenu: 250,
+      heightContextMenu: 146,
     };
   },
 
@@ -423,14 +444,26 @@ export default {
   },
 
   watch: {
-    reLoad(newValue) {
-      if (newValue) {
-        this.currentPage = 1;
-      }
+    numberPage() {
+      this.currentPage = this.numberPage;
     },
 
     currentPage(newPage) {
       this.pageInput = newPage;
+    },
+
+    listSelected(newValue) {
+      if (newValue.length === 0) {
+        this.arrSelected.length = 0;
+      } else {
+        this.arrSelected = newValue;
+      }
+    },
+
+    reLoad(newValue) {
+      if (newValue) {
+        this.currentPage = 1;
+      }
     },
 
     dataTable(newData) {
@@ -443,7 +476,6 @@ export default {
             Math.round(item.DepreciationAmount)
           ),
           DepreciationYear: this.formatValue(Math.round(item.DepreciationYear)),
-
           ResidualPrice: this.formatValue(Math.round(item.ResidualPrice)),
         };
       });
@@ -452,15 +484,26 @@ export default {
   },
 
   computed: {
-    ...mapState("formDialog", ["isShow"]),
     ...mapState("contextMenu", ["isShowMenu", "dataCMenu", "pos"]),
-    ...mapState("property", [
-      "propertyList",
-      "listSelected",
-      "loadingTime",
-      "isLoading",
-      "reLoad",
-    ]),
+    ...mapState("asset", ["assetList", "listSelected", "isLoading", "reLoad"]),
+    ...mapState("displayTable", ["listDisplayed"]),
+    ...mapState("sideBar", ["isCollapsed"]),
+
+    /**
+     * Function check show Summary
+     * Author: HMDUC (18/07/2023)
+     */
+    isShowSummary() {
+      return this.listDisplayed.some((item) => item === "Summary");
+    },
+
+    /**
+     * Function check show Paging
+     * Author: HMDUC (18/07/2023)
+     */
+    isShowPagging() {
+      return this.listDisplayed.some((item) => item === "Paging");
+    },
 
     /**
      * Function check selected row
@@ -485,11 +528,21 @@ export default {
     },
 
     /**
+     * Function check isContextMenu
+     * Author:  HMDUC (25/06/2023)
+     */
+    isContextMenu() {
+      return (index) => {
+        return this.indexContextMenu === index;
+      };
+    },
+
+    /**
      * Function return totalrecord
      * Author: HMDUC(26/05/2023)
      */
     paginateTable() {
-      return this.propertyList.data;
+      return this.assetList.data;
     },
 
     /**
@@ -497,25 +550,38 @@ export default {
      * Author: HMDUC(26/05/2023)
      */
     totalRecored() {
-      return this.propertyList.totalRow;
+      return this.assetList.totalRow;
     },
     /**
      * Function return total page
      * Author: HMDUC(26/05/2023)
      */
     totalPage() {
-      return Math.ceil(this.propertyList.totalRow / this.pageSize);
+      return Math.ceil(this.assetList.totalRow / this.pageSize);
     },
   },
 
   methods: {
     ...mapActions("formDialog", ["setIsShow", "setDataForm", "setFormMode"]),
     ...mapActions("contextMenu", ["setShowMenu", "setDataMenu", "setPos"]),
-    ...mapActions("property", [
-      "getPropertyList",
-      "deleteProperty",
-      "setListSelected",
-    ]),
+    ...mapActions("asset", ["getAssetList", "deleteAsset", "setListSelected"]),
+
+    /**
+     * Function call Api Get NewAssetCode
+     * Author: HMDUC(15/06/2023)
+     */
+    async getNewAssetCode() {
+      try {
+        const res = await request.get(`/Assets/NewCode`);
+        this.newAssetCode = res.toString();
+      } catch (err) {
+        this.$emit(
+          "showToast",
+          "notice",
+          this.$_MISAResources.toast__content.ErrorServer
+        );
+      }
+    },
 
     /**
      * funtion handle start resize event
@@ -602,8 +668,8 @@ export default {
      * @param {*} value
      * @returns 2.33 -> 2,33
      */
-    formatFloat(value) {
-      let float = format.formatFloat(value);
+    formatDenary(value) {
+      let float = format.formatDenary(value);
       return float;
     },
 
@@ -617,11 +683,12 @@ export default {
     handleClickRow(data, index, event) {
       if (event.ctrlKey) {
         //  event ctrl + click
+        this.isCtrlClick = true;
         this.handleSelected(data, index, event);
       } else if (event.shiftKey) {
         //event shift + click
         this.handleShiftClick(index, event);
-      } else if (this.isShiftClick) {
+      } else if (this.isShiftClick && this.arrSelected.length > 1) {
         this.arrSelected = this.arrSelected.filter(
           (item) => item.AssetCode === data.AssetCode
         );
@@ -630,22 +697,27 @@ export default {
         this.indexCtrlClick = index;
       } else {
         //normal click
+        this.isCtrlClick = false;
         this.handleSelected(data, index, event);
       }
     },
     /**
-     * function handle event ctrl  + click
+     * function handle event ctrl  + click // click
      * Author: HMDUC (08/06/2023)
      * @param {*} data
      */
-    handleSelected(data, index, e) {
-      e.preventDefault();
+    handleSelected(data, index) {
       this.indexCtrlClick = index;
-      if (!this.arrSelected.includes(data)) {
+
+      if (!this.arrSelected.some((item) => item.AssetCode == data.AssetCode)) {
+        if (!this.isCtrlClick) {
+          this.arrSelected.length = 0;
+        }
         this.arrSelected.push(data);
       } else {
-        const index = this.arrSelected.indexOf(data);
-        this.arrSelected.splice(index, 1);
+        this.arrSelected = this.arrSelected.filter(
+          (item) => item.AssetCode !== data.AssetCode
+        );
       }
       this.setListSelected(this.arrSelected);
     },
@@ -685,33 +757,33 @@ export default {
     },
 
     /**
-     * function handle keydown event
-     * Author: HMDUC (04/06/2023)
-     * @param {} event
-     */
-    // handleKeyDown(event) {
-    //   if (event.keyCode == Enum.KEY__CODE.ARROW_UP) {
-    //     // Arrow up key
-    //     this.moveRow(-1);
-    //   } else if (event.keyCode == Enum.KEY__CODE.ARROW_DOWN) {
-    //     // Arrow down key
-    //     this.moveRow(1);
-    //   }
-    // },
-
-    /**
      * fucntion move row up or down by keyboard
      * Author: HMDUC (04/06/2023)
      * @param {*} index
      */
     moveRow(index) {
-      const newIndex = this.indexActive + index;
+      var newIndex = 0;
+      if (this.indexActive < this.paginateTable.length - 1) {
+        newIndex = this.indexActive + index;
+      } else if (index > 0) {
+        newIndex = this.indexActive;
+      } else if (this.indexActive === 0) {
+        newIndex = 0;
+      }
+
+      this.listSelected.length = 0;
+      this.indexCtrlClick = newIndex;
+
       if (newIndex >= 0 && newIndex < this.paginateTable.length) {
         this.indexActive = newIndex;
         this.$refs.rowItem[this.indexActive].scrollIntoView({
           block: "nearest",
           inline: "start",
         });
+      }
+      if (this.assetClone[newIndex]) {
+        this.arrSelected.push(this.assetClone[newIndex]);
+        this.setListSelected(this.arrSelected);
       }
     },
 
@@ -767,19 +839,13 @@ export default {
      * Author: HMDUC (27/05/2023)
      */
     openForm(data) {
-      this.setIsShow(true);
-      this.$emit("getData", data);
-      this.setFormMode(Enum.FORM__MODE.EDIT);
-    },
-
-    /**
-     * Function handle btn delete on row
-     * Author: HMDUC (27/05/2023)
-     * @param {*} data
-     */
-    handleDeleteRow(data) {
-      var arr = [data];
-      this.$emit("showPopup", arr, "confirm");
+      this.$emit("loading", true);
+      this.$emit("loading", false);
+      setTimeout(() => {
+        this.setIsShow(true);
+        this.$emit("getData", data);
+        this.setFormMode(Enum.FORM__MODE.EDIT);
+      }, 300);
     },
 
     /**
@@ -787,25 +853,62 @@ export default {
      * Author: HMDUC (27/05/2023)
      * @param {*} data
      */
-    handleDuplicate(data) {
-      this.setIsShow(true);
-      this.$emit("getData", data);
-      this.setFormMode(Enum.FORM__MODE.DUPLICATE);
+    async handleDuplicate(data) {
+      this.$emit("loading", true);
+      await this.getNewAssetCode();
+
+      this.$emit("loading", false);
+      setTimeout(() => {
+        var dataDuplicate = { ...data, AssetCode: this.newAssetCode };
+        this.setIsShow(true);
+        this.$emit("getData", dataDuplicate);
+        this.setFormMode(Enum.FORM__MODE.DUPLICATE);
+      }, 300);
+    },
+
+    /**
+     * Function handle btn delete on row
+     * Author: HMDUC (27/05/2023)
+     * @param {*} data
+     */
+    handleDelete(data) {
+      var arr = [data];
+      this.$emit("showPopup", arr, "confirm");
     },
 
     /**
      * Function show context menu on row
      * Author: HMDUC (27/05/2023)
      */
-    showContextMenu(e, data) {
-      const { clientX, clientY } = e;
+    showContextMenu(e, data, index) {
+      var temp = 0;
+      var browserHeight = window.innerHeight;
+      var { clientX, clientY } = e;
+
       this.dataSelected = data;
-      this.setDataMenu(data);
+      this.indexContextMenu = index;
       this.setShowMenu(true);
-      this.setPos({ x: clientX, y: clientY });
+
+      //Check position context menu
+      if (clientX > browserHeight) {
+        clientX = clientX - this.widthContextMenu;
+      }
+      console.log(clientY, browserHeight);
+      if (clientY > browserHeight - 141) {
+        clientY = clientY - this.heightContextMenu;
+      }
+
+      //check collapsed sidebar
+      if (this.isCollapsed) {
+        temp = 126;
+      }
+      this.setPos({ x: clientX - temp - 60, y: clientY + 5 });
 
       //add event click mouse left
       document.addEventListener("click", this.hideContextMenu);
+
+      // add event wheel mouse
+      document.addEventListener("wheel", this.hideContextMenu);
     },
     /**
      * Function hidden context menu
@@ -813,6 +916,7 @@ export default {
      */
     hideContextMenu() {
       this.setShowMenu(false);
+      this.indexContextMenu = -1;
 
       //add event click mouse right
       document.removeEventListener("click", this.hideContextMenu);
@@ -820,8 +924,9 @@ export default {
 
     /**
      * Function handle btnAdd contextmenu
+     * Author: HMDUC(28/05/2023)
      */
-    handleBtnAdd() {
+    contextBtnAdd() {
       this.setIsShow(true);
       this.$emit("getData", null);
       this.setFormMode(Enum.FORM__MODE.ADD);
@@ -831,7 +936,7 @@ export default {
      * Function handle btnEdit contextmenu
      * Author: HMDUC(28/05/2023)
      */
-    handleBtnEdit(data) {
+    contextBtnEdit(data) {
       this.setIsShow(true);
       this.$emit("getData", data);
       this.setFormMode(Enum.FORM__MODE.EDIT);
@@ -840,19 +945,17 @@ export default {
      * Function handle btnDelete contextmenu
      * Author: HMDUC (28/05/2023)
      */
-    handleBtnDelete(data) {
+    contextBtnDelete(data) {
       const arrDataSelected = [];
       arrDataSelected.push(data);
       this.$emit("showPopup", arrDataSelected, "confirm");
-      this.isShowPopup = true;
-      this.dataSelected = data;
     },
 
     /**
      * Function handle btnDuplicate contextmenu
      * Author: HMDUC (28/05/2023)
      */
-    handleBtnDuplicate(data) {
+    contextBtnDuplicate(data) {
       this.setIsShow(true);
       this.$emit("getData", data);
       this.setFormMode(Enum.FORM__MODE.DUPLICATE);
@@ -872,21 +975,20 @@ export default {
      * @return value input number
      */
     handleInputPage(value) {
-      this.pageInput = value.replace(/[0a-zA-Z!@#$%^&*()]/g, "");
-
+      this.pageInput = value.replace(/[a-zA-Z!@#$%^&*()]/g, "");
       clearTimeout(this.debounce);
       this.debounce = setTimeout(() => {
         if (this.pageInput > 0 && this.pageInput <= this.totalPage) {
           this.currentPage = this.pageInput;
         } else if (this.pageInput > this.totalPage) {
           this.currentPage = this.totalPage;
-        } else if (this.pageInput === 0) {
+        } else if (this.pageInput == 0) {
           this.currentPage = 1;
         }
         if (this.pageInput.length > 0) {
           this.$emit("nextPage", this.currentPage);
         }
-      }, 900);
+      }, 1000);
 
       return this.pageInput;
     },

@@ -31,3 +31,7 @@
 .content__top--wrapper>div>.input__text:first-child {
     background-color: var(--white-color);
 }
+
+.wrapper__dropdown {
+    position: relative;
+}

@@ -2,8 +2,12 @@
  * Declare resource project
  * Author: HMDUC(01/06/2023)
  */
-
 export const MISAResources = {
+
+    //name
+    name: {
+        nameSotfware: "MISA QLTS"
+    },
 
     //title page
     page__title: {
@@ -23,7 +27,16 @@ export const MISAResources = {
     //title form
     form__title: {
         AddTitle: "Thêm tài sản",
-        EditTitle: "Sửa tài sản"
+        EditTitle: "Sửa tài sản",
+        DuplicateTitle: "Nhân bản tài sản"
+    },
+
+    //placeholder
+    placeholder: {
+        AssetCode: "Nhập mã tài sản",
+        AssetName: "Nhập tên tài sản",
+        DepartmentCode: "Chọn mã bộ phận sử dụng",
+        CategoryCode: "Chọn mã loại tài sản"
     },
 
     //form mode text:
@@ -31,6 +44,11 @@ export const MISAResources = {
         add: "add",
         edit: "edit",
         duplicate: "duplicate",
+    },
+
+    number: {
+        quantity: 1,
+        depreciation: 0.01
     },
 
     //content toast message
@@ -45,7 +63,8 @@ export const MISAResources = {
         NotAsset: "Bạn chưa chọn tài sản để xóa",
         UpdateSuccess: "Cập nhật tài sản thành công",
         UpdateError: "Cập nhật tài sản thất bại",
-        ErrorServer: "Có lỗi xảy ra vui lòng liên MISA để được hỗ trợ"
+        ErrorServer: "Có lỗi xảy ra vui lòng liên MISA để được hỗ trợ",
+        NoEdit: "Tài sản chưa được thay đổi",
 
     },
 
@@ -70,7 +89,7 @@ export const MISAResources = {
 
     //error message input
     text__error: {
-        input_err: "không được để trống"
+        inputErr: "không được để trống."
     },
 
     //text combobox
@@ -81,22 +100,25 @@ export const MISAResources = {
 
     //question popup
     popup: {
-        delete_only: "Bạn có muốn xóa tài sản ",
-        delete_more: "tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?",
-        add__cancel: "Bạn có muốn hủy khai báo tài sản này?",
-        edit__cancel: "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu các thay đổi này?"
+        deleteOnly: "Bạn có muốn xóa tài sản ",
+        deleteMore: "tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?",
+        addCancel: "Bạn có muốn hủy khai báo tài sản này?",
+        editCancel: "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu các thay đổi này?"
     },
 
     //content buton
     content__button: {
-        add_asset: "Thêm tài sản",
-        reload_async: "Cập nhật dữ liệu",
-        cancel_popup: "Hủy bỏ",
+        addAsset: "Thêm tài sản",
+        reloadAsync: "Cập nhật dữ liệu",
+        cancelPopup: "Hủy bỏ",
         delete: "Xóa",
         no: "Không",
-        no_save: "Không lưu",
+        noSave: "Không lưu",
         save: "Lưu",
-        year: "Năm"
+        year: "Năm",
+        cancelForm: "Hủy",
+
+        agree: "Đồng ý"
     },
 
     //tooltip button
@@ -106,13 +128,16 @@ export const MISAResources = {
         excel: "Xuất file excel",
         delete: "Xóa",
         notice: "Thông báo",
-        setting: " Cài đặt",
         helper: "Trợ giúp",
         profile: "Cá nhân",
         firstPage: "Trang đầu",
         lastPage: "Trang cuối",
         nextPage: "Trang sau",
         prevPage: "Trang trước",
+        setting: "Cài đặt",
+        collapsed: "Thu gọn",
+        expanded: "Mở rộng",
+        close: "Đóng (ESC)"
     },
     //table paging
     paging: {
@@ -152,7 +177,40 @@ export const MISAResources = {
             trackedYear: "TrackedYear",
             residualPrice: "ResidualPrice"
         }
-    }
+    },
+    //day of Week for Datepicker
+    listDay: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+
+    //drop down setting
+    title__dropdown: {
+        display: "Tùy chỉnh hiển thị"
+    },
+
+    //drop down setting
+    setting__display: {
+        summary: "Summary",
+        pagging: "Paging"
+    },
+
+    //sidebar
+    sidebar: {
+        dashboard: "Tổng quan",
+        asset: "Tài sản",
+        assetIncrease: "Ghi tăng",
+        changeInfor: "Thay đổi thông tin",
+        assetAssessment: "Đánh giá lại",
+        tranfer: "Điều chuyển tài sản",
+        receiptRecommend: "Đề nghị xử lý",
+        assetReducing: "Ghi giảm",
+        depreciationBusiness: "Tính khấu hao",
+        depreciationAsset: "Tính hao mòn",
+        assetInventory: "Kiểm kê",
+        assetTrilist: "Tài sản HT-ĐB",
+        equipmentList: "Công cụ dụng cụ",
+        dictionary: "Danh mục",
+        search: "Tra cứu",
+        report: "Báo cáo"
+    },
 }
 
 

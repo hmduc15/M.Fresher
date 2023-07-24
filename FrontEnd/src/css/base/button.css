@@ -4,11 +4,11 @@
 }
 
 .btn__sub:focus {
-    outline: 1px solid var(--blue-color-primary);
+    outline: 2px solid #a5c6ea;
 }
 
 .btn--sm-pop {
-    padding: 8px 25px 6px 25px;
+    padding: 8px 25px 8px 25px;
     font-size: 13px;
     font-family: RobotoMedium;
 }
@@ -21,6 +21,11 @@
     justify-content: center;
     gap: 0 10px;
     border-radius: 4px;
+}
+
+
+.btn__reload:active {
+    background-color: #EEEEEE;
 }
 
 .btn__reload:hover {
@@ -141,10 +146,7 @@
     left: 8px;
 }
 
-.btn__edit {
-    margin-left: 15px;
-    margin-right: 10px;
-}
+
 
 .btn__add {
     width: 110px;
@@ -201,6 +203,25 @@
     align-items: center;
 }
 
+.btn__setting {
+    width: 36px;
+    height: 36px;
+    background-color: var(--white-color);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .16);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn__setting:hover {
+    background-color: #E0E0E0;
+}
+
+.btn__setting:active {
+    background-color: #EEEEEE;
+}
+
 .btn__delete:hover {
     background-color: #E0E0E0;
 }
@@ -228,6 +249,10 @@
 
 .btn__cancel:hover {
     background-color: #e3e1e1;
+}
+
+.btn__cancel:focus {
+    outline: 1px solid var(--blue-color-primary);
 }
 
 .btn__cancel .text__btn {
@@ -263,16 +288,16 @@
 }
 
 .btn__context {
-    width: 110px;
-    height: 36px;
+    width: 250px;
+    height: 38px;
     white-space: nowrap;
     gap: 0 10px;
     display: flex;
     align-items: center;
-    padding-left: 12px;
+    padding: 0 26px;
     font-family: RobotoRegular;
     font-size: 13px;
-    line-height: 36px;
+    line-height: 38px;
     color: var(--black-color);
     background-color: var(--white-color);
 }
@@ -312,4 +337,16 @@
     .btn__reload>.text__btn {
         display: none;
     }
+}
+
+.btn--increase:focus {
+    outline: 1px solid black;
+}
+
+.btn--decrease:focus {
+    outline: 1px solid black;
+}
+
+.btn--focus {
+    outline: 1px solid var(--blue-color-primary);
 }

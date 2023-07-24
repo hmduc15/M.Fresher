@@ -1,8 +1,10 @@
 import axios from "axios";
 
+
 const request = axios.create({
     baseURL: process.env.VUE_APP_API_URL,
 })
+
 /**
  * Funcion call api get data
  * Author: HMDUC (01/06/2023)
@@ -27,7 +29,8 @@ export const deleteProperty = async (id) => {
 }
 
 /**
- * Function add asset  
+ * Function add asset 
+ * Author: HMDUC (01/06/2023) 
  * @param {} data 
  * @returns respone
  */
@@ -36,6 +39,12 @@ export const postProperty = async (data) => {
     return res;
 }
 
+/**
+ * Fuction update Asset
+ * Author: HMDUC (01/06/2023)
+ * @param {*} data 
+ * @returns respone 
+ */
 export const updateProperty = async (data) => {
     const res = await request.put(`/Assets`, data);
     return res;
@@ -44,6 +53,7 @@ export const updateProperty = async (data) => {
 
 /**
  * Function delete multi asset by ID
+ * Author: HMDUC (01/06/2023)
  * @param {*} dataList 
  * @returns 
  */
@@ -56,6 +66,7 @@ export const deleteMultiple = async (dataList) => {
 
 /**
  * Function pagging table
+ * Author: HMDUC (01/06/2023)
  * @param {*} pageNumber 
  * @param {*} pageSize 
  * @returns list asset

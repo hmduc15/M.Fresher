@@ -42,7 +42,7 @@
         <div class="content__top--wrapper">
           <m-button
             iconButton="icon__reload"
-            :content="this.$_MISAResources.content__button.reload_async"
+            :content="this.$_MISAResources.content__button.reloadAsync"
             className="btn__reload"
             @click="handleReload"
           ></m-button>
@@ -52,15 +52,16 @@
         <m-button
           className="btn__add btn__main"
           iconButton="icon__plus"
-          :content="this.$_MISAResources.content__button.add_asset"
+          :content="this.$_MISAResources.content__button.addAsset"
           @click="handleOpenForm"
         >
         </m-button>
-        <a href="https://localhost:7050/api/v1/Assets/Export">
+        <a :href="`${apiUrl}/Assets/Export`">
           <m-button
             className="btn__export"
             iconButton="icon__export"
             :title="this.$_MISAResources.tooltip__btn.excel"
+            posTooltip="top"
           >
           </m-button>
         </a>
@@ -69,25 +70,78 @@
           iconButton="icon__delete--red"
           :title="this.$_MISAResources.tooltip__btn.delete"
           @click="handleDelete"
+          posTooltip="top"
         >
         </m-button>
+        <div
+          class="wrapper__dropdown"
+          v-esc="handleCloseSetting"
+          v-clickOutside="handleCloseSetting"
+        >
+          <m-button
+            className="btn__setting"
+            iconButton="icon__setting"
+            :title="this.$_MISAResources.tooltip__btn.setting"
+            @click="handleOpenSetting"
+            posTooltip="top"
+          ></m-button>
+          <div class="setting__dropdown" v-if="isShowSetting">
+            <div class="setting__title">
+              <div>{{ this.$_MISAResources.title__dropdown.display }}</div>
+              <m-button
+                className="btn__close--setting"
+                iconButton="icon__close"
+                :title="this.$_MISAResources.tooltip__btn.close"
+                posTooltip="top"
+                @click="handleCloseSetting"
+              ></m-button>
+            </div>
+            <div class="display__list">
+              <div
+                class="display__item--wrap"
+                v-for="(item, index) in this.$_MISAResources.setting__display"
+                :key="index"
+              >
+                <div class="display__item">
+                  {{ item }}
+                  <m-input
+                    type="checkbox"
+                    className="table__checkbox"
+                    name="ckbox"
+                    id="ckbox"
+                    @input="handleCheckDisplay(item)"
+                    v-if="!isDisplay(item)"
+                  ></m-input>
+                  <div
+                    v-else-if="isDisplay(item)"
+                    class="checkbox icon__checked"
+                    @click="handleUnCheck(item)"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <m-table
       :columns="col"
-      :dataTable="propertyList"
-      @showCMenu="showContextMenu"
+      :dataTable="assetList"
+      :numberPage="currentPage"
       @getData="handleData"
       @showPopup="handleShowPopup"
       @nextPage="nextPage"
       @prevPage="prevPage"
       @pageSize="chosePageSize"
+      @loading="setLoading"
     ></m-table>
     <asset-form
       :data="dataRecieved"
       :isShow="isShow"
+      :newCode="newAssetCode"
       @showToast="handleShowToast"
-      @openPopup="openPopupCancel"
+      @openPopup="showPopup"
+      @loading="setLoading"
     ></asset-form>
     <m-dialog v-if="isShowPopup || isReload">
       <template #content v-if="isReload">
@@ -97,10 +151,13 @@
         <m-popup
           :type="typePopup"
           :dataPopup="dataRecieved"
+          :dataForm="dataFormAsset"
+          :errMessage="listMessage"
           icon="icon__warning"
           @cancel="handleCancel"
           @showToast="handleShowToast"
           @closeForm="handleCloseForm"
+          :isShow="isShowPopup"
         ></m-popup>
       </template>
     </m-dialog>
@@ -114,18 +171,18 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-import Enum from "@/utils/enum";
 import { request } from "@/services/request";
+import Enum from "@/utils/enum";
+import { mapActions, mapState } from "vuex";
 
 import MButton from "@/components/base/MButton.vue";
-import MTable from "@/components/table/MTable.vue";
-import MInput from "@/components/base/MInput.vue";
-import MPopup from "@/components/base/MPopup.vue";
-import MDiaglog from "@/components/base/MDiaglog.vue";
-import MToast from "@/components/base/MToast.vue";
 import MCombobox from "@/components/base/MCombobox.vue";
+import MDiaglog from "@/components/base/MDiaglog.vue";
+import MInput from "@/components/base/MInput.vue";
 import MLoading from "@/components/base/MLoading.vue";
+import MPopup from "@/components/base/MPopup.vue";
+import MToast from "@/components/base/MToast.vue";
+import MTable from "@/components/table/MTable.vue";
 import AssetForm from "@/view/asset/AssetForm";
 
 export default {
@@ -144,12 +201,16 @@ export default {
 
   data() {
     return {
+      apiUrl: process.env.VUE_APP_API_URL,
       isShowPopup: false,
       isShowCMenu: false,
       isReload: false,
       isShowToast: false,
+      isShowSetting: false,
       stateTable: false,
       dataRecieved: "",
+      dataFormAsset: "",
+      listMessage: null,
       positionCMenu: null,
       typeToast: null,
       typePopup: null,
@@ -226,50 +287,78 @@ export default {
       currentPage: 1,
       pageSize: 20,
       assetClone: null,
+      newAssetCode: null,
+      arrDisplay: ["Summary", "Paging"],
     };
   },
 
   created() {
     /**
-     * function call api from store
+     * Function call api from store
      * Author: HMDUC (28/05/2023)
      */
-    this.getPropertyList({
+    this.getAssetList({
       pageNumber: this.currentPage,
       pageSize: this.pageSize,
     });
+
+    /**
+     * Function call api get list department
+     * Author: HMDUC (28/05/2023)
+     */
     this.getDepartmentList();
+
+    /**
+     * Function call api get list category
+     * Author: HMDUC (28/05/2023)
+     */
     this.getCategory();
-    this.getExport();
+
+    /**
+     * Function call api get new AssetCode;
+     * Author: HMDUC (28/05/2023)
+     */
+    this.getNewAssetCode();
+
+    this.setListDisplayed(this.arrDisplay);
   },
 
   computed: {
     ...mapState("formDialog", ["isShow", "dataForm"]),
-    ...mapState("property", [
-      "propertyList",
-      "listSelected",
-      "loadingTime",
-      "isLoading",
-    ]),
+    ...mapState("asset", ["assetList", "listSelected", "isLoading"]),
+    ...mapState("displayTable", ["listDisplayed"]),
+
+    isDisplay() {
+      return (field) => {
+        return this.arrDisplay.find((item) => item === field);
+      };
+    },
   },
 
   methods: {
     ...mapActions("formDialog", ["setIsShow", "setDataForm", "setFormMode"]),
+    ...mapActions("asset", ["deleteListSelected", "getAssetList"]),
+    ...mapActions("displayTable", ["setListDisplayed"]),
 
-    ...mapActions("property", ["deleteListSelected", "getPropertyList"]),
-
-    async getExport() {
+    /**
+     * Function call Api Get NewAssetCode
+     * Author: HMDUC(15/06/2023)
+     */
+    async getNewAssetCode() {
       try {
-        const res = await request.get(`/Assets/Export`);
-        this.linkExcel = res;
-        return res;
-      } catch (e) {
-        console.log(e);
+        const res = await request.get(`/Assets/NewCode`);
+        this.newAssetCode = res.toString();
+      } catch (err) {
+        this.$emit(
+          "showToast",
+          "notice",
+          this.$_MISAResources.toast__content.ErrorServer
+        );
       }
     },
 
     /**
-     * Function call Api get Departmen list
+     * Function call Api get Department list
      * Author: HMDUC (15/06/2023)
      */
     async getDepartmentList() {
@@ -320,12 +409,27 @@ export default {
     },
 
     /**
+     * Function set Loading
+     * Author: HMDUC (16/07/2023)
+     */
+    setLoading(isLoading) {
+      if (isLoading) {
+        this.isReload = isLoading;
+      } else {
+        setTimeout(() => {
+          this.isReload = isLoading;
+        }, 300);
+      }
+    },
+
+    /**
      * Function filter category
      * Author: HMDUC (15/06/2023)
      */
     changeCategory() {
-      this.getPropertyList({
-        pageNumber: 1,
+      this.currentPage = 1;
+      this.getAssetList({
+        pageNumber: this.currentPage,
         pageSize: this.pageSize,
         searchInput: this.inputSearch,
         categoryName: this.categoryFilter,
@@ -338,8 +442,9 @@ export default {
      * Author: HMDUC (15/06/2023)
      */
     changeDepartment() {
-      this.getPropertyList({
-        pageNumber: 1,
+      this.currentPage = 1;
+      this.getAssetList({
+        pageNumber: this.currentPage,
         pageSize: this.pageSize,
         searchInput: this.inputSearch,
         categoryName: this.categoryFilter,
@@ -353,9 +458,10 @@ export default {
      */
     handleSearch() {
       clearTimeout(this.debounce);
+      this.currentPage = 1;
       this.debounce = setTimeout(() => {
-        this.getPropertyList({
-          pageNumber: 1,
+        this.getAssetList({
+          pageNumber: this.currentPage,
           pageSize: this.pageSize,
           searchInput: this.inputSearch,
           categoryName: this.categoryFilter,
@@ -370,9 +476,10 @@ export default {
      * Author: HMDUC (15/06/2023)
      */
     chosePageSize(pageSize) {
-      this.getPropertyList({
+      this.pageSize = pageSize;
+      this.getAssetList({
         pageNumber: 1,
-        pageSize: pageSize,
+        pageSize: this.pageSize,
         searchInput: this.inputSearch,
         categoryName: this.categoryFilter,
         departmentName: this.departmentFilter,
@@ -386,8 +493,19 @@ export default {
     handleReload() {
       this.isReload = true;
       setTimeout(() => {
+        this.currentPage = 1;
+        this.departmentFilter = null;
+        this.categoryFilter = null;
+        this.inputSearch = "";
+        this.pageSize = 20;
         this.isReload = false;
-        this.prevPage(1);
+        this.getAssetList({
+          pageNumber: this.currentPage,
+          pageSize: this.pageSize,
+          searchInput: null,
+          categoryName: null,
+          departmentName: null,
+        });
       }, 1000);
     },
 
@@ -396,9 +514,9 @@ export default {
      * Author: HMDUC (15/06/2023)
      */
     nextPage(page) {
-      this.currentPage++;
-      this.getPropertyList({
-        pageNumber: page,
+      this.currentPage = page;
+      this.getAssetList({
+        pageNumber: this.currentPage,
         pageSize: this.pageSize,
         searchInput: this.inputSearch,
         categoryName: this.categoryFilter,
@@ -411,9 +529,9 @@ export default {
      * Author: HMDUC (15/06/2023)
      */
     prevPage(page) {
-      this.currentPage--;
-      this.getPropertyList({
-        pageNumber: page,
+      this.currentPage = page;
+      this.getAssetList({
+        pageNumber: this.currentPage,
         pageSize: this.pageSize,
         searchInput: this.inputSearch,
         categoryName: this.categoryFilter,
@@ -422,11 +540,52 @@ export default {
     },
 
     /**
-     * function handle delete multiple property is selected by chk
+     * Function open setting dropdown
+     * Author: HMDUC (18/07/2023)
+     */
+    handleOpenSetting() {
+      this.isShowSetting = !this.isShowSetting;
+    },
+
+    /**
+     * Function close setting dropdown
+     * Author: HMDUC (18/07/2023)
+     */
+    handleCloseSetting() {
+      this.isShowSetting = false;
+    },
+
+    /**
+     * Function  set filed display
+     * Author: HMDUC (18/07/2023)
+     * @param {*} field
+     */
+    handleCheckDisplay(field) {
+      if (!this.arrDisplay.some((item) => item === field)) {
+        this.arrDisplay.push(field);
+      } else {
+        this.arrDisplay = this.arrDisplay.filter((item) => item !== field);
+      }
+      this.setListDisplayed(this.arrDisplay);
+    },
+
+    /**
+     * Function remove filed display
+     * Author: HMDUC (18/07/2023)
+     * @param {*} field
+     */
+    handleUnCheck(field) {
+      const index = this.arrDisplay.indexOf(field);
+      this.arrDisplay.splice(index, 1);
+      this.setListDisplayed(this.arrDisplay);
+    },
+
+    /**
+     * Function handle delete multiple asset is selected by chk
      * Author: HMDUC(27/05/2023)
      */
     handleDelete() {
-      //delelte property selected by checkbox
+      //delelte asset selected by checkbox
       let lengthList = this.listSelected.length;
       switch (lengthList) {
         case 0:
@@ -434,8 +593,7 @@ export default {
           this.isShowToast = true;
           setTimeout(() => {
             this.isShowToast = false;
-            this.stateTable = true;
-          }, 2500);
+          }, 3200);
           break;
         default:
           this.handleShowPopup(this.listSelected, "confirm");
@@ -444,17 +602,21 @@ export default {
     },
 
     /**
-     * function open form add
+     * Function open form add
      * Author: HMDUC(27/05/2023)
      */
     handleOpenForm() {
-      this.dataRecieved = null;
-      this.setIsShow(true);
-      this.setFormMode(Enum.FORM__MODE.ADD);
+      this.isReload = true;
+      setTimeout(() => {
+        this.isReload = false;
+        this.dataRecieved = null;
+        this.setIsShow(true);
+        this.setFormMode(Enum.FORM__MODE.ADD);
+      }, 100);
     },
 
     /**
-     * function close form add
+     * Function close form add
      * Author: HMDUC(27/05/2023)
      */
     handleCloseForm() {
@@ -463,33 +625,44 @@ export default {
     },
 
     /**
-     * function emit data property when selected
+     * Function emit data asset when selected
      * Author: HMDUC(27/05/2023)
      */
     handleData(data) {
       this.dataRecieved = data;
-      this.setIsShow(true);
-      this.setFormMode(Enum.FORM__MODE.EDIT);
     },
 
     /**
-     * function open popup
+     * Function show popup delete
      * Author: HMDUC(27/05/2023)
+     * @param {*} data
+     * @param {*} type
      */
     handleShowPopup(data, type) {
+      let listJson = JSON.stringify(data);
       this.typePopup = type;
-      this.dataRecieved = data;
+      this.dataRecieved = JSON.parse(listJson);
       this.isShowPopup = true;
-    },
-
-    openPopupCancel(type, data) {
-      this.typePopup = type;
-      this.isShowPopup = true;
-      this.dataRecieved = data;
     },
 
     /**
-     * function close popup
+     * Funtion show popup when edit
+     * Author: HMDUC(27/05/2023)
+     * @param {*} type
+     * @param {*} data
+     */
+    showPopup(type, data) {
+      if (type == "warning") {
+        this.dataFormAsset = data;
+      } else {
+        this.listMessage = data;
+      }
+      this.typePopup = type;
+      this.isShowPopup = true;
+    },
+
+    /**
+     * Function close popup
      * Author: HMDUC(27/05/2023)
      */
     handleCancel() {
@@ -497,40 +670,19 @@ export default {
     },
 
     /**
-     * function show toast , emit type to component toast
+     * Function show toast , emit type to component toast
      * Author: HMDUC(27/05/2023)
      * @param {*} type
+     * @param {*} content
      */
     handleShowToast(type, content) {
-      this.isShowPopup = false;
       this.typeToast = type;
       this.contentToast = content;
       this.isShowToast = true;
+      this.isShowPopup = false;
       setTimeout(() => {
         this.isShowToast = false;
-        this.stateTable = true;
-      }, 2500);
-    },
-
-    /**
-     * function show context menu when click right mouse
-     * Author: HMDUC(27/05/2023)
-     * @param {*} data
-     * @param {*} posMenu
-     */
-    showContextMenu(data, posMenu) {
-      this.dataRecieved = data;
-      this.isShowCMenu = true;
-      this.positionCMenu = posMenu;
-    },
-    /**
-     *  function show popup to confirm delete
-     *  Author: HMDUC(27/05/2023)
-     * @param {*} data
-     */
-    showPopup(data) {
-      this.dataRecieved = data;
-      this.isShowPopup = true;
+      }, 3200);
     },
   },
 };
@@ -542,4 +694,5 @@ export default {
 @import "@/css/base/combobox.css";
 @import "@/css/base/input.css";
 @import "@/css/base/dialog.css";
+@import "@/css/base/dropdown.css";
 </style>

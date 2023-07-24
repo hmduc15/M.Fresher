@@ -1,0 +1,61 @@
+.setting__dropdown {
+     position: absolute;
+     right: 0;
+     top: 38px;
+     background-color: var(--white-color);
+     color: var(--black-color);
+     font-family: RobotoRegular;
+     font-size: 13px;
+     width: 200px;
+     max-height: 438px;
+     padding: 16px 0;
+     z-index: 100;
+     box-shadow: 0 3px 16px 0 rgba(0, 0, 0, .16);
+}
+
+.setting__title {
+     font-size: 15px;
+     display: flex;
+     align-items: flex-end;
+     justify-content: space-between;
+     padding: 0 16px;
+}
+
+.setting__title>.btn__close--setting>.icon__close {
+     transform: scale(0.86)
+}
+
+.display__list {
+     height: 240px;
+     overflow: hidden;
+     margin-top: 20px;
+
+}
+
+
+.display__item--wrap:hover {
+     background-color: var(--blue-hover-color);
+}
+
+.display__item {
+     font-size: 13px;
+     height: 38px;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 0 16px;
+}
+
+
+
+.display__item>.input>.table__checkbox {
+     width: 14px;
+     height: 14px;
+}
+
+.display__item>.icon__checked {
+     width: 14px;
+     height: 14px;
+     background-position-x: -25px;
+     background-position-y: -234px;
+}

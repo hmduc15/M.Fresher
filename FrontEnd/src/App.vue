@@ -3,7 +3,7 @@
     <m-sidebar></m-sidebar>
     <div :class="[`${!isCollapsed ? 'main' : 'main--active'}`]">
       <m-header></m-header>
-      <m-content></m-content>
+      <router-view />
     </div>
   </div>
 </template>
@@ -13,13 +13,12 @@ import { mapState } from "vuex";
 
 import TheSidebar from "./layout/TheSidebar.vue";
 import TheMainHeader from "./layout/TheMainHeader.vue";
-import TheMainContent from "./layout/TheMainContent.vue";
+
 export default {
   name: "App",
   components: {
     "m-sidebar": TheSidebar,
     "m-header": TheMainHeader,
-    "m-content": TheMainContent,
   },
 
   computed: {

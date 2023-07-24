@@ -1,20 +1,11 @@
 <template>
-  <AssetList></AssetList>
+  <router-view />
 </template>
 
 <script>
-import AssetList from '@/view/asset/AssetList.vue';
-
 export default {
   name: "TheMainConTent",
-  data() {
-    return {
-      isShowForm: false,
-    };
-  },
-  components: {
-    AssetList,
-  },
+  components: {},
   methods: {},
 };
 </script>

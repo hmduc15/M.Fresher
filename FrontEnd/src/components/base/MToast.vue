@@ -52,12 +52,21 @@ export default {
           icon: "icon__delete--red",
           content: this.$_MISAResources.toast__content.InsertError,
         },
+        err__update: {
+          icon: "icon__warning",
+          content: this.$_MISAResources.toast__content.UpdateError,
+        },
+
         notice: {
           icon: "icon__notice--b",
         },
         warning: {
-          icon: "icon__warning",
+          icon: "icon__warning--sm",
           content: this.$_MISAResources.toast__content.NotAsset,
+        },
+        no__edit: {
+          icon: "icon__notice--b",
+          content: this.$_MISAResources.toast__content.NoEdit,
         },
       },
     };

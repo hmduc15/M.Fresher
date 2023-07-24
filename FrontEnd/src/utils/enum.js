@@ -16,6 +16,10 @@ export default {
         CTRL: 17,
         //Key Shift
         SHIFT: 16,
+        //Key S
+        S: 83,
+        //Key W 
+        Q: 81
     },
 
     //format date
@@ -24,6 +28,11 @@ export default {
         VI: "dd/MM/yyyy",
         // type EN
         EN: "MM/dd/yyyy"
+    },
+
+    //number increase
+    VARIABLE: {
+        QUANTITY: 1,
     },
 
     //form mode
@@ -46,8 +55,8 @@ export default {
         NO_CONTENT: 204,
         // Error Validate
         BAD_REQUEST: 400,
-        // Error unknow
+        // Error server
         ERROR: 500,
+    },
 
-    }
 }

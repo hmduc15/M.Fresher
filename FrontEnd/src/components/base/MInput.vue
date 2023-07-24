@@ -41,8 +41,7 @@
         :tabindex="tabIndex"
       />
       <div v-show="isError" class="input__text--err">
-        {{ this.labelError }}
-        {{ this.$_MISAResources.text__error["input_err"] }}
+        {{ this.errMesage }}
       </div>
     </template>
     <template v-else-if="type === 'date'">
@@ -51,15 +50,17 @@
         v-model="modelValue"
         :format="dateFormat"
         :name="name"
-        :day-names="['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']"
+        :day-names="this.$_MISAResources.listDay"
         locale="vi"
         @update:model-value="handleDate"
         auto-apply
+        text-input
+        :enable-time-picker="false"
       >
         <template #input-icon>
           <div class="date__input_icon icon__date"></div
         ></template>
-        <template #dp-input="{ value, onEnter }">
+        <template #dp-input="{ value, onEnter, onInput }">
           <input
             ref="inputRef"
             :class="[
@@ -73,9 +74,13 @@
             :isFocus="isFocus"
             @blur="required ? validate() : ''"
             @keydown.enter="onEnter"
+            @input="onInput"
           />
         </template>
       </VueDatePicker>
+      <div v-show="isError" class="input__text--err">
+        {{ this.errMesage }}
+      </div>
     </template>
   </div>
 </template>
@@ -119,6 +124,7 @@ export default {
       dateFormat: Enum.FORMAT__DATE.VI,
       isError: false,
       labelError: null,
+      errMesage: null,
     };
   },
 
@@ -151,19 +157,21 @@ export default {
   methods: {
     ...mapActions("toastMessage", ["setIsShowToast", "setContentToast"]),
 
+    onInput(event) {
+      this.handleDate(event.target.value);
+    },
+
     /**
      * Function handle event focus
      * Author: HMDUC (29/05/2023)
      */
     handleFocus() {
-      this.$nextTick(() => {
-        this.$refs.inputRef.focus();
-        this.$refs.inputRef.select();
-      });
+      this.$refs.inputRef.focus();
+      this.$refs.inputRef.select();
     },
 
     /**
-     * Function handle event focus first input
+     * Funtion handle focus first input
      * Author: HMDUC (29/05/2023)
      */
     focusFirstInput() {
@@ -213,10 +221,8 @@ export default {
       const nameLabel = this.$_MISAResources.label__input[self.name];
       if (!Validate.isEmptyOrNull(value)) {
         self.isError = true;
-        self.labelError = nameLabel;
-        this.$nextTick(() => {
-          this.$refs.inputRef?.focus();
-        });
+        self.errMesage =
+          nameLabel + " " + this.$_MISAResources.text__error.inputErr;
         return self.isError;
       } else {
         self.isError = false;

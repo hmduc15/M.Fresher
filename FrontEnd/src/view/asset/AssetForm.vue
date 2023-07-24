@@ -2,14 +2,19 @@
   <m-dialog v-if="isShowForm">
     <template #content>
       <div class="form__wrapper">
-        <form class="form__container" v-esc="closeForm">
+        <form
+          class="form__container"
+          v-esc="closeForm"
+          v-ctrl-w="handleCancel"
+          v-ctrl-s="submitData"
+        >
           <div class="form__body">
             <m-button
               type="button"
               className="btn__close"
               iconButton="icon__close"
-              @click="closeForm"
-              title="Đóng"
+              @click="handleCancel"
+              :title="this.$_MISAResources.tooltip__btn.close"
               posTooltip="right"
             ></m-button>
             <p class="form__title">{{ titleForm }}</p>
@@ -24,8 +29,10 @@
                     :required="true"
                     :isLabel="true"
                     :isFocus="true"
-                    :maxLength="20"
+                    :placeHolder="this.$_MISAResources.placeholder.AssetCode"
+                    :maxLength="100"
                     v-model="asset.AssetCode"
+                    @keydown.shift.prevent.tab="moveFocus"
                   >
                   </m-input>
                 </div>
@@ -37,8 +44,9 @@
                     className="input__text input--xl"
                     name="AssetName"
                     :required="true"
-                    :maxLength="36"
+                    :maxLength="255"
                     :isLabel="true"
+                    :placeHolder="this.$_MISAResources.placeholder.AssetName"
                   >
                   </m-input>
                 </div>
@@ -86,7 +94,7 @@
                     :required="true"
                     v-model="asset.CategoryCode"
                     isLabel="Mã loại tài sản"
-                    @change="changeType"
+                    @change="changeCategory"
                   ></m-combobox>
                 </div>
                 <div class="input__wrapper">
@@ -119,16 +127,8 @@
                   >
                   </m-input>
                   <div class="input__btn">
-                    <m-button
-                      type="button"
-                      iconButton="icon__up"
-                      @click="handleIncrease(this.asset.Quantity, 1)"
-                    ></m-button>
-                    <m-button
-                      type="button"
-                      iconButton="icon__down"
-                      @click="handleDecrease(this.asset.Quantity, 1)"
-                    ></m-button>
+                    <div class="btn--increase icon__up"></div>
+                    <div class="btn--decrease icon__down"></div>
                   </div>
                 </div>
                 <div class="input__wrapper">
@@ -149,7 +149,6 @@
                   <m-input
                     ref="LifeTime"
                     type="text"
-                    value=""
                     className="input__text input--default text--right"
                     name="LifeTime"
                     :required="true"
@@ -170,17 +169,17 @@
                     :number="true"
                     :required="true"
                     :isLabel="true"
-                    :maxLength="18"
+                    :maxLength="5"
                     @input="
-                      asset.DepreciationRate = this.checkNumber(
+                      asset.DepreciationRate = this.formatInputDecimal(
                         asset.DepreciationRate
                       )
                     "
                   >
                   </m-input>
                   <div class="input__btn">
-                    <m-button type="button" iconButton="icon__up"></m-button>
-                    <m-button type="button" iconButton="icon__down"></m-button>
+                    <div class="btn--increase icon__up"></div>
+                    <div class="btn--decrease icon__down"></div>
                   </div>
                 </div>
                 <div class="input__wrapper">
@@ -244,16 +243,18 @@
           </div>
           <div class="form__footer">
             <m-button
-              @click="handleCancel"
               type="button"
-              content="Hủy bỏ"
-              className="btn__sub btn--form "
-            ></m-button>
-            <m-button
-              type="button"
-              content="Lưu"
+              :content="this.$_MISAResources.content__button.save"
               className="btn__main btn__submit"
               @click="submitData"
+            ></m-button>
+            <m-button
+              ref="lastBtn"
+              type="button"
+              :content="this.$_MISAResources.content__button.cancelForm"
+              className="btn__sub btn--form "
+              @click="handleCancel"
+              @keydown.tab.prevent="backTabIndex"
             ></m-button>
           </div>
         </form>
@@ -266,6 +267,7 @@ import { mapActions, mapState } from "vuex";
 import Enum from "@/utils/enum";
 import { format } from "@/utils/format";
 import { request } from "@/services/request";
+import { Validate } from "@/utils/validate";
 
 import MDiaglog from "@/components/base/MDiaglog.vue";
 import MInput from "@/components/base/MInput.vue";
@@ -274,7 +276,7 @@ import MCombobox from "@/components/base/MCombobox";
 
 export default {
   name: "AssetForm",
-  props: ["title", "isShow", "data"],
+  props: ["title", "isShow", "data", "newCode"],
   components: {
     "m-dialog": MDiaglog,
     "m-input": MInput,
@@ -310,18 +312,17 @@ export default {
         ModifiedDate: "",
       },
       assetJson: null,
-      isError: false,
+      isCheckValidate: false,
       listDepartment: null,
       listAssetCategory: null,
       selectedOption: null,
-      newAssetCode: null,
+      inputRefs: [],
     };
   },
 
   created() {
     this.getDepartmentList();
     this.getCategory();
-    this.getNewAssetCode();
   },
 
   updated() {
@@ -329,20 +330,15 @@ export default {
       let objJson = JSON.stringify(this.data);
       this.assetJson = objJson;
       this.asset = JSON.parse(objJson);
-      if (this.formMode === Enum.FORM__MODE.DUPLICATE) {
-        this.getNewAssetCode();
-        this.asset.AssetCode = this.newAssetCode;
-      }
-      this.asset.DepreciationRate = format.formatFloat(
-        this.asset.DepreciationRate * 100
+      this.asset.DepreciationRate = format.formatDenary(
+        parseFloat(this.asset.DepreciationRate * 100).toFixed(2)
       );
     } else {
-      this.getNewAssetCode();
       this.asset = {};
-      this.asset.AssetCode = this.newAssetCode;
       this.asset.Quantity = 1;
       this.asset.Cost = 0;
       this.asset.DepreciationYear = 0;
+      this.asset.AssetCode = this.newCode;
     }
     this.isShowForm = this.isShow;
   },
@@ -351,6 +347,7 @@ export default {
     ...mapState("toastMessage", ["isShowToast", "contentToast"]),
     ...mapState("formDialog", ["formMode"]),
     ...mapState("yearSelected", ["yearSelected"]),
+    ...mapState("inputError", ["listError"]),
 
     /**
      * Function set yearSelected
@@ -365,57 +362,38 @@ export default {
      * Author: HMDUC (20/5/2023)
      */
     titleForm() {
-      if (
-        this.formMode === Enum.FORM__MODE.ADD ||
-        this.formMode === Enum.FORM__MODE.DUPLICATE
-      ) {
+      if (this.formMode === Enum.FORM__MODE.ADD) {
         return this.$_MISAResources.form__title["AddTitle"];
+      } else if (this.formMode === Enum.FORM__MODE.DUPLICATE) {
+        return this.$_MISAResources.form__title["DuplicateTitle"];
       } else {
         return this.$_MISAResources.form__title["EditTitle"];
       }
     },
-
-    /**
-     * Function check valid Input
-     * Author: HMDUC (20/5/2023)
-     */
-    isValid() {
-      for (const inputRef in this.$refs) {
-        if (this.$refs[inputRef].required && this.$refs[inputRef].validate()) {
-          return false;
-        }
-      }
-      return true;
-    },
-  },
-
-  mounted() {
-    if (this.isShowForm) {
-      this.$nextTick(() => {
-        this.$refs.AssetCode.focus();
-      });
-    }
   },
 
   methods: {
     ...mapActions("formDialog", ["setIsShow"]),
-    ...mapActions("property", ["postProperty", "updateProperty"]),
+    ...mapActions("asset", ["postAsset", "updateAsset"]),
+    ...mapActions("inputError", ["setListError"]),
+    /**
+     * Function move focus when shift+tab
+     * Author: HMDUC (19/07/2023)
+     */
+    moveFocus() {
+      this.$refs.lastBtn.$el.focus();
+    },
 
     /**
-     * Function call Api Get NewAssetCode
-     * Author: HMDUC(15/06/2023)
+     * Function set back TabIndex first input
+     * Author: HMDUC (17/07/2023)
      */
-    async getNewAssetCode() {
-      try {
-        const res = await request.get(`/Assets/NewCode`);
-        this.newAssetCode = res;
-        return this.newAssetCode;
-      } catch (err) {
-        this.$emit(
-          "showToast",
-          "notice",
-          this.$_MISAResources.toast__content.ErrorServer
-        );
+    backTabIndex() {
+      for (var inputRef in this.$refs) {
+        this.$nextTick(() => {
+          this.$refs[inputRef].handleFocus();
+        });
+        break;
       }
     },
 
@@ -487,7 +465,7 @@ export default {
      * @param {*} obj
      *
      */
-    changeType(obj) {
+    changeCategory(obj) {
       this.selectedOption = obj;
       const category = this.findOptionById(
         this.listAssetCategory,
@@ -496,14 +474,18 @@ export default {
       this.asset.CategoryId = category.id;
       this.asset.CategoryName = category.value;
       this.asset.LifeTime = category.lifeTime;
-      this.asset.DepreciationRate = format.formatFloat(
-        ((1 / this.asset.LifeTime) * 100).toFixed(2)
+      this.asset.DepreciationRate = format.formatDenary(
+        parseFloat(category.depreciationRate * 100).toFixed(2)
       );
+      this.$refs["DepreciationRate"].isError = false;
+      this.$refs["LifeTime"].isError = false;
 
       //Calculate DepreciationYear when change category
+      var cost =
+        this.asset.Cost === 0 ? 0 : Number(this.asset.Cost.replace(/\./g, ""));
       var DepreciationYear =
-        parseFloat(this.asset.Cost).toFixed(3) *
-        parseFloat(this.asset.DepreciationRate.replace(",", "."));
+        cost *
+        (parseFloat(this.asset.DepreciationRate.replace(",", ".")) / 100);
 
       this.asset.DepreciationYear = format.formatMoney(
         Math.round(DepreciationYear)
@@ -527,7 +509,7 @@ export default {
      * function format money
      * Author: HMDUC (04/06/2023)
      * @param {*} value
-     * return 1.000.000
+     * @return 1.000.000
      */
     formatInputMoney(value) {
       //remove character not numbe
@@ -546,6 +528,19 @@ export default {
       //check invalid money input
       if (/^\d+$/.test(money)) {
         let formatted = format.formatMoney(money);
+        return formatted;
+      }
+    },
+
+    /**
+     * Function format decimal
+     * Author: HMDUC (04/06/2023)
+     * @return formatted
+     */
+    formatInputDecimal(value) {
+      let number = this.checkNumber(value);
+      if (/^\d+$/.test(number)) {
+        var formatted = format.formaDecimal(number);
         return formatted;
       }
     },
@@ -600,9 +595,16 @@ export default {
         AssetName: this.asset.AssetName,
         DepartmentId: this.asset.DepartmentId,
         DepreciationRate:
-          parseFloat(this.asset.DepreciationRate?.replace(",", ".")) / 100,
-        DepreciationYear: this.asset.DepreciationYear.replace(".", ""),
-        Cost: this.asset.Cost?.replace(".", ""),
+          (parseFloat(this.asset.DepreciationRate.replace(",", ".")) * 100) /
+          10000,
+        DepreciationYear:
+          this.asset.DepreciationYear === 0
+            ? 0
+            : this.asset.DepreciationYear.replace(".", ""),
+        Cost:
+          this.asset.Cost === 0
+            ? 0
+            : Number(this.asset.Cost.replace(/\./g, "")),
         CategoryId: this.asset.CategoryId,
         PurchaseDate: this.asset.PurchaseDate,
         Quantity: this.asset.Quantity,
@@ -622,27 +624,65 @@ export default {
         var assetChanged = {
           ...this.asset,
           DepreciationRate:
-            parseFloat(this.asset.DepreciationRate.replace(",", ".")) / 100,
+            (parseFloat(this.asset.DepreciationRate.replace(",", ".")) * 100) /
+            10000,
         };
+
         if (this.assetJson !== JSON.stringify(assetChanged)) {
           this.$emit("openPopup", "warning", {
             ...this.cloneAsset(),
             AssetId: this.asset.AssetId,
-            DepartmentCode: this.asset.DepartmentCode,
-            CategoryCode: this.asset.CategoryCode,
-            DepartmentName: this.asset.DepartmentName,
-            CategoryName: this.asset.CategoryName,
-            Cost: this.asset.Cost,
-            DepreciationYear: this.asset.DepreciationYear,
           });
         } else {
           this.closeForm();
         }
+      } else if (this.formMode === Enum.FORM__MODE.ADD) {
+        this.$emit("openPopup", "warning");
       } else {
-        this.$emit("openPopup", "warning", this.asset);
+        this.$emit("openPopup", "warning", {
+          ...this.cloneAsset(),
+          DepartmentCode: this.asset.DepartmentCode,
+          CategoryCode: this.asset.CategoryCode,
+          DepartmentName: this.asset.DepartmentName,
+          CategoryName: this.asset.CategoryName,
+          DepreciationYear: this.asset.DepreciationYear,
+          Cost: this.asset.Cost,
+        });
+      }
+    },
+
+    /**
+     * Function check Null Input
+     * Author: HMDUC (29/05/2023)
+     */
+    handleValidate() {
+      let isValid = true;
+      let firstErrorRef = null;
+
+      for (var inputRef in this.$refs) {
+        const self = this.$refs[inputRef];
+        const nameLabel = this.$_MISAResources.label__input[self.name];
+        if (self.required && !Validate.isEmptyOrNull(self.modelValue)) {
+          self.errMesage =
+            nameLabel + " " + this.$_MISAResources.text__error.inputErr;
+          self.isError = true;
+          //get First Input Error
+          if (!firstErrorRef) {
+            firstErrorRef = self;
+          }
+          isValid = false;
+        } else {
+          self.isError = false;
+        }
+      }
+      //Focus first Input Error
+      if (firstErrorRef) {
+        this.$nextTick(() => {
+          firstErrorRef.handleFocus();
+        });
       }
 
-      //check Asset isChanged
+      return isValid;
     },
 
     /**
@@ -650,38 +690,43 @@ export default {
      * Author: HMDUC (28/05/2023)
      */
     submitData() {
+      //Get formMode current
       let mode = this.formMode;
-      if (this.isValid) {
+      if (this.handleValidate()) {
+        this.$emit("loading", true);
         switch (mode) {
+          //Add Asset
           case Enum.FORM__MODE.ADD:
-            //Add Asset
             this.addAsset(this.cloneAsset());
             break;
-          case Enum.FORM__MODE.EDIT:
-            //Edit Asset
 
+          //Edit Asset
+          case Enum.FORM__MODE.EDIT:
             var assetChanged = {
               ...this.asset,
               DepreciationRate:
-                parseFloat(this.asset.DepreciationRate.replace(",", ".")) / 100,
+                (parseFloat(this.asset.DepreciationRate.replace(",", ".")) *
+                  100) /
+                10000,
             };
 
             //check Asset isChanged
             if (this.assetJson !== JSON.stringify(assetChanged)) {
-              this.updateAsset({
+              this.editAsset({
                 ...this.cloneAsset(),
                 AssetId: this.asset.AssetId,
               });
             } else {
-              //toast
-              console.log("f");
+              setTimeout(() => {
+                this.$emit("showToast", "no__edit");
+              }, 300);
+              this.$emit("loading", false);
             }
             break;
+
+          //Duplicate Asset
           case Enum.FORM__MODE.DUPLICATE:
-            //Duplicate Asset
             this.addAsset(this.cloneAsset());
-            break;
-          default:
             break;
         }
       }
@@ -694,42 +739,80 @@ export default {
      */
     async addAsset(asset) {
       try {
-        const res = await this.postProperty(asset);
-        if (res.status === Enum.REQ__CODE.CREATED) {
-          this.$emit("showToast", "success__add");
-          this.closeForm();
-        } else if (res.status === Enum.REQ__CODE.BAD_REQUEST) {
-          this.$emit(
-            "showToast",
-            "notice",
-            res.data.DataError[asset.AssetCode]
-          );
-        }
+        const res = await this.postAsset(asset);
+        this.handleResponse({
+          code: res.status,
+          dataErr: res.data.DataError,
+        });
       } catch (err) {
-        this.$emit("showToast", "err__add");
+        this.handleResponse({ code: err.status });
       }
     },
 
     /**
-     * Function call Api update Asset
+     * Function call Api edit Asset
      * Author: HMDUC (28/05/2023)
      * @param {*} asset
      */
-    async updateAsset(asset) {
+    async editAsset(asset) {
       try {
-        const res = await this.updateProperty(asset);
-        if (res.status === Enum.REQ__CODE.SUCCESS) {
+        const res = await this.updateAsset(asset);
+        this.handleResponse({
+          code: res.status,
+          dataErr: res.data.DataError,
+        });
+      } catch (err) {
+        this.handleResponse({ code: err.status });
+      }
+    },
+
+    /**
+     * Funtion handle request respone
+     * Author: HMDUC (03/07/2023)
+     * @param {*} code
+     * @param {*} data
+     */
+    handleResponse({ code, dataErr }) {
+      this.$emit("loading", false);
+      switch (code) {
+        case Enum.REQ__CODE.CREATED:
+          this.$emit("showToast", "success__add");
+          this.closeForm();
+          break;
+
+        case Enum.REQ__CODE.BAD_REQUEST:
+          var arrMessage = [];
+          var inputError = [];
+
+          for (var key in dataErr) {
+            if (Object.hasOwnProperty.call(dataErr, key)) {
+              const message = dataErr[key];
+              arrMessage.push(message);
+
+              if (key == "ProductionAndPurchaseDate") {
+                key = "PurchaseDate";
+              }
+
+              inputError.push(this.$refs[key]);
+              this.setListError(inputError);
+            }
+          }
+
+          this.$emit("openPopup", "error", arrMessage);
+          break;
+
+        case Enum.REQ__CODE.SUCCESS:
           this.$emit("showToast", "success__update");
           this.closeForm();
-        } else if (res.status === Enum.REQ__CODE.BAD_REQUEST) {
-          this.$emit(
-            "showToast",
-            "notice",
-            res.data.DataError[asset.AssetCode]
-          );
-        }
-      } catch (err) {
-        this.$emit("showToast", "err__add");
+          break;
+
+        case Enum.REQ__CODE.ERROR:
+          if (this.formMode === Enum.FORM__MODE.ADD) {
+            this.$emit("showToast", "err__add");
+          } else {
+            this.$emit("showToast", "err__update");
+          }
+          break;
       }
     },
   },

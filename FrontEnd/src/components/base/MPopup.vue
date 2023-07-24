@@ -1,6 +1,5 @@
-<!-- eslint-disable no-debugger -->
 <template>
-  <div class="popup__container">
+  <div class="popup__container" v-if="isShowPopup">
     <div class="popup__icon" :class="icon"></div>
     <div class="popup__content">
       <div
@@ -16,21 +15,21 @@
             <div>
               <span style="font-weight: bold">
                 {{
-                  dataPopup.length < 10
-                    ? `0${dataPopup.length}`
-                    : dataPopup.length
+                  dataDelete.length < 10
+                    ? `0${dataDelete.length}`
+                    : dataDelete.length
                 }}</span
               >
-              {{ this.$_MISAResources.popup.delete_more }}
+              {{ this.$_MISAResources.popup.deleteMore }}
             </div>
           </template>
-          <template v-else-if="dataPopup.length === 1">
+          <template v-else-if="dataDelete.length === 1">
             <div class="property">
-              {{ this.$_MISAResources.popup.delete_only }}
-              <b>{{ dataPopup[0].AssetCode }}</b>
+              {{ this.$_MISAResources.popup.deleteOnly }}
+              <b>{{ dataDelete[0].AssetCode }}</b>
               -
               <b>
-                {{ dataPopup[0].AssetName }}
+                {{ dataDelete[0].AssetName }}
                 ?
               </b>
             </div>
@@ -44,27 +43,39 @@
             "
           >
             <div>
-              <span>{{ this.$_MISAResources.popup.add__cancel }}</span>
+              <span>{{ this.$_MISAResources.popup.addCancel }}</span>
             </div>
           </template>
           <template v-else>
             <div>
-              <span>{{ this.$_MISAResources.popup.edit__cancel }}</span>
+              <span>{{ this.$_MISAResources.popup.editCancel }}</span>
             </div>
+          </template>
+        </template>
+        <template v-else-if="type === 'error'">
+          <template v-if="errMessage.length > 1">
+            <ul v-for="(item, index) in errMessage" :key="index">
+              <li class="error__item">{{ item }}</li>
+            </ul>
+          </template>
+          <template v-else-if="errMessage.length === 1">
+            <div>{{ errMessage[0] }}</div>
           </template>
         </template>
       </div>
       <div class="popup__btn">
         <template v-if="type === 'confirm'">
           <m-button
-            :content="this.$_MISAResources.content__button.cancel_popup"
+            :content="this.$_MISAResources.content__button.cancelPopup"
             className="btn--sm-pop btn__cancel"
             @click="handleBtnCancel"
+            :tabindex="1"
           ></m-button>
           <m-button
             :content="this.$_MISAResources.content__button.delete"
             className="btn--sm-pop btn__main"
-            @click="handleDelete(dataPopup)"
+            @click="handleDelete(dataDelete)"
+            :tabindex="2"
           ></m-button>
         </template>
         <template v-else-if="type === 'warning'">
@@ -72,33 +83,44 @@
             v-if="this.formMode === this.$_MISAResources.form__mode.edit"
           >
             <m-button
-              :content="this.$_MISAResources.content__button.cancel_popup"
+              :content="this.$_MISAResources.content__button.cancelPopup"
               className="btn--sm-pop btn__cancel"
               @click="handleBtnCancel"
             ></m-button>
             <m-button
-              :content="this.$_MISAResources.content__button.no_save"
+              :content="this.$_MISAResources.content__button.noSave"
               className="btn--sm-pop btn__outline-pri"
-              @click="handleCloseForm()"
+              @click="handleCloseForm"
             ></m-button>
             <m-button
               :content="this.$_MISAResources.content__button.save"
               className="btn--sm-pop btn__main"
-              @click="handleSave(dataPopup)"
+              @click="handleSave(dataForm)"
             ></m-button>
           </template>
           <template v-else>
             <m-button
+              ref="btnCancel"
               :content="this.$_MISAResources.content__button.no"
               className="btn--sm-pop btn__cancel"
+              tabindex="1"
               @click="handleBtnCancel"
             ></m-button>
             <m-button
-              :content="this.$_MISAResources.content__button.cancel_popup"
+              :content="this.$_MISAResources.content__button.cancelPopup"
               className="btn--sm-pop btn__main"
               @click="handleCloseForm()"
+              tabindex="2"
             ></m-button>
           </template>
+        </template>
+        <template v-else-if="type === 'error'">
+          <m-button
+            :content="this.$_MISAResources.content__button.agree"
+            className="btn--sm-pop btn__main"
+            @click="handleClosePop"
+            :tabindex="2"
+          ></m-button>
         </template>
       </div>
     </div>
@@ -113,36 +135,62 @@ import { mapActions, mapState } from "vuex";
 
 export default {
   name: "MPopup",
-  props: ["dataPopup", "icon", "isShow", "type"],
+  props: ["dataPopup", "icon", "isShow", "type", "dataForm", "errMessage"],
   components: {
     "m-button": MButton,
   },
+  data() {
+    return {
+      isShowPopup: this.isShow,
+      dataDelete: this.dataPopup,
+    };
+  },
   computed: {
-    ...mapState("property", ["isLoading", "propertyList", "listSelected"]),
+    ...mapState("asset", ["isLoading", "assetList", "listSelected"]),
     ...mapState("formDialog", ["formMode"]),
+    ...mapState("inputError", ["listError"]),
   },
 
   updated() {
     this.isShowPopup = this.isShow;
   },
-  data() {
-    return {
-      isShowPopup: this.isShow,
-    };
-  },
+
   methods: {
-    ...mapActions("property", [
+    ...mapActions("asset", [
       "delete",
       "setListSelected",
       "deleteMulti",
-      "updateProperty",
+      "updateAsset",
     ]),
     /**
      * function emit close form when click cancel
-     * Author: HMDUC(27/05/2023)x
+     * Author: HMDUC(27/05/2023)
      */
     handleBtnCancel() {
       this.$emit("cancel");
+      if (this.type === "confirm") {
+        this.setListSelected([]);
+      }
+    },
+
+    /**
+     * Function emit close popup error
+     * Author: HMDUC (15/05/2023)
+     */
+    handleClosePop() {
+      var firstError = null;
+      this.$emit("cancel");
+      for (var input of this.listError) {
+        if (!firstError) {
+          firstError = input;
+        }
+        input.isError = true;
+      }
+      if (firstError) {
+        this.$nextTick(() => {
+          firstError.handleFocus();
+        });
+      }
     },
 
     /**
@@ -175,7 +223,7 @@ export default {
       };
 
       try {
-        const res = await this.updateProperty(assetUpdateDto);
+        const res = await this.updateAsset(assetUpdateDto);
         if (res.status === Enum.REQ__CODE.SUCCESS) {
           this.$emit("showToast", "success__update");
           this.handleCloseForm();
@@ -189,54 +237,67 @@ export default {
      * function confirm delete property selected
      * Author: HMDUC(27/05/2023)
      */
-    async handleDelete(data) {
-      let lenghtList = data.length;
-      switch (lenghtList) {
+    handleDelete(data) {
+      let lengthList = data.length;
+      switch (lengthList) {
         case 1:
-          try {
-            const res = await this.delete(data[0].AssetId);
-            const deleteIndex = this.listSelected.findIndex(
-              (item) => item.AssetId == data[0].AssetId
-            );
-            this.listSelected.splice(deleteIndex, 1);
-            if (res === Enum.REQ__CODE.NO_CONTENT) {
-              this.$emit("showToast", "success");
-              this.$emit("reLoad");
-            } else if (res === Enum.REQ__CODE.BAD_REQUEST) {
-              this.$emit("showToast", "err");
-            }
-          } catch (err) {
-            this.$emit("showToast", "err");
-          }
+          this.deleteOne(data);
+          this.isShowPopup = false;
           break;
         default:
-          try {
-            let listId = [];
-            data.forEach((item) => {
-              listId.push(item.AssetId);
-            });
-            const res = await this.deleteMulti(listId);
-            const deleteIndex = [];
+          this.deleteMore(data);
+          break;
+      }
+      this.listSelected.length = 0;
+    },
 
-            // remove asset in store
-            this.listSelected.forEach((item, index) => {
-              if (listId.includes(item.AssetId)) {
-                deleteIndex.push(index);
-              }
-            });
+    /**
+     * Function delete one asset
+     * Author: MDUC(27/05/2023)
+     * @param {*} data
+     */
+    async deleteOne(data) {
+      try {
+        const res = await this.delete(data[0].AssetId);
+        this.handleToastResponse(res);
+      } catch (err) {
+        this.handleToastResponse(500);
+      }
+    },
 
-            deleteIndex.reverse().forEach((index) => {
-              this.listSelected.splice(index, 1);
-            });
+    /**
+     * Function delete more
+     * Author: MDUC(27/05/2023)
+     * @param {*} data
+     */
+    async deleteMore(data) {
+      try {
+        let listId = [];
+        data.forEach((item) => {
+          listId.push(item.AssetId);
+        });
+        const res = await this.deleteMulti(listId);
+        this.handleToastResponse(res);
+      } catch (err) {
+        this.handleToastResponse(500);
+      }
+    },
 
-            if (res === Enum.REQ__CODE.NO_CONTENT) {
-              this.$emit("showToast", "success");
-            } else if (res === Enum.REQ__CODE.BAD_REQUEST) {
-              this.$emit("showToast", "err");
-            }
-          } catch (err) {
-            this.$emit("showToast", "err");
-          }
+    /**
+     * Funtion handle request respone
+     * Author: HMDUC (03/07/2023)
+     * @param {*} code
+     */
+    handleToastResponse(code) {
+      switch (code) {
+        case Enum.REQ__CODE.NO_CONTENT:
+          this.$emit("showToast", "success");
+          break;
+        case Enum.REQ__CODE.BAD_REQUEST:
+          this.$emit("showToast", "err");
+          break;
+        case Enum.REQ__CODE.ERROR:
+          this.$emit("showToast", "err");
           break;
       }
     },
