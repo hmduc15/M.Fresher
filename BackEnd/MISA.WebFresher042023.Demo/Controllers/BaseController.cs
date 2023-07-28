@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
-using MISA.WebFresher042023.Demo.Core.Enum;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Application;
+using MISA.WebFresher042023.Demo.Domain.Enum;
 
 namespace MISA.WebFresher042023.Demo.Controllers
 {
@@ -10,13 +10,17 @@ namespace MISA.WebFresher042023.Demo.Controllers
     public abstract class BaseController<TEntityDto, TEntityInsertDto, TEntityUpdateDto> : ControllerBase
     {
 
+        #region Field
         protected readonly IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> _baseService;
+        #endregion
 
+        #region Constructor
         public BaseController(IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> baseService)
         {
 
             _baseService = baseService;
-        }
+        } 
+        #endregion
 
         /// <summary>
         ///  API lấy ra tất các entity
@@ -148,13 +152,14 @@ namespace MISA.WebFresher042023.Demo.Controllers
         {
             var rowsAffected = await _baseService.DeleteMulAsync(ids);
 
-            if (rowsAffected < 0)
+            if (rowsAffected > 0)
             {
-                return StatusCode(StatusCodes.Status400BadRequest);
+                return StatusCode(StatusCodes.Status204NoContent);
+                
             }
             else
             {
-                return StatusCode(StatusCodes.Status204NoContent);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
         } 
         #endregion

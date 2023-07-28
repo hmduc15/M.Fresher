@@ -18,6 +18,7 @@
     @focus="handleFocus"
     @blur="required ? validate() : handleBlur()"
     :tabindex="tabIndex"
+    :placement="placement"
   >
     <template v-slot:prefix>
       <div
@@ -69,6 +70,7 @@ export default {
     "name",
     "isFilter",
     "required",
+    "placement",
   ],
   data() {
     return {

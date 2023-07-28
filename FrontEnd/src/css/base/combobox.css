@@ -472,7 +472,7 @@
 }
 
 .el-select__popper {
-    z-index: 300 !important;
+    z-index: 9999 !important;
 }
 
 /* Responsive */

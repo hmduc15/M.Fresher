@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MISA.WebFresher042023.Demo.Core.Dto.DepartmentDto;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Application;
 using MySqlConnector;
 
 namespace MISA.WebFresher042023.Demo.Controllers
@@ -15,14 +15,17 @@ namespace MISA.WebFresher042023.Demo.Controllers
     [ApiController]
     public class DepartmentsController : BaseController<DepartmentDto,DepartmentInsertDto,DepartmentUpdateDto>
     {
+        #region Field
         private readonly IDepartmentService _departmentService;
+        #endregion
 
-
-        public DepartmentsController(IDepartmentService departmentService) : base(departmentService) 
+        #region Constructor
+        public DepartmentsController(IDepartmentService departmentService) : base(departmentService)
         {
-            _departmentService = departmentService; 
+            _departmentService = departmentService;
         }
 
+        #endregion
 
     }
 }

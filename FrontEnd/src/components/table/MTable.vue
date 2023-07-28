@@ -3,12 +3,10 @@
     ref="tableRef"
     :class="['table__view', { 'table--nopaging': !isShowPagging }]"
   >
-    <div
-      @mousemove.stop="handleResize"
-      @mouseup.capture="handleStopResize"
-      class="table__container"
-    >
+    <!-- Table Content -->
+    <div class="table__container">
       <div class="table__content">
+        <!-- Table Header -->
         <div class="table__content--header">
           <div class="header__row">
             <div
@@ -67,6 +65,7 @@
             </div>
           </div>
         </div>
+        <!-- Table Body -->
         <div
           class="table__content--body"
           ref="tBody"
@@ -136,6 +135,7 @@
             </div>
           </div>
         </div>
+        <!-- Table Summary -->
         <div
           class="table__content--summary"
           v-if="isShowSummary"
@@ -174,6 +174,7 @@
           </div>
         </div>
       </div>
+      <!-- Table Pagging -->
       <div class="table__paging" v-if="isShowPagging">
         <div class="total_record">
           {{ this.$_MISAResources.paging.total + ":" }}
@@ -256,14 +257,19 @@
           </m-tooltip>
         </div>
       </div>
+      <!-- Table Empty -->
       <div
         class="empty__data icon--empty"
+        :class="this.$route.path === '/assettranfer' ? 'empty__data--sm' : ''"
         v-if="dataTable.data?.length === 0 && !isLoading"
       ></div>
+      <!-- Table Fixed Content -->
       <div class="fixed__content">
+        <!-- Header -->
         <div class="fixed__content--header">
           <span>{{ this.$_MISAResources.table.title.action }}</span>
         </div>
+        <!-- Body -->
         <div
           class="fixed__content--body"
           ref="fBody"
@@ -289,7 +295,7 @@
               <m-button
                 className="btn__row btn__edit"
                 iconButton="icon__edit"
-                @click="openForm(data, $event)"
+                @click="handleEdit(data, $event)"
                 :title="this.$_MISAResources.tooltip__btn.edit"
                 posTooltip="left"
               ></m-button>
@@ -310,6 +316,7 @@
             </div>
           </div>
         </div>
+        <!-- Summary -->
         <div
           class="fixed__content--summary"
           v-if="isShowSummary"
@@ -317,12 +324,14 @@
           name="summary"
         ></div>
       </div>
+      <!-- Loading -->
       <div class="loading__container" v-if="isLoading">
         <div class="row--item" v-for="index in rowLoading" :key="index">
           <m-skeleton :isLoading="true" :rows="0"></m-skeleton>
         </div>
       </div>
     </div>
+    <!-- Context Menu -->
     <div
       ref="contextmenu"
       :style="{
@@ -337,23 +346,23 @@
       <div class="context__button">
         <m-button
           className="btn__context"
-          iconButton="icon__edit"
+          iconButton="icon__ctm icon__edit"
           content="Sửa"
-          @click="contextBtnEdit(dataSelected)"
+          @click="handleEdit(dataSelected)"
         >
         </m-button>
         <m-button
           className="btn__context"
-          iconButton="icon__delete--black"
+          iconButton="icon__ctm icon__delete--red"
           content="Xóa"
-          @click="contextBtnDelete(dataSelected)"
+          @click="handleDelete(dataSelected)"
         >
         </m-button>
         <m-button
           className="btn__context"
-          iconButton="icon__duplicate"
+          iconButton="icon__ctm icon__duplicate"
           content="Nhân bản"
-          @click="contextBtnDuplicate(dataSelected)"
+          @click="handleDuplicate(dataSelected)"
         >
         </m-button>
       </div>
@@ -432,7 +441,7 @@ export default {
       debounce: null,
       currentPage: this.numberPage,
       newAssetCode: null,
-      widthContextMenu: 250,
+      widthContextMenu: 200,
       heightContextMenu: 146,
     };
   },
@@ -441,6 +450,13 @@ export default {
     this.$nextTick(() => {
       this.widthSkeleton = this.$refs.tableRef?.offsetWidth;
     });
+    window.addEventListener("mousemove", this.handleResize);
+    window.addEventListener("mouseup", this.handleStopResize);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("mousemove", this.handleResize);
+    window.removeEventListener("mouseup", this.handleStopResize);
   },
 
   watch: {
@@ -550,14 +566,14 @@ export default {
      * Author: HMDUC(26/05/2023)
      */
     totalRecored() {
-      return this.assetList.totalRow;
+      return this.dataTable.totalRow;
     },
     /**
      * Function return total page
      * Author: HMDUC(26/05/2023)
      */
     totalPage() {
-      return Math.ceil(this.assetList.totalRow / this.pageSize);
+      return Math.ceil(this.dataTable.totalRow / this.pageSize);
     },
   },
 
@@ -574,6 +590,7 @@ export default {
       try {
         const res = await request.get(`/Assets/NewCode`);
         this.newAssetCode = res.toString();
+        this.$refs.AssetCode.s;
       } catch (err) {
         this.$emit(
           "showToast",
@@ -753,7 +770,7 @@ export default {
      */
     handleOpenEdit(data) {
       this.isDbClick = true;
-      this.openForm(data);
+      this.handleEdit(data);
     },
 
     /**
@@ -838,14 +855,16 @@ export default {
      * Function open form when click btnEdit
      * Author: HMDUC (27/05/2023)
      */
-    openForm(data) {
+    handleEdit(data) {
       this.$emit("loading", true);
-      this.$emit("loading", false);
+
       setTimeout(() => {
         this.setIsShow(true);
         this.$emit("getData", data);
         this.setFormMode(Enum.FORM__MODE.EDIT);
       }, 300);
+
+      this.$emit("loading", false);
     },
 
     /**
@@ -857,13 +876,14 @@ export default {
       this.$emit("loading", true);
       await this.getNewAssetCode();
 
-      this.$emit("loading", false);
       setTimeout(() => {
         var dataDuplicate = { ...data, AssetCode: this.newAssetCode };
         this.setIsShow(true);
         this.$emit("getData", dataDuplicate);
         this.setFormMode(Enum.FORM__MODE.DUPLICATE);
       }, 300);
+
+      this.$emit("loading", false);
     },
 
     /**
@@ -893,7 +913,6 @@ export default {
       if (clientX > browserHeight) {
         clientX = clientX - this.widthContextMenu;
       }
-      console.log(clientY, browserHeight);
       if (clientY > browserHeight - 141) {
         clientY = clientY - this.heightContextMenu;
       }
@@ -920,45 +939,6 @@ export default {
 
       //add event click mouse right
       document.removeEventListener("click", this.hideContextMenu);
-    },
-
-    /**
-     * Function handle btnAdd contextmenu
-     * Author: HMDUC(28/05/2023)
-     */
-    contextBtnAdd() {
-      this.setIsShow(true);
-      this.$emit("getData", null);
-      this.setFormMode(Enum.FORM__MODE.ADD);
-    },
-
-    /**
-     * Function handle btnEdit contextmenu
-     * Author: HMDUC(28/05/2023)
-     */
-    contextBtnEdit(data) {
-      this.setIsShow(true);
-      this.$emit("getData", data);
-      this.setFormMode(Enum.FORM__MODE.EDIT);
-    },
-    /**
-     * Function handle btnDelete contextmenu
-     * Author: HMDUC (28/05/2023)
-     */
-    contextBtnDelete(data) {
-      const arrDataSelected = [];
-      arrDataSelected.push(data);
-      this.$emit("showPopup", arrDataSelected, "confirm");
-    },
-
-    /**
-     * Function handle btnDuplicate contextmenu
-     * Author: HMDUC (28/05/2023)
-     */
-    contextBtnDuplicate(data) {
-      this.setIsShow(true);
-      this.$emit("getData", data);
-      this.setFormMode(Enum.FORM__MODE.DUPLICATE);
     },
     /**
      * Function handle cancel popup

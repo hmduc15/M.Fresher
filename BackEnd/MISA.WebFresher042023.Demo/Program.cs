@@ -1,16 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using MISA.WebFresher042023.Demo.Middleware;
-using MISA.WebFresher042023.Demo.Core.MISAException;
-using MISA.WebFresher042023.Demo.Core.Interface;
+using MISA.WebFresher042023.Demo.Domain.Interface;
 using MISA.WebFresher042023.Demo.Core.Service;
 using MISA.WebFresher042023.Demo.Infrastructure.Repository;
-using MISA.WebFresher042023.Demo.Core.Enum;
-
-
-using System;
-using MISA.WebFresher042023.Demo.Core.Interface.Repository;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
-using System.Text.Json;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Application.Service;
+using MISA.WebFresher042023.Demo.Domain;
+using MISA.WebFresher042023.Demo.Infrastructure.UnitOfWork;
+using MISA.WebFresher042023.Demo.Domain.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -49,6 +46,12 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = builder.Configuration["ConnectionString"];
+
+
+
+builder.Services.AddScoped<IUnitOfWork>(provider => new UnitOfWork(connectionString));
+
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 
@@ -57,6 +60,11 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
+builder.Services.AddScoped<IReceiptRepository,ReceiptRepository>();
+
+builder.Services.AddScoped<IAssetManager, AssetManager>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

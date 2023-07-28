@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v6.0": {
       "MISA.WebFresher042023.Demo/1.0.0": {
         "dependencies": {
-          "MISA.WebFresher042023.Demo.Core": "1.0.0",
+          "MISA.WebFresher042023.Demo.Application": "1.0.0",
           "MISA.WebFresher042023.Demo.Infrastructure": "1.0.0",
           "MySqlConnector": "2.2.6",
           "Swashbuckle.AspNetCore": "6.2.3"
@@ -329,22 +329,28 @@
           "System.Text.Encodings.Web": "6.0.0"
         }
       },
-      "MISA.WebFresher042023.Demo.Core/1.0.0": {
+      "MISA.WebFresher042023.Demo.Application/1.0.0": {
         "dependencies": {
           "AutoMapper": "12.0.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "EPPlus": "6.2.6",
+          "MISA.WebFresher042023.Demo.Domain": "1.0.0",
           "Microsoft.AspNetCore.Mvc.Abstractions": "2.2.0",
           "Newtonsoft.Json": "13.0.1"
         },
         "runtime": {
-          "MISA.WebFresher042023.Demo.Core.dll": {}
+          "MISA.WebFresher042023.Demo.Application.dll": {}
+        }
+      },
+      "MISA.WebFresher042023.Demo.Domain/1.0.0": {
+        "runtime": {
+          "MISA.WebFresher042023.Demo.Domain.dll": {}
         }
       },
       "MISA.WebFresher042023.Demo.Infrastructure/1.0.0": {
         "dependencies": {
           "Dapper": "2.0.138",
-          "MISA.WebFresher042023.Demo.Core": "1.0.0",
+          "MISA.WebFresher042023.Demo.Application": "1.0.0",
           "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
           "MySqlConnector": "2.2.6"
         },
@@ -640,7 +646,12 @@
       "path": "system.text.json/6.0.0",
       "hashPath": "system.text.json.6.0.0.nupkg.sha512"
     },
-    "MISA.WebFresher042023.Demo.Core/1.0.0": {
+    "MISA.WebFresher042023.Demo.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MISA.WebFresher042023.Demo.Domain/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

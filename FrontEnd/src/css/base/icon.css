@@ -290,3 +290,61 @@
     width: 15px;
     height: 8px;
 }
+
+.icon__add--receipt {
+    background: url(../../assets/icon/icon-v3.svg) no-repeat -947px -111px;
+    width: 18px;
+    height: 18px;
+}
+
+.icon__print {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -331px -67px;
+    width: 18px;
+    height: 18px;
+}
+
+.icon__feedBack {
+    background: url(../../assets/icon/icon-v3.svg) no-repeat -154px -109px;
+    width: 20px;
+    height: 22px;
+}
+
+.icon__row--resize {
+    background: url(../../assets/icon/icon-v3.svg) no-repeat -1126px -242px;
+    width: 11px;
+    height: 21px;
+    position: absolute;
+    left: 50%;
+    top: -10px;
+    display: none;
+}
+
+.resize--active {
+    top: 47px;
+}
+
+.icon__collapse--down {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -334px -293px;
+    width: 12px;
+    height: 7px;
+}
+
+.icon__collapse--up {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -290px -293px;
+    width: 12px;
+    height: 7px;
+}
+
+.icon__close-v2 {
+    background: url(../../assets/icon/icon_close-v2.svg);
+    height: 16px;
+    width: 16px;
+    border: none;
+    background-repeat: no-repeat;
+}
+
+.icon__chose {
+    background: url(../../assets/icon/icon-v3.svg)no-repeat -903px -111px;
+    width: 18px;
+    height: 18px;
+}

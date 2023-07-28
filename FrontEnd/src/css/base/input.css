@@ -6,6 +6,10 @@
     width: 260px;
 }
 
+.input__full {
+    width: 100%;
+}
+
 .text--right {
     text-align: right;
 }

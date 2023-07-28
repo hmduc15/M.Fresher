@@ -1,29 +1,30 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
-using MISA.WebFresher042023.Demo.Core.Entity;
-using MISA.WebFresher042023.Demo.Core.Enum;
-using MISA.WebFresher042023.Demo.Core.Interface.Repository;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
-using MISA.WebFresher042023.Demo.Core.MISAException;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Domain.Entity;
+using MISA.WebFresher042023.Demo.Domain.Enum;
+using MISA.WebFresher042023.Demo.Domain.Interface;
+using MISA.WebFresher042023.Demo.Domain.MISAException;
+using MISA.WebFresher042023.Demo.Domain.Resources;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
-namespace MISA.WebFresher042023.Demo.Core.Service
+namespace MISA.WebFresher042023.Demo.Application.Service
 {
     public class AssetService : BaseService<Asset, AssetDto, AssetInsertDto, AssetUpdateDto>, IAssetService
     {
         #region Field
         private readonly IAssetRepository _assetRepository;
+        private readonly IAssetManager _assetManager;
         #endregion
 
         #region Constructor
-        public AssetService(IAssetRepository assetRepository, IMapper mapper) : base(assetRepository, mapper)
+        public AssetService(IAssetRepository assetRepository, IMapper mapper, IAssetManager assetManager) : base(assetRepository, mapper)
         {
             _assetRepository = assetRepository;
+            _assetManager = assetManager;
         }
         #endregion
-
 
         /// <summary>
         /// Hàm check null
@@ -34,7 +35,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="errMessage">Message lỗi</param>
         /// Author: HMDUC (03/07/2023)
         #region CheckNull
-        protected override void CheckNull(Dictionary<string, string> errData, string? value, string? entityField, string errMessage)
+        protected override void CheckNull(Dictionary<string, string> errData, string? value, string entityField, string errMessage)
         {
 
             if (string.IsNullOrEmpty(value))
@@ -63,91 +64,31 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         }
         #endregion
 
-
         /// <summary>
-        /// Hàm check nghiệp vụ
+        /// Hàm validate nghiệp vụ
         /// </summary>
-        /// <param name="entityInsertDto">Tài sản cần check</param>
-        /// Author: HMDUC (03/07/2023)
-        #region CheckValidateBusiness
-        protected override void CheckValidateBusiness(Asset asset)
+        /// <param name="asset"></param>
+        /// <param name="isInsert"></param>
+        protected override void ValidateBusiness(Asset asset, bool isInsert = true)
         {
-            var errorData = new Dictionary<string, string>();
-            var purchaseDate = asset.PurchaseDate;
-            var productionYear = asset.ProductionYear;
-            var depreciationRate = asset.DepreciationRate;
-            var cost = asset.Cost;
-            var depreciationYear = asset.DepreciationYear;
-            var lifeTime = asset.LifeTime;
 
-
-            if (depreciationYear > cost)
-            {
-                errorData.Add("DepreciationYear", Resources.ResourceVN.Error_DepreciationYear);
-            }
-
-            if (depreciationRate != 1 / (float)lifeTime)
-            {
-                errorData.Add("DepreciationRate", Resources.ResourceVN.Error_DepreciationRate);
-            }
-
-            if (purchaseDate > DateTime.Now)
-            {
-                errorData.Add("PurchaseDate", Resources.ResourceVN.Error_PurchaseDate);
-            }
-
-            if (productionYear > DateTime.Now)
-            {
-                errorData.Add("ProductionYear", Resources.ResourceVN.Error_ProductionYear);
-            }
-
-            if (purchaseDate > productionYear)
-            {
-                errorData.Add("ProductionAndPurchaseDate", Resources.ResourceVN.Error_PurchaseDateAndProductionYear);
-            }
-
-            if (errorData.Count > 0)
-            {
-                throw new ValidateException(errorData, (int)MISACode.Validate);
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// Hàm check trùng mã tài sản
-        /// </summary>
-        /// <param name="asset">Tài sản cần check</param>
-        /// <param name="code">Mã tài sản cần check</param>
-        /// <param name="isInsert">
-        ///  Check là thêm mới hay cập nhật
-        ///   Insert: true , Update: false
-        /// </param>
-        /// Author: HMDUC (03/07/2023)
-        #region CheckDuplicate
-        protected override void CheckDuplicate(Asset asset, string? code, bool isInsert = true)
-        {
-            bool isExistAssetCode;
-            var errorData = new Dictionary<string, string>();
-
-
+            // Check trùng mã tài sản
             if (isInsert)
             {
-                isExistAssetCode = _assetRepository.CheckExistAssetCode(code);
-
+                _assetManager.CheckAssetExistByCode(asset.AssetCode);
             }
             else
             {
-                isExistAssetCode = _assetRepository.CheckExistAssetCode(code, asset.AssetId);
+                _assetManager.CheckAssetExistByCode(asset.AssetCode, asset.AssetId, false);
             }
 
-            if (isExistAssetCode)
-            {
-                errorData.Add("AssetCode", Resources.ResourceVN.Error_Dupli_Code);
-                throw new ValidateException(errorData, (int)MISACode.Validate);
-            }
+            // Check ngày mua và ngày bắt đầu sử dụng
+            _assetManager.CheckTime(asset.PurchaseDate, asset.ProductionYear);
+
+            //Check tỷ lệ hao mòn và hao mòn năm
+            _assetManager.CheckDepreciation(asset.DepreciationRate, asset.DepreciationYear, asset.Cost, asset.LifeTime);
+
         }
-        #endregion
-
 
         /// <summary>
         /// Hàm phân trang và tìm kiếm 
@@ -176,7 +117,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             decimal totalCost = 0;
             float totalDepreciation = 0;
-            float toltalResidualPrice = 0;
+            decimal toltalResidualPrice = 0;
 
             //Calculate Depreciation and Residual
             CalculateDepreciationAndResidual(data);
@@ -188,7 +129,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             {
                 totalCost += (decimal)asset.Cost;
                 totalDepreciation += (float)asset.DepreciationAmount;
-                toltalResidualPrice += (float)asset.ResidualPrice;
+                toltalResidualPrice += (decimal)asset.ResidualPrice;
             }
 
             var result = new
@@ -211,6 +152,57 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         #endregion
 
         /// <summary>
+        /// Hàm phân trang + tìm kiếm tài sản phục vụ thêm tài sản vào chứng từ
+        /// </summary>
+        /// <param name="ids">Danh sach Id tài sản cần loại bỏ</param>
+        /// <param name="pageSize">Số dòng hiển thị</param>
+        /// <param name="pageNumber">Số trang</param>
+        /// Author: HMDUC (28/07/2023)
+        public async Task<object> GetPaggingAssetChose(List<Guid> ids, int pageSize, int pageNumber)
+        {
+            var respone = await _assetRepository.GetPaggingAssetChose(ids,pageSize, pageNumber);
+
+            //Parse response to JSON
+            JObject jObject = JObject.FromObject(respone);
+            var data = jObject["data"]?.ToObject<IEnumerable<Asset>>();
+            var dataSumaryAll = jObject["dataSumaryAll"]?.ToObject<IEnumerable<Asset>>();
+            var totalRow = jObject["totalRow"]?.Value<int>();
+
+            decimal totalCost = 0;
+            float totalDepreciation = 0;
+            decimal toltalResidualPrice = 0;
+
+            //Calculate Depreciation and Residual
+            CalculateDepreciationAndResidual(data);
+
+            CalculateDepreciationAndResidual(dataSumaryAll);
+
+            //Calculate total Cost, Depreciation,Residual
+            foreach (var asset in dataSumaryAll)
+            {
+                totalCost += (decimal)asset.Cost;
+                totalDepreciation += (float)asset.DepreciationAmount;
+                toltalResidualPrice += (decimal)asset.ResidualPrice;
+            }
+
+            var result = new
+            {
+                data = data,
+                totalRow = totalRow,
+                summaryData = new
+                {
+                    total_quantity = dataSumaryAll.Sum(asset => asset.Quantity),
+                    total_cost = totalCost,
+                    total_depreciation = totalDepreciation,
+                    total_residual_price = toltalResidualPrice,
+
+                }
+            };
+
+            return result;
+        }
+
+        /// <summary>
         ///  Hàm tính giá trị còn lại , giá trị hao mòn năm và tỉ lệ hao mòn
         /// </summary>
         /// <param name="assets">Tài sản cần tính</param>
@@ -221,13 +213,10 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             foreach (var asset in assets)
             {
                 //Giá trị hao mòn năm = 
-                asset.DepreciationYear = Math.Round(decimal.Round((decimal)(1 / (float)asset.LifeTime * (float)asset.Cost), 4));
+                asset.DepreciationYear = Math.Round(decimal.Round((decimal)((1 / (float)asset.LifeTime) * (float)asset.Cost), 3));
 
                 //Hao mòn lũy kế 
                 asset.DepreciationAmount = (decimal)((float)asset.DepreciationYear * (float)(DateTime.Now.Year - asset.TrackedYear));
-
-                //Giá trị còn lại
-                asset.ResidualPrice = (decimal)((float)asset.Quantity * (float)asset.Cost - (float)asset.DepreciationAmount);
             }
         }
         #endregion
@@ -269,7 +258,6 @@ namespace MISA.WebFresher042023.Demo.Core.Service
                 newAssetCode = GenerateCode(maxAssetCode);
                 asset = await _assetRepository.GetByCodeAsync(newAssetCode);
                 maxAssetCode = newAssetCode;
-
             } while (asset != null);
 
             return maxAssetCode;
@@ -307,7 +295,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
                 int suffixTemp = 1;
                 return prefixCode + suffixTemp.ToString();
             }
-        } 
+        }
         #endregion
 
 

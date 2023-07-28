@@ -1,0 +1,15 @@
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.csproj.AssemblyReference.cache
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.Resources.ExportVN.resources
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.Resources.ResourceVN.resources
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.csproj.GenerateResource.cache
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.AssemblyInfoInputs.cache
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.AssemblyInfo.cs
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.csproj.CoreCompileInputs.cache
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.deps.json
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.dll
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.pdb
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.dll
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\refint\MISA.WebFresher042023.Demo.Domain.dll
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.pdb
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Domain\obj\Debug\net6.0\ref\MISA.WebFresher042023.Demo.Domain.dll

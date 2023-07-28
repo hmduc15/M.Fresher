@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MISA.WebFresher042023.Demo.Core.Resources;
-
-namespace MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset
+namespace MISA.WebFresher042023.Demo.Application
 {
     public class AssetDto
     {

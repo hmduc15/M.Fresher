@@ -2,11 +2,15 @@ import { createStore } from 'vuex'
 
 import formDialog from './formDialog';
 import contextMenu from './contextMenu';
-import asset from './asset';
+import asset from './asset/asset';
 import yearSelected from './yearSelected';
 import sideBar from './sideBar';
 import inputError from './inputError';
 import displayTable from './displayTable';
+import receipt from './receipt';
+import assetTranfer from './asset/assetTranfer';
+import assetTranferChose from './asset/assetTranferChose';
+import assetChose from './asset/assetChose';
 
 
 /**
@@ -21,7 +25,11 @@ const store = createStore({
         yearSelected,
         sideBar,
         inputError,
-        displayTable
+        displayTable,
+        receipt,
+        assetTranfer,
+        assetTranferChose,
+        assetChose
     }
 
 })

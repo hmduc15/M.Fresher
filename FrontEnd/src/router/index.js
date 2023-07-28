@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AssetList from '@/view/asset/AssetList'
 import ReportPage from '@/view/report/ReportPage'
+import AssetTranferList from '@/view/assetTranfer/AssetTranferList'
 
 const routers = [
     {
@@ -24,8 +25,8 @@ const routers = [
         component: AssetList
     },
     {
-        path: '/tranferasset',
-        component: AssetList
+        path: '/assettranfer',
+        component: AssetTranferList
     },
     {
         path: '/receiptreccommend',

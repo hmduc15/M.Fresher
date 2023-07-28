@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
-using MISA.WebFresher042023.Demo.Core.Entity;
-using MISA.WebFresher042023.Demo.Core.Interface;
+using MISA.WebFresher042023.Demo.Domain;
+using MISA.WebFresher042023.Demo.Domain.Entity;
+using MISA.WebFresher042023.Demo.Domain.Interface;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
     /// </summary>
     public class DepartmentRepository : BaseRepository<Department>, IDepartmentRepository
     {
-        public DepartmentRepository(IConfiguration configuration) : base(configuration) 
+        public DepartmentRepository(IUnitOfWork unitOfWork) : base(unitOfWork) 
         {
             
         }

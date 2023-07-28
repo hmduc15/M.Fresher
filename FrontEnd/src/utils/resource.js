@@ -28,7 +28,11 @@ export const MISAResources = {
     form__title: {
         AddTitle: "Thêm tài sản",
         EditTitle: "Sửa tài sản",
-        DuplicateTitle: "Nhân bản tài sản"
+        DuplicateTitle: "Nhân bản tài sản",
+        AddReceipt: "Thêm chứng từ điều chuyển",
+        ComonInfor: "Thông tin chung",
+        TranferInfor: "Thông tin tài sản điều chuyển",
+        AddReceiptAsset: "Chọn tài sản điều chuyển"
     },
 
     //placeholder
@@ -84,7 +88,13 @@ export const MISAResources = {
         PurchaseDate: "Ngày mua",
         ProductionYear: "Ngày bắt đầu sử dụng",
         TrackedYear: "Năm theo dõi",
-        PriceUsed: "Giá trị còn lại"
+        PriceUsed: "Giá trị còn lại",
+        ReceiptCode: "Mã chứng từ",
+        ReceiptDate: "Ngày chứng từ",
+        TranferDate: "Ngày điều chuyển",
+        Note: "Ghi chú",
+        DepartmentCodeNew: "Bộ phận sử dụng mới",
+        UserNew: "Người sử dụng mới",
     },
 
     //error message input
@@ -103,7 +113,8 @@ export const MISAResources = {
         deleteOnly: "Bạn có muốn xóa tài sản ",
         deleteMore: "tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?",
         addCancel: "Bạn có muốn hủy khai báo tài sản này?",
-        editCancel: "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu các thay đổi này?"
+        editCancel: "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu các thay đổi này?",
+        addReceipt: "Dữ liệu đã thay đổi bạn có muốn lưu không?"
     },
 
     //content buton
@@ -113,12 +124,18 @@ export const MISAResources = {
         cancelPopup: "Hủy bỏ",
         delete: "Xóa",
         no: "Không",
+        yes: "Có",
         noSave: "Không lưu",
         save: "Lưu",
         year: "Năm",
         cancelForm: "Hủy",
-
-        agree: "Đồng ý"
+        agree: "Đồng ý",
+        tranferIn: "Điều chuyển trong đơn vị",
+        tranferOut: "Điều chuyển ngoài đơn vị",
+        receive: "Tiếp nhận tài sản",
+        addReceipt: "Thêm chứng từ",
+        infor: "Thông tin chi tiết",
+        choseAsset: "Chọn tài sản"
     },
 
     //tooltip button
@@ -137,7 +154,10 @@ export const MISAResources = {
         setting: "Cài đặt",
         collapsed: "Thu gọn",
         expanded: "Mở rộng",
-        close: "Đóng (ESC)"
+        close: "Đóng (ESC)",
+        reload: "Nạp",
+        print: "In",
+        feedBack: "Phản hồi"
     },
     //table paging
     paging: {
@@ -161,7 +181,16 @@ export const MISAResources = {
             cost: "Nguyên giá",
             trackedYear: "Năm theo dõi",
             action: "Chức năng",
-            residualPrice: "Giá trị còn lại"
+            residualPrice: "Giá trị còn lại",
+            receiptCode: "Mã chứng từ",
+            receiptDate: "Ngày chứng từ",
+            tranferDate: "Ngày điều chuyển",
+            receiptNote: "Ghi chú",
+            orgPrice: "Nguyên giá",
+            departmentNameNew: "Bộ phận điều chuyển đến",
+            reason: "Lý do",
+            userAsset: "Người đang sử dụng",
+            newUserAsset: "Người sử dụng mới"
         },
 
         key: {
@@ -175,7 +204,17 @@ export const MISAResources = {
             depreciationAmount: "DepreciationAmount",
             cost: "Cost",
             trackedYear: "TrackedYear",
-            residualPrice: "ResidualPrice"
+            residualPrice: "ResidualPrice",
+            receiptCode: "ReceiptCode",
+            receiptDate: "ReceiptDate",
+            tranferDate: "TranferDate",
+            receiptNote: "ReceiptNote",
+            orgPrice: "OrgPrice",
+            departmentNameNew: "DepartmentReciept",
+            reason: "reason",
+            userAsset: "UserAsset",
+            newUserAsset: "NewUserAsset"
+
         }
     },
     //day of Week for Datepicker
@@ -211,6 +250,11 @@ export const MISAResources = {
         search: "Tra cứu",
         report: "Báo cáo"
     },
+
+    //title tab view
+    title__tab: {
+        tranfer: "Điều chuyển"
+    }
 }
 
 

@@ -1,5 +1,6 @@
 <template>
   <div class="main__content">
+    <!-- Content top -->
     <div class="content__top">
       <div class="content__top--left">
         <div class="content__top--wrapper">
@@ -12,7 +13,8 @@
             :required="false"
             :isLabel="false"
             v-model="inputSearch"
-            @input="handleSearch(inputSearch)"
+            @input="clearSearch(inputSearch)"
+            @keydown.enter="handleSearch(inputSearch)"
           >
           </m-input>
           <div class="icon__search--sm btn__search"></div>
@@ -124,6 +126,7 @@
         </div>
       </div>
     </div>
+    <!-- Table -->
     <m-table
       :columns="col"
       :dataTable="assetList"
@@ -135,6 +138,7 @@
       @pageSize="chosePageSize"
       @loading="setLoading"
     ></m-table>
+    <!-- Form -->
     <asset-form
       :data="dataRecieved"
       :isShow="isShow"
@@ -143,6 +147,7 @@
       @openPopup="showPopup"
       @loading="setLoading"
     ></asset-form>
+    <!-- Popup -->
     <m-dialog v-if="isShowPopup || isReload">
       <template #content v-if="isReload">
         <m-loading></m-loading>
@@ -161,6 +166,7 @@
         ></m-popup>
       </template>
     </m-dialog>
+    <!-- Toast Message -->
     <m-toast
       :type="typeToast"
       :content="contentToast"
@@ -457,17 +463,29 @@ export default {
      * Author: HMDUC (15/06/2023)
      */
     handleSearch() {
-      clearTimeout(this.debounce);
       this.currentPage = 1;
-      this.debounce = setTimeout(() => {
-        this.getAssetList({
-          pageNumber: this.currentPage,
-          pageSize: this.pageSize,
-          searchInput: this.inputSearch,
-          categoryName: this.categoryFilter,
-          departmentName: this.departmentFilter,
-        });
-      }, 800);
+      this.getAssetList({
+        pageNumber: this.currentPage,
+        pageSize: this.pageSize,
+        searchInput: this.inputSearch,
+        categoryName: this.categoryFilter,
+        departmentName: this.departmentFilter,
+      });
+    },
+
+    clearSearch() {
+      if (this.inputSearch.length === 0) {
+        clearTimeout(this.debounce);
+        this.debounce = setTimeout(() => {
+          this.getAssetList({
+            pageNumber: 1,
+            pageSize: this.pageSize,
+            searchInput: this.inputSearch,
+            categoryName: this.categoryFilter,
+            departmentName: this.departmentFilter,
+          });
+        }, 800);
+      }
     },
 
     /**

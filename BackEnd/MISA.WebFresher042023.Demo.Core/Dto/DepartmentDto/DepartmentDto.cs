@@ -1,37 +1,35 @@
-﻿using MISA.WebFresher042023.Demo.Core.Resources;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MISA.WebFresher042023.Demo.Core.Dto.DepartmentDto
+namespace MISA.WebFresher042023.Demo.Application;
+
+public class DepartmentDto
 {
-    public class DepartmentDto
-    {
 
-        /// <summary>
-        /// Id Departmnet
-        /// </summary>
-        [Required]
-  
-        public Guid DepartmentId { get; set; }
+    /// <summary>
+    /// Id Departmnet
+    /// </summary>
+    [Required]
 
-        /// <summary>
-        /// Code Department
-        /// </summary>
-        public string? DepartmentCode { get; set; }
+    public Guid DepartmentId { get; set; }
 
-        /// <summary>
-        /// Name Department
-        /// </summary>
-        public string? DepartmentName { get; set; }
+    /// <summary>
+    /// Code Department
+    /// </summary>
+    public string? DepartmentCode { get; set; }
 
-        /// <summary>
-        /// Description 
-        /// </summary>
-        public string? Description { get; set; }
+    /// <summary>
+    /// Name Department
+    /// </summary>
+    public string? DepartmentName { get; set; }
 
-    }
+    /// <summary>
+    /// Description 
+    /// </summary>
+    public string? Description { get; set; }
+
 }

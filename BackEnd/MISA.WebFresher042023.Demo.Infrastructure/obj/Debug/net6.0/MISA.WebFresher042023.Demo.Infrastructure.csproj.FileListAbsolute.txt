@@ -1,8 +1,6 @@
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Infrastructure.deps.json
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Infrastructure.dll
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Infrastructure.pdb
-D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Core.dll
-D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Core.pdb
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Infrastructure.csproj.AssemblyReference.cache
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Infrastructure.AssemblyInfoInputs.cache
@@ -13,3 +11,7 @@ D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\obj\Debu
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\obj\Debug\net6.0\refint\MISA.WebFresher042023.Demo.Infrastructure.dll
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\obj\Debug\net6.0\MISA.WebFresher042023.Demo.Infrastructure.pdb
 D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\obj\Debug\net6.0\ref\MISA.WebFresher042023.Demo.Infrastructure.dll
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Application.dll
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.dll
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Application.pdb
+D:\MISA.WebFresher042023.Demo\MISA.WebFresher042023.Demo.Infrastructure\bin\Debug\net6.0\MISA.WebFresher042023.Demo.Domain.pdb

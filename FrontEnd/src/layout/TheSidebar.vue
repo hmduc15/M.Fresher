@@ -84,7 +84,7 @@ export default {
   },
   data() {
     return {
-      isCollapsed: false,
+      isCollapsed: true,
       activeIndex: 1,
       buttons: [
         {
@@ -113,7 +113,7 @@ export default {
             },
             {
               content: this.$_MISAResources.sidebar.tranfer,
-              path: "/tranferasset",
+              path: "/assettranfer",
             },
             {
               content: this.$_MISAResources.sidebar.receiptRecommend,

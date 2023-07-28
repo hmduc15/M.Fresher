@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MISA.WebFresher042023.Demo.Core.Entity;
-using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
+using MISA.WebFresher042023.Demo.Domain.Entity;
+using MISA.WebFresher042023.Demo.Application;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Domain.Enum;
+using Newtonsoft.Json.Linq;
+using System.Text.Json.Serialization;
 
 namespace MISA.WebFresher042023.Demo.Controllers
 {
@@ -14,13 +17,18 @@ namespace MISA.WebFresher042023.Demo.Controllers
     public class AssetsController : BaseController<AssetDto, AssetInsertDto, AssetUpdateDto>
     {
 
+        #region Field
         private readonly IAssetService _assetService;
 
+        #endregion
+
+        #region Constructor
         public AssetsController(IAssetService assetService) : base(assetService)
         {
             _assetService = assetService;
         }
 
+        #endregion
 
         /// <summary>
         /// API lấy ra mã tài sản mới
@@ -56,7 +64,7 @@ namespace MISA.WebFresher042023.Demo.Controllers
 
             if (assetPaggingList == null)
             {
-                return StatusCode(400);
+                return StatusCode((int)MISACode.BadResquest);
             }
             else
             {
@@ -64,6 +72,40 @@ namespace MISA.WebFresher042023.Demo.Controllers
             }
         }
         #endregion
+
+        /// <summary>
+        /// Hàm phân trang + tìm kiếm tài sản phục vụ thêm tài sản vào chứng từ
+        /// </summary>
+        /// <param name="ids">Danh sach Id tài sản cần loại bỏ</param>
+        /// <param name="pageSize">Số dòng hiển thị</param>
+        /// <param name="pageNumber">Số trang</param>
+        /// Author: HMDUC (28/07/2023)
+        [HttpPost("PaggingAssetChose")]
+        public async Task<object> GetPaggingAssetChose([FromBody] DataBodyPost data )
+        {
+        
+            var assetChose  = await _assetService.GetPaggingAssetChose(data.ids, data.pageSize, data.pageNumber);
+
+            if (assetChose == null)
+            {
+                return StatusCode((int)MISACode.BadResquest);
+            }
+            else
+            {
+                return Ok(assetChose);
+            }
+
+        }
+
+
+        public class DataBodyPost
+        {
+           
+            public List<Guid> ids { get; set; }
+            public int pageSize { get; set; }
+            public int pageNumber { get; set; }
+
+        }
 
         /// <summary>
         /// API tải xuống file Excel

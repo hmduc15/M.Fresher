@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
-using MISA.WebFresher042023.Demo.Core.Entity;
-using MISA.WebFresher042023.Demo.Core.Interface.Repository;
+using MISA.WebFresher042023.Demo.Domain;
+using MISA.WebFresher042023.Demo.Domain.Entity;
+using MISA.WebFresher042023.Demo.Domain.Interface;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
 
-        public CategoryRepository(IConfiguration configuration) : base(configuration)
+        public CategoryRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             
         }

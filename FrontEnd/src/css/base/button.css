@@ -3,6 +3,10 @@
     background-color: var(--white-color);
 }
 
+.btn__text>.text__btn {
+    display: block;
+}
+
 .btn__sub:focus {
     outline: 2px solid #a5c6ea;
 }
@@ -29,7 +33,7 @@
 }
 
 .btn__reload:hover {
-    background-color: #EFF2F4;
+    background-color: #E0E0E0;
 }
 
 .btn__reload>.text__btn {
@@ -61,7 +65,7 @@
 }
 
 .btn__main:focus {
-    outline: 2px solid #CCE4FF;
+    outline: 2px solid #9cc7f8;
     background-color: rgba(0, 99, 126);
 }
 
@@ -226,14 +230,16 @@
     background-color: #E0E0E0;
 }
 
+.btn__delete:active {
+    background-color: #EEEEEE;
+}
+
+
 .btn__delete:hover>[data-title]::after {
     opacity: 1;
     visibility: visible;
 }
 
-.btn__delete:active {
-    background-color: #EEEEEE;
-}
 
 .btn__sub .text__btn {
     display: block;
@@ -288,10 +294,10 @@
 }
 
 .btn__context {
-    width: 250px;
+    width: 100%;
     height: 38px;
     white-space: nowrap;
-    gap: 0 10px;
+    gap: 0 12px;
     display: flex;
     align-items: center;
     padding: 0 26px;
@@ -349,4 +355,78 @@
 
 .btn--focus {
     outline: 1px solid var(--blue-color-primary);
+}
+
+/* Asset tranfer */
+.btn__add--receipt {
+    display: flex;
+    padding: 8px 12px 8px;
+    gap: 0 5px;
+    height: 34px;
+    align-items: center
+}
+
+.btn__tab-view {
+    font-size: 13px;
+    height: 44px;
+    padding: 0 16px;
+    font-family: RobotoRegular;
+    font-weight: 700;
+    color: var(--gray--noactive);
+    border-radius: 3px;
+}
+
+.active__tab {
+    color: var(--black-color);
+    border-bottom: 3px solid #1aa4c8;
+}
+
+.btn__tab-view>.text__btn {
+    display: block;
+}
+
+.btn__infor {
+    padding: 5px 10px;
+    font-size: 13px;
+    height: 24px;
+}
+
+.btn__collapse-detail {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    background-color: #e4e4e4;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 2px;
+    padding-left: 2px;
+}
+
+.btn__chose {
+    border-radius: 2.5px;
+    height: 32px;
+    overflow: hidden;
+    background-color: #fff;
+    cursor: pointer;
+    border: 1px solid #1aa4c8;
+    padding: 13px;
+    display: flex;
+    gap: 0 8px;
+    align-items: center;
+}
+
+.btn__chose:hover {
+    background-color: var(--border-color);
+}
+
+.btn__chose>.text__btn {
+    font-family: RobotoMedium;
+    font-size: 13px;
+    color: #4f4f4f;
+
 }

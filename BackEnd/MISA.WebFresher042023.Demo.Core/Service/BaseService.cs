@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
-using MISA.WebFresher042023.Demo.Core.Enum;
-using MISA.WebFresher042023.Demo.Core.Interface.Repository;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
-using MISA.WebFresher042023.Demo.Core.MISAException;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Domain.Enum;
+using MISA.WebFresher042023.Demo.Domain.MISAException;
+using MISA.WebFresher042023.Demo.Domain.Resources;
+using MISA.WebFresher042023.Demo.Domain.Interface;
 
-namespace MISA.WebFresher042023.Demo.Core.Service
+namespace MISA.WebFresher042023.Demo.Application.Service
 {
     public abstract class BaseService<TEntity, TEntityDto, TEntityInsertDto, TEntityUpdateDto> : IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto>
     {
@@ -22,12 +22,12 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         }
         #endregion
 
+        #region Method
         /// <summary>
         ///  Hàm lấy ra danh sách EntityDto từ Db
         /// </summary>
         /// <returns>List EntityDto</returns>
         /// Author: HMDUC (19/06/2023)
-        #region GetAllAsync
         public async Task<List<TEntityDto>> GetAllAsync()
         {
             var entityList = await _baseRepository.GetAllAsync();
@@ -44,11 +44,10 @@ namespace MISA.WebFresher042023.Demo.Core.Service
                 entityDtos.Add(entityDto);
             }
 
-
             return entityDtos;
 
         }
-        #endregion
+
 
         /// <summary>
         /// Hàm lấy EntityDto theo Id
@@ -56,22 +55,20 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="Id">ID entity</param>
         /// <returns>entityDto</returns>
         /// Author: HMDUC (19/06/2023)
-        #region GetByIdAsync
         public async Task<TEntityDto> GetByIdAsync(Guid id)
         {
             var entity = await _baseRepository.GetByIdAsync(id);
 
             if (entity == null)
             {
-                throw new NotFoundException(Resources.ResourceVN.Error_NotExit_Asset, 404);
+                throw new NotFoundException(ResourceVN.Error_NotExit_Asset, 404);
             }
 
             var entityDto = _mapper.Map<TEntityDto>(entity);
 
             return entityDto;
-
         }
-        #endregion
+
 
         /// <summary>
         ///  Hàm lấy EntityDto theo Code
@@ -79,7 +76,6 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="Code">Mã Entity</param>
         /// <returns>entityDto</returns>
         /// Author: HMDUC (19/06/2023)
-        #region GetByCodeAsync
         public async Task<TEntityDto> GetByCodeAsync(string code)
         {
             var entity = await _baseRepository.GetByCodeAsync(code);
@@ -90,7 +86,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             return entityDto;
 
         }
-        #endregion
+
 
         /// <summary>
         /// Hàm thêm mới EntityInsertDto
@@ -100,10 +96,8 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// Row Affected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-        #region InsertAsync
         public async Task<int> InsertAsync(TEntityInsertDto entityInsertDto)
         {
-            var errorData = new Dictionary<string, string>();
             var entity = _mapper.Map<TEntity>(entityInsertDto);
 
             //Get table Name   
@@ -112,17 +106,11 @@ namespace MISA.WebFresher042023.Demo.Core.Service
             // Check validate data
             ValidateEntityData(entity);
 
-            //Check duplicate
-            var columnCode = $"{tableName}Code";
-            var entityCode = entity?.GetType().GetProperty(columnCode)?.GetValue(entity)?.ToString();
-            CheckDuplicate(entity, entityCode);
-
-            //Check Validate Business
-            this.CheckValidateBusiness(entity);
+            //Check validate business
+            ValidateBusiness(entity);
 
             //Initial Data for Entity
             var columnId = $"{tableName}Id";
-
             var entityId = typeof(TEntity).GetProperty($"{columnId}");
             var createdDate = typeof(TEntity).GetProperty("CreatedDate");
 
@@ -136,7 +124,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             return rowEffected;
         }
-        #endregion
+
 
         /// <summary>
         /// Hàm cập nhật EntityInsertDto
@@ -146,23 +134,15 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// Row Affected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-        #region UpdateAsync
         public async Task<int> UpdateAsync(TEntityUpdateDto entityUpdateDto)
         {
-            var errorData = new Dictionary<string, string>();
             var entity = _mapper.Map<TEntity>(entityUpdateDto);
-
-            //Get table Name   
-            var tableName = typeof(TEntityUpdateDto).Name.Replace("UpdateDto", "");
 
             // Check validate data
             ValidateEntityData(entity);
 
-            //Check duplicate
-            var columnCode = $"{tableName}Code";
-            var entityCode = entity?.GetType().GetProperty(columnCode)?.GetValue(entity)?.ToString();
-            CheckDuplicate(entity, entityCode, false);
-
+            //Check validate business
+            ValidateBusiness(entity, false);
 
             //Initial data ModifiedDate
             var modifiedDate = typeof(TEntity).GetProperty("ModifiedDate");
@@ -175,7 +155,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             return rowEffected;
         }
-        #endregion
+
 
         /// <summary>
         /// Hàm xóa Entity theo Id
@@ -185,22 +165,21 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         ///  Row Affected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-        #region DeleteAsync
         public async Task<int> DeleteAsync(Guid id)
         {
             var res = await _baseRepository.GetByIdAsync(id);
 
-            //check exit Asset before delete
+            //check Exist Entity
             if (res == null)
             {
-                throw new NotFoundException(Resources.ResourceVN.Error_NotExit_Asset, 404);
+                throw new NotFoundException(ResourceVN.Error_NotExit_Asset, 404);
             }
 
             var rowAffected = await _baseRepository.DeleteEntityAsync(id);
 
             return rowAffected;
         }
-        #endregion
+
 
         /// <summary>
         /// Hàm xóa nhiều theo danh sách Id
@@ -210,22 +189,20 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// RowsAffected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (20/06/2023)
-        #region DeleteMulAsync
         public async Task<int> DeleteMulAsync(List<Guid> ids)
         {
             var rowsAffected = await _baseRepository.DeleteEntityMulAsync(ids);
 
             return rowsAffected;
         }
-        #endregion
+
 
         /// <summary>
-        /// Hàm Validate data
+        /// Hàm check validate data input
         /// </summary>
         /// <param name="entity">TEntity</param>
         /// <exception cref="ValidateException"></exception>
         /// Author: HMDUC (20/06/2023)
-        #region ValidaeEnityData
         private void ValidateEntityData(TEntity entity)
         {
             var tableName = typeof(TEntity).Name;
@@ -237,26 +214,14 @@ namespace MISA.WebFresher042023.Demo.Core.Service
 
             var errorData = new Dictionary<string, string>();
 
-            CheckNull(errorData, entityCode, columnCode, Resources.ResourceVN.Empty_Code);
-            CheckNull(errorData, entityName, columnName, Resources.ResourceVN.Empty_Name);
-            CheckLength(errorData, entityCode, columnCode, Resources.ResourceVN.Error_Length_Code, 20);
+            CheckNull(errorData, entityCode, columnCode, ResourceVN.Empty_Code);
+            CheckNull(errorData, entityName, columnName, ResourceVN.Empty_Name);
+            CheckLength(errorData, entityCode, columnCode, ResourceVN.Error_Length_Code, 20);
 
             if (errorData.Count > 0)
             {
                 throw new ValidateException(errorData, (int)MISACode.Validate);
             }
-        } 
-        #endregion
-
-        /// <summary>
-        /// Hàm check trùng mã tài sản 
-        /// </summary>
-        /// <param name="entity">TEntity</param>
-        /// <param name="code">Mã Entity</param>
-        /// <param name="isInsert">Check Insert or Update</param>
-        /// Author: HMDUC (22/06/2023)
-        protected virtual void CheckDuplicate(TEntity entity, string? code, bool isInsert = true)
-        {
         }
 
         /// <summary>
@@ -267,10 +232,7 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="entityField">Tên Entity Field cần check</param>
         /// <param name="errMessage">Message lỗi</param>
         /// Author: HMDUC (22/06/2023)
-        protected virtual void CheckNull(Dictionary<string, string> errData, string? value, string? entityField, string errMessage)
-        {
-
-        }
+        protected virtual void CheckNull(Dictionary<string, string> errData, string? value, string entityField, string errMessage) { }
 
         /// <summary>
         ///  Hàm check length Entity Field
@@ -280,18 +242,15 @@ namespace MISA.WebFresher042023.Demo.Core.Service
         /// <param name="entityField">Tên Entity Field cần check</param>
         /// <param name="errMessage">Message lỗi</param>
         /// Author: HMDUC (22/06/2023)
-        protected virtual void CheckLength(Dictionary<string, string> errData, string? value, string entityField, string errorMessage, int maxLength)
-        {
-
-        }
+        protected virtual void CheckLength(Dictionary<string, string> errData, string? value, string entityField, string errorMessage, int maxLength) { }
 
         /// <summary>
-        /// Hàm check validate nghiệp vụ
+        ///  Hàm check validate nghiệp vụ
         /// </summary>
-        /// <param name="entity">Entity cần check</param>
-        /// Author: HMDUC (22/06/2023)
-        protected virtual void CheckValidateBusiness(TEntity entity)
-        {
-        }
+        /// <param name="entity">TEntity</param>
+        /// <param name="isInsert">Method là Insert hay Update</param>
+        /// Author: HMDUC (20/06/2023)
+        protected virtual void ValidateBusiness(TEntity entity, bool isInsert = true) { }
+        #endregion
     }
 }

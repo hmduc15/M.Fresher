@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MISA.WebFresher042023.Demo.Core.Dto.CategoryDto;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Application;
 using MySqlConnector;
 
 namespace MISA.WebFresher042023.Demo.Controllers
@@ -11,12 +11,15 @@ namespace MISA.WebFresher042023.Demo.Controllers
     [ApiController]
     public class CategoryController : BaseController<CategoryDto, CategoryInsertDto, CategoryUpdateDto>
     {
+        #region Field
         private readonly ICategoryService _categoryService;
+        #endregion
 
-
-        public CategoryController(ICategoryService categoryService) : base(categoryService) 
+        #region Constructor
+        public CategoryController(ICategoryService categoryService) : base(categoryService)
         {
             _categoryService = categoryService;
-        }
+        } 
+        #endregion
     }
 }

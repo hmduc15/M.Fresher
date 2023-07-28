@@ -1,7 +1,7 @@
 const sideBar = {
      namespaced: true,
      state: {
-          isCollapsed: false,
+          isCollapsed: true,
      },
      mutations: {
           /**

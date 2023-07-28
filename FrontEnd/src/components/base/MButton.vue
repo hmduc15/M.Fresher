@@ -4,6 +4,7 @@
     :content="title"
     :placement="posTooltip"
     :effect="isEffect"
+    :hide-after="0"
   >
     <template #child>
       <button :type="type" :class="className" @click.stop="$emit('click')">

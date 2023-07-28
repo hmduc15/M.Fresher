@@ -5,34 +5,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MISA.WebFresher042023.Demo.Core.Dto.CategoryDto
+namespace MISA.WebFresher042023.Demo.Application
 {
+    /// <summary>
+    /// Loại tài sản khi cập nhật
+    /// </summary>
     public class CategoryUpdateDto
     {
         /// <summary>
-        /// Code Category
+        /// Mã loại tài sản
         /// </summary>
         [Required]
         public string CategoryCode { get; set; }
 
         /// <summary>
-        /// Name Category
+        /// Tên loại tài sản
         /// </summary>
         [Required]
         public string? CategoryName { get; set; }
 
         /// <summary>
-        /// DepreciationRate Category Asset
+        /// Tỷ lệ hao mòn
         /// </summary>
         public float? DepreciationRate { get; set; }
 
         /// <summary>
-        /// LifeTime
+        /// Số năm sử dụng 
         /// </summary>
         public int? LifeTime { get; set; }
 
         /// <summary>
-        /// Description
+        /// Mô tả 
         /// </summary>
         /// 
         public string? Description { get; set; }

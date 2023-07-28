@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MISA.WebFresher042023.Demo.Core\MISA.WebFresher042023.Demo.Core.csproj" />
+    <ProjectReference Include="..\MISA.WebFresher042023.Demo.Core\MISA.WebFresher042023.Demo.Application.csproj" />
   </ItemGroup>
 
 </Project>

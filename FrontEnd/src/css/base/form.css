@@ -54,7 +54,7 @@
     text-align: right;
     display: flex;
     align-items: center;
-    flex-direction: row-reverse;
+    justify-content: flex-end;
 }
 
 .btn--form {
@@ -66,6 +66,17 @@
     margin-right: 12px;
     background-color: rgba(239, 239, 239, .7294117647);
     border: 1px solid #afafaf;
+}
+
+.btn--form-chose {
+    font-size: 13px;
+    width: unset;
+    padding: 8px 16px;
+    font-family: 'RobotoMedium';
+}
+
+.btn--form-chose>.text__btn {
+    color: #1f2229;
 }
 
 .btn--form:hover {

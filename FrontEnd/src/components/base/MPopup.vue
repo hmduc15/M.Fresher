@@ -46,11 +46,18 @@
               <span>{{ this.$_MISAResources.popup.addCancel }}</span>
             </div>
           </template>
-          <template v-else>
+          <template
+            v-else-if="this.formMode === this.$_MISAResources.form__mode.edit"
+          >
             <div>
               <span>{{ this.$_MISAResources.popup.editCancel }}</span>
             </div>
           </template>
+        </template>
+        <template v-else-if="type === 'warning__modal'">
+          <div>
+            <span>{{ this.$_MISAResources.popup.addReceipt }}</span>
+          </div>
         </template>
         <template v-else-if="type === 'error'">
           <template v-if="errMessage.length > 1">
@@ -114,6 +121,21 @@
             ></m-button>
           </template>
         </template>
+        <template v-else-if="type === 'warning__modal'">
+          <m-button
+            ref="btnCancel"
+            :content="this.$_MISAResources.content__button.no"
+            className="btn--sm-pop btn__cancel"
+            tabindex="1"
+            @click="handleBtnCancel"
+          ></m-button>
+          <m-button
+            :content="this.$_MISAResources.content__button.yes"
+            className="btn--sm-pop btn__main"
+            @click="handleCloseForm()"
+            tabindex="2"
+          ></m-button>
+        </template>
         <template v-else-if="type === 'error'">
           <m-button
             :content="this.$_MISAResources.content__button.agree"
@@ -135,7 +157,15 @@ import { mapActions, mapState } from "vuex";
 
 export default {
   name: "MPopup",
-  props: ["dataPopup", "icon", "isShow", "type", "dataForm", "errMessage"],
+  props: [
+    "dataPopup",
+    "icon",
+    "isShow",
+    "type",
+    "dataForm",
+    "errMessage",
+    "content",
+  ],
   components: {
     "m-button": MButton,
   },

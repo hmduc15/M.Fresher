@@ -5,6 +5,7 @@
       {{ this.$_MISAResources.label__input[name] }}
       <span v-if="required"> * </span>
     </label>
+    <!-- Input Checkbox -->
     <template v-if="type === 'checkbox'">
       <!-- Checkbox input template -->
       <input
@@ -17,6 +18,7 @@
         :disabled="isDisabled"
       />
     </template>
+    <!-- Input Text -->
     <template v-else-if="type === 'text'">
       <!-- Text input template -->
       <input
@@ -44,8 +46,8 @@
         {{ this.errMesage }}
       </div>
     </template>
+    <!-- Input Datepicker -->
     <template v-else-if="type === 'date'">
-      <!-- Date input template with default value -->
       <VueDatePicker
         v-model="modelValue"
         :format="dateFormat"

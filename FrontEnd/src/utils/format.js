@@ -21,6 +21,21 @@ export function formatDenary(number) {
     return formatted;
 }
 
+/**
+ * Funtion format date
+ * @param {*} data 
+ * @returns 22/02/2023
+ */
+export function formatDate(data) {
+    let date = new Date(data);
+    let year = date.getFullYear().toString();
+    let month = (date.getMonth() + 1).toString().padStart(2, '0');
+    let day = date.getDate().toString().padStart(2, '0');
+
+    return `${day}/${month}/${year}`;
+
+}
+
 
 /**
  * funtion format decimal

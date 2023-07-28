@@ -8,6 +8,7 @@
           v-ctrl-w="handleCancel"
           v-ctrl-s="submitData"
         >
+          <!-- Body Form -->
           <div class="form__body">
             <m-button
               type="button"
@@ -241,20 +242,21 @@
               </div>
             </div>
           </div>
+          <!-- Footer Form -->
           <div class="form__footer">
             <m-button
-              type="button"
-              :content="this.$_MISAResources.content__button.save"
-              className="btn__main btn__submit"
-              @click="submitData"
-            ></m-button>
-            <m-button
-              ref="lastBtn"
               type="button"
               :content="this.$_MISAResources.content__button.cancelForm"
               className="btn__sub btn--form "
               @click="handleCancel"
-              @keydown.tab.prevent="backTabIndex"
+            ></m-button>
+            <m-button
+              type="button"
+              ref="lastBtn"
+              :content="this.$_MISAResources.content__button.save"
+              className="btn__main btn__submit"
+              @click="submitData"
+              @keydown="handKeyDownBtn"
             ></m-button>
           </div>
         </form>
@@ -382,6 +384,17 @@ export default {
      */
     moveFocus() {
       this.$refs.lastBtn.$el.focus();
+    },
+
+    /**
+     * Function handle keydown last btn form
+     * Author: HMDUC (19/07/2023)
+     */
+    handKeyDownBtn(event) {
+      if (event.key === "Tab" && !event.shiftKey) {
+        event.preventDefault();
+        this.backTabIndex();
+      }
     },
 
     /**

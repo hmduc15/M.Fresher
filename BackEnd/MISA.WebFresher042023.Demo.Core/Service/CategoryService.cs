@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using MISA.WebFresher042023.Demo.Core.Dto.CategoryDto;
-using MISA.WebFresher042023.Demo.Core.Entity;
-using MISA.WebFresher042023.Demo.Core.Interface.Repository;
-using MISA.WebFresher042023.Demo.Core.Interface.Service;
+using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Application;
+using MISA.WebFresher042023.Demo.Domain.Entity;
+using MISA.WebFresher042023.Demo.Application.Service;
+using MISA.WebFresher042023.Demo.Domain.Interface;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,19 +16,19 @@ namespace MISA.WebFresher042023.Demo.Core.Service
     /// <summary>
     /// Implement Interface Category Service
     /// </summary>
-    public class CategoryService : BaseService<Category,CategoryDto,CategoryInsertDto,CategoryUpdateDto>, ICategoryService
+    public class CategoryService : BaseService<Category, CategoryDto, CategoryInsertDto, CategoryUpdateDto>, ICategoryService
     {
-         private readonly ICategoryRepository _categoryRepository;
+        #region Field
+        private readonly ICategoryRepository _categoryRepository;
+        #endregion
 
-        /// <summary>
-        /// use Interface Repository
-        /// </summary>
-        /// <param name="categoryRepository"></param>
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper) : base(categoryRepository, mapper) 
+        #region Constructor
+        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper) : base(categoryRepository, mapper)
         {
             _categoryRepository = categoryRepository;
-        }
+        } 
+        #endregion
 
-     
+
     }
 }

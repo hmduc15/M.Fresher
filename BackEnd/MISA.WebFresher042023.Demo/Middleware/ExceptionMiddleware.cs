@@ -1,6 +1,6 @@
-﻿using MISA.WebFresher042023.Demo.Core.Enum;
-using MISA.WebFresher042023.Demo.Core.MISAException;
-using MISA.WebFresher042023.Demo.Core.Resources;
+﻿using MISA.WebFresher042023.Demo.Domain.Enum;
+using MISA.WebFresher042023.Demo.Domain.MISAException;
+using MISA.WebFresher042023.Demo.Domain.Resources;
 using System.Diagnostics;
 using System.Net;
 using System.Text.Json;

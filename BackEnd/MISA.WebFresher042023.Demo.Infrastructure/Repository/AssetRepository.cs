@@ -1,23 +1,19 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MISA.WebFresher042023.Demo.Core.Entity;
+using MISA.WebFresher042023.Demo.Domain.Entity;
 using MySqlConnector;
 using Dapper;
-using MISA.WebFresher042023.Demo.Core.MISAException;
-using MISA.WebFresher042023.Demo.Core.Resources;
-using MISA.WebFresher042023.Demo.Core.Dto;
+using MISA.WebFresher042023.Demo.Domain.Resources;
 using System.Data;
-using MISA.WebFresher042023.Demo.Core.Interface.Repository;
+using MISA.WebFresher042023.Demo.Domain.Interface;
 using static Dapper.SqlMapper;
-using System.Text.RegularExpressions;
 using OfficeOpenXml;
-using static MISA.WebFresher042023.Demo.Core.MISAAttribute.CustomAttribute;
+using static MISA.WebFresher042023.Demo.Domain.MISAAttribute.CustomAttribute;
 using System;
 using OfficeOpenXml.Style;
 using System.Reflection;
 using System.Drawing;
-using AutoMapper;
-using MISA.WebFresher042023.Demo.Core.Dto.Dto.Asset;
-using System.Data.Common;
+using MISA.WebFresher042023.Demo.Domain;
+using Newtonsoft.Json;
 
 namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 {
@@ -27,12 +23,11 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
     public class AssetRepository : BaseRepository<Asset>, IAssetRepository
     {
 
-
         #region Constructor
-        public AssetRepository(IConfiguration configuration) : base(configuration)
+        public AssetRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
 
-        } 
+        }
         #endregion
 
 
@@ -54,11 +49,11 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             parameters.Add("@M_AssetId", assetId);
             parameters.Add("@M_AssetCode", assetCode);
 
-            var result = _connection.QueryFirstOrDefault<bool>(sqlCommand, parameters, commandType: CommandType.StoredProcedure);
+            var result = _uow.Connection.QueryFirstOrDefault<bool>(sqlCommand, parameters, commandType: CommandType.StoredProcedure, transaction: _uow.Transaction);
 
             return result;
 
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -88,7 +83,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             parameters.Add("@totalRecord", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@totalRow", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-            var result = await _connection.QueryMultipleAsync(sqlCommandPagging, parameters, commandType: CommandType.StoredProcedure);
+            var result = await _uow.Connection.QueryMultipleAsync(sqlCommandPagging, parameters, commandType: CommandType.StoredProcedure, transaction: _uow.Transaction);
 
             //Get assetPagging
             var assetPagging = await result.ReadAsync<Asset>();
@@ -109,9 +104,46 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             };
 
             return response;
-        } 
+        }
         #endregion
 
+        /// <summary>
+        /// Hàm phân trang + tìm kiếm tài sản phục vụ thêm tài sản vào chứng từ
+        /// </summary>
+        /// <param name="ids">Danh sach Id tài sản cần loại bỏ</param>
+        /// <param name="pageSize">Số dòng hiển thị</param>
+        /// <param name="pageNumber">Số trang</param>
+        /// Author: HMDUC (28/07/2023)
+        public async Task<object> GetPaggingAssetChose(List<Guid> ids, int pageSize, int pageNumber)
+        {
+            var sqlCommand = "Proc_Asset_Chose";
+
+            DynamicParameters parameters = new DynamicParameters();
+            var paramString = JsonConvert.SerializeObject(ids);
+            parameters.Add("@ids", paramString);
+            parameters.Add("@pageSize", pageSize);
+            parameters.Add("@pageNumber", pageNumber);
+            parameters.Add("@totalRow", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            var result = await _uow.Connection.QueryMultipleAsync(sqlCommand,parameters,commandType: CommandType.StoredProcedure,transaction: _uow.Transaction);
+
+            //Get asset Pagging
+            var assetPagging = await result.ReadAsync<Asset>();
+
+            //Get assetAll
+            var assetAll = await result.ReadAsync<Asset>();
+
+            int totalRow = parameters.Get<int>("totalRow");
+
+            var response = new
+            {
+                data = assetPagging.ToList(),
+                totalRow = totalRow,
+                dataSumaryAll = assetAll.ToList(),
+            };
+
+            return response;
+        }
 
         /// <summary>
         /// Hàm lấy mã tài sản mới nhất phục vụ thêm mới tài sản
@@ -124,21 +156,14 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             //Get tableName Entity
             var tableName = typeof(Asset).Name;
 
-            //connect mysql
-            var sqlConnection = new MySqlConnection(_connectionString);
+            //Sql command line
             var sqlCommand = $"CALL Proc_{tableName}_GetNew";
 
-            //open connection
-            await sqlConnection.OpenAsync();
-
-            var newCode = await sqlConnection.QueryAsync<string>(sql: sqlCommand);
-
-            //close connection
-            await sqlConnection.CloseAsync();
+            var newCode = await _uow.Connection.QueryAsync<string>(sql: sqlCommand, transaction: _uow.Transaction);
 
             return string.Join(",", newCode);
 
-        } 
+        }
         #endregion
 
         /// <summary>
@@ -149,18 +174,10 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
         #region GetListExport
         public async Task<Stream> GetListExport()
         {
-            //connect mysql
-            var sqlConnection = new MySqlConnection(_connectionString);
+            //Sql command line
             var sqlCommand = $"CALL Proc_Asset_GetAll";
 
-            //opent connection
-            await sqlConnection.OpenAsync();
-
-            var listExport = await sqlConnection.QueryAsync<Asset>(sql: sqlCommand);
-
-
-            //close connection
-            await sqlConnection.CloseAsync();
+            var listExport = await _uow.Connection.QueryAsync<Asset>(sql: sqlCommand, transaction: _uow.Transaction);
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -176,7 +193,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             stream.Position = 0;
 
             return package.Stream;
-        } 
+        }
         #endregion
 
 
@@ -295,7 +312,7 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
         private readonly List<PropertyInfo> excelColummnProperties = typeof(Asset)
      .GetProperties()
      .Where(c => c.GetCustomAttributes(typeof(ExcelColumnAttribute), true).Length > 0)
-     .ToList(); 
+     .ToList();
         #endregion
     }
 }

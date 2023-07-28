@@ -87,5 +87,54 @@ export const paggingTable = async (pageNumber, pageSize, searchInput, department
     return res.data;
 }
 
+/**
+ * Function pagging table receipt
+ * @param {*} pageNumber 
+ * @param {*} pageSize 
+ * @param {*} searchInput 
+ * @param {*} departmentName 
+ * @param {*} categoryName 
+ * Author: HMDUC (27/07/2023)
+ */
+export const paggingTableTranferReceipt = async (pageNumber, pageSize, searchInput, departmentName, categoryName) => {
+    let queryParams = `pageSize=${pageSize}&pageNumber=${pageNumber}`;
+    if (searchInput) {
+        queryParams += `&searchInput=${searchInput}`;
+    }
+    if (departmentName) {
+        queryParams += `&m_DepartmentName=${departmentName}`;
+    }
+    if (categoryName) {
+        queryParams += `&m_CategoryName=${categoryName}`;
+    }
+    const res = await request.get(`/Receipt/PaggingList?${queryParams}`);
+
+    return res.data;
+}
+
+/**
+ * Function get and pagging table asset tranfer
+ * @param {*} id 
+ * @param {*} pageNumber 
+ * @param {*} pageSize 
+ * Author: HMDUC (27/07/2023) 
+ */
+export const paggingTableTranferAsset = async (id, pageNumber, pageSize,) => {
+    const res = await request.get(`Receipt/PaggingListAsset?id=${id}&pageSize=${pageSize}&pageNumber=${pageNumber}`);
+    return res.data;
+}
+/**
+ * Function get and pagging list asset chose
+ * @param {*} ids 
+ * @param {*} pageNumber 
+ * @param {*} pageSize 
+ * @returns 
+ */
+export const paggingAssetChose = async (ids, pageSize, pageNumber) => {
+    const res = await request.post(`Assets/PaggingAssetChose`, { ids: ids, pageSize: pageSize, pageNumber: pageNumber });
+    return res.data;
+}
+
+
 
 export * as request from "@/services/request"

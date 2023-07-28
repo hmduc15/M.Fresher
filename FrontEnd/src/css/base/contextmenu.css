@@ -10,6 +10,10 @@
     background-color: var(--white-color);
 }
 
+.btn__context>.icon__ctm {
+    transform: unset;
+}
+
 
 @keyframes animateOpen {
     0% {
