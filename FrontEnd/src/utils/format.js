@@ -36,6 +36,50 @@ export function formatDate(data) {
 
 }
 
+/**
+ * Function formatIndo China Time
+ * @param {*} date 
+ * @returns 
+ */
+export function formatIndochinaTime(date) {
+    const gmtOffset = -7 * 60;
+    const time = new Date(date);
+    const indoTime = new Date(time.getTime() + gmtOffset * 60 * 1000);
+    return indoTime;
+}
+
+/**
+ * Function format time
+ * @param {*} date 
+ * @returns 
+ */
+export function convertRequest(date) {
+    const time = new Date(date);
+    const year = time.getFullYear();
+    const month = time.getMonth() + 1; // Lưu ý: getMonth() trả về giá trị từ 0 đến 11
+    const day = time.getDate();
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    const seconds = time.getSeconds();
+    const formatDate = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}T${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.000`;
+    return formatDate
+}
+
+/**
+ * Function format to ISOstring
+ * Author: HMDUC (15/12/2002)
+ */
+
+export function convertToISOString(date) {
+    const parts = date.split("/");
+    const day = parts[0];
+    const month = parts[1];
+    const year = parts[2];
+    const dateObject = new Date(`${year}-${month}-${day}`);
+    const isoString = dateObject.toISOString();
+    return isoString;
+
+}
 
 /**
  * funtion format decimal

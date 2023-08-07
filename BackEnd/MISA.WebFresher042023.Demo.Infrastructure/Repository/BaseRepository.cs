@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using MISA.WebFresher042023.Demo.Domain;
 using MISA.WebFresher042023.Demo.Domain.Entity;
-using MISA.WebFresher042023.Demo.Domain.Interface;
+using MISA.WebFresher042023.Demo.Domain.Interface.Repository;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -41,9 +41,9 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             //connect mysql
             var sqlCommand = $"CALL Proc_{TableName}_GetAll";
 
-            var assets = await _uow.Connection.QueryAsync<TEntity>(sql: sqlCommand, transaction: _uow.Transaction);
+            var listEntity = await _uow.Connection.QueryAsync<TEntity>(sql: sqlCommand, transaction: _uow.Transaction);
 
-            return assets.ToList();
+            return listEntity.ToList();
 
         }
         #endregion

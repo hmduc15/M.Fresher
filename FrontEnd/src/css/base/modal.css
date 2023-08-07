@@ -10,6 +10,15 @@
      animation: openModal 0.3s ease;
 }
 
+.modal--fullscreen>.modal__content>.modal--body {
+     overflow-y: auto;
+}
+
+.modal--fullscreen>.modal__content>.modal--body::-webkit-scrollbar {
+     width: 0;
+     height: 0;
+}
+
 @keyframes openModal {
      from {
           transform: translateY(-200px);
@@ -52,16 +61,27 @@
      height: 100%;
 }
 
+.body__content>.title {
+     margin-bottom: 16px;
+}
+
 .modal__content {
      height: 100%;
 }
 
-#title {
+
+.detail__action {
+     height: 52px;
+}
+
+.title {
      font-size: 14px;
      height: 22px;
      font-weight: 500;
      color: #242e42;
      font-family: RobotoMedium;
+     display: flex;
+     align-items: center;
 }
 
 .card__body {
@@ -70,9 +90,12 @@
      padding-bottom: 24px;
 }
 
+.card__body>.row:first-child {
+     height: 68px;
+}
 
 .body__table {
-     height: calc(100% - 175px);
+     height: calc(100% - 220px);
 }
 
 .detail__action {
@@ -80,6 +103,8 @@
      align-items: center;
      justify-content: space-between;
 }
+
+
 
 .mg--16 {
      margin-top: 16px;
@@ -91,22 +116,6 @@
      flex-wrap: wrap;
 }
 
-.col-2 {
-     flex: 0 0 auto;
-     width: 16.6666666667%;
-     padding: 0 10px;
-}
-
-.col-6 {
-     flex: 0 0 auto;
-     width: 50%;
-}
-
-.col-3 {
-     flex: 0 0 auto;
-     width: 25%;
-     padding: 0 10px;
-}
 
 .form-outline .form-control {
      min-height: auto;
@@ -122,6 +131,38 @@
      align-items: center;
      justify-content: flex-end;
      border-top: 1px solid rgba(0, 0, 0, .16);
+     position: relative;
+     z-index: 99;
+}
+
+.form__check {
+     display: flex;
+     flex-direction: row-reverse;
+     justify-content: center;
+     align-items: center;
+     gap: 0 10px;
+     margin: 0 10px;
+}
+
+.chose__department {
+     margin-top: 16px;
+     display: flex;
+     gap: 0 30px;
+}
+
+.chose__input {
+     display: flex;
+     align-items: center;
+}
+
+.chose--after>.label__input, .chose--before>.label__input {
+     margin-bottom: 0;
+     cursor: pointer;
+}
+
+.department__append {
+     padding: 0 10px;
+     margin-top: 15px;
 }
 
 /* Form chose asset */
@@ -166,8 +207,34 @@
 .form__chose--footer {
      height: 50px;
      position: absolute;
-     bottom: -5px;
-     right: 10px;
+     bottom: 0px;
+     right: 0;
+     width: 100%;
+     padding: 0 10px;
+     display: flex;
+     flex-wrap: wrap;
+     flex-shrink: 0;
+     align-items: center;
+     justify-content: flex-end;
+     font-family: RobotoRegular;
+}
+
+.selected__wrapper {
+     font-size: 13px;
+     display: flex;
+     align-items: center;
+     gap: 0 16px;
+}
+
+.clear__selected {
+     color: var(--blue-color-primary);
+     cursor: pointer;
+     background-color: rgba(0, 0, 0, 0);
+     border: none;
+}
+
+.btn__footer {
+     justify-content: flex-end;
 }
 
 .border--bottom {

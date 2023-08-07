@@ -2,6 +2,15 @@
     width: 536px;
 }
 
+.input--sm {
+    width: 40px;
+    text-align: center;
+}
+
+.input--md {
+    width: 350px;
+}
+
 .input--default {
     width: 260px;
 }
@@ -95,10 +104,11 @@
     margin-bottom: 8px;
     font-family: RobotoMedium;
     font-size: 14px;
+    user-select: none;
 }
 
 .label__input span {
-    color: red
+    color: red;
 }
 
 .input__row {
@@ -106,8 +116,14 @@
     gap: 0 16px;
 }
 
+
+
 .input--gray {
     background-color: #EEEEEE;
+}
+
+.input--white {
+    background-color: var(--white-color);
 }
 
 .input__btn {
@@ -117,6 +133,16 @@
     position: absolute;
     right: 6px;
     top: 40%;
+}
+
+.input--ceil {
+    width: 240px;
+    margin-left: 1px;
+    height: 35px;
+}
+
+.input--border-focus {
+    border: 1px solid var(--blue-color-primary);
 }
 
 .input__number--r {

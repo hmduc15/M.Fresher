@@ -9,7 +9,10 @@
       @mouseup.capture="handleStopResize"
       class="table__container"
     >
-      <div class="table__content table--tranfer">
+      <div
+        class="table__content table--tranfer"
+        :class="[`${!isCollapsed ? 'table--tranfer-expand' : ''}`]"
+      >
         <!-- Table Header -->
         <div
           class="table__content--header"
@@ -31,7 +34,7 @@
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
                 `${column.key === 'ReceiptNote' ? 'flex-1' : ''}`,
-                `${column.key === 'reason' ? 'flex-1' : ''}`,
+                `${column.key === 'Reason' ? 'flex-1' : ''}`,
                 `${column.type === 'date' ? 'align--center' : ''}`,
               ]"
             >
@@ -126,7 +129,7 @@
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
                 `${column.key === 'ReceiptNote' ? 'flex-1' : ''}`,
-                `${column.key === 'reason' ? 'flex-1' : ''}`,
+                `${column.key === 'Reason' ? 'flex-1' : ''}`,
                 `${column.type === 'date' ? 'align--center' : ''}`,
               ]"
               :style="[`width: ${widthDefault[index]}px`]"
@@ -298,7 +301,10 @@
       <!-- Table Empty -->
       <div
         class="empty__data empty__data--sm icon--empty"
-        v-if="dataTable.data?.length === 0 && !isLoadingDetail"
+        v-if="
+          (dataTable.data?.length === 0 && !isLoadingDetail) ||
+          (this.dataTable.length === 0 && !isLoadingDetail)
+        "
       ></div>
       <!-- Table Fixed Content -->
       <div class="fixed__content" v-if="isFixedAction">
@@ -331,29 +337,7 @@
             @mouseenter.s="handleHoverStart(indexRow)"
             @mouseleave="handleHoverEnd"
           >
-            <div class="fixed__ceil--item">
-              <m-button
-                className="btn__row btn__edit"
-                iconButton="icon__edit"
-                @click="handleEdit(data, $event)"
-                :title="this.$_MISAResources.tooltip__btn.edit"
-                posTooltip="left"
-              ></m-button>
-              <m-button
-                className="btn__row btn__message"
-                iconButton="icon__duplicate"
-                :title="this.$_MISAResources.tooltip__btn.duplicate"
-                posTooltip="top"
-                @click="handleDuplicate(data)"
-              ></m-button>
-              <m-button
-                className="btn__row btn__delete--table"
-                iconButton="icon__delete--red"
-                :title="this.$_MISAResources.tooltip__btn.delete"
-                posTooltip="top"
-                @click="handleDelete(data)"
-              ></m-button>
-            </div>
+            <div class="fixed__ceil--item"></div>
           </div>
         </div>
         <!-- Summary -->
@@ -369,42 +353,6 @@
         <div class="row--item" v-for="index in rowLoading" :key="index">
           <m-skeleton :isLoading="true" :rows="0"></m-skeleton>
         </div>
-      </div>
-    </div>
-    <!-- Context Menu -->
-    <div
-      ref="contextmenu"
-      :style="{
-        top: pos.y + 'px',
-        left: pos.x + 'px',
-        width: widthContextMenu + 'px',
-        height: heightContextMenu + 'px',
-      }"
-      class="context__menu"
-      v-show="isShowMenu"
-    >
-      <div class="context__button">
-        <m-button
-          className="btn__context"
-          iconButton="icon__ctm icon__edit"
-          content="Sửa"
-          @click="handleEdit(dataSelected)"
-        >
-        </m-button>
-        <m-button
-          className="btn__context"
-          iconButton="icon__ctm icon__delete--red"
-          content="Xóa"
-          @click="handleDelete(dataSelected)"
-        >
-        </m-button>
-        <m-button
-          className="btn__context"
-          iconButton="icon__ctm icon__duplicate"
-          content="Nhân bản"
-          @click="handleDuplicate(dataSelected)"
-        >
-        </m-button>
       </div>
     </div>
   </div>
@@ -777,14 +725,16 @@ export default {
      * Author: HMDUC(26/05/2023)
      */
     totalRecored() {
-      return this.dataTable.totalRow;
+      return this.dataTable.totalRow ? this.dataTable.totalRow : 0;
     },
     /**
      * Function return total page
      * Author: HMDUC(26/05/2023)
      */
     totalPage() {
-      return Math.ceil(this.dataTable.totalRow / this.pageSize);
+      return this.dataTable.totalRow
+        ? Math.ceil(this.dataTable.totalRow / this.pageSize)
+        : 1;
     },
   },
 
@@ -1080,7 +1030,6 @@ export default {
      */
     handleEdit(data) {
       this.$emit("loading", true);
-
       setTimeout(() => {
         this.setIsShow(true);
         this.$emit("getData", data);
@@ -1232,7 +1181,7 @@ export default {
     nextPage() {
       if (this.currentPage < this.totalPage) {
         this.currentPage++;
-        this.$emit("nextPage", this.currentPage);
+        this.$emit("nextPage", this.currentPage, true);
       }
     },
     /**
@@ -1242,7 +1191,7 @@ export default {
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.$emit("prevPage", this.currentPage);
+        this.$emit("prevPage", this.currentPage, true);
       }
     },
   },
@@ -1276,15 +1225,23 @@ export default {
 .table__content--summary {
   height: 37px;
   line-height: 37px;
+  z-index: 51;
 }
 
-.table__paging,
+.table__paging {
+  z-index: 88;
+  position: relative;
+}
 .fixed__content--header {
   user-select: none;
 }
 
 .fixed__content {
-  height: calc(100% - 43px);
+  height: calc(100% - 40px);
+  width: 7px;
+}
+.fixed__row--item {
+  border-left: none;
 }
 
 .table__content--summary {

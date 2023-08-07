@@ -7,15 +7,15 @@ using MISA.WebFresher042023.Demo.Domain.Enum;
 namespace MISA.WebFresher042023.Demo.Controllers
 {
     [ApiController]
-    public abstract class BaseController<TEntityDto, TEntityInsertDto, TEntityUpdateDto> : ControllerBase
+    public abstract class BaseController<TEntityDto, TEntityInsertDto, TEntityUpdateDto,TEntityTranferDto> : ControllerBase
     {
 
         #region Field
-        protected readonly IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> _baseService;
+        protected readonly IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto, TEntityTranferDto> _baseService;
         #endregion
 
         #region Constructor
-        public BaseController(IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto> baseService)
+        public BaseController(IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto, TEntityTranferDto> baseService)
         {
 
             _baseService = baseService;
@@ -122,7 +122,7 @@ namespace MISA.WebFresher042023.Demo.Controllers
         /// Author: HMDUC (19/06/2023)
         #region DeleteEntity
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteByIdAsync(Guid id)
+        public  async Task<IActionResult> DeleteByIdAsync(Guid id)
         {
             var rowAffect = await _baseService.DeleteAsync(id);
             if (rowAffect > 0)

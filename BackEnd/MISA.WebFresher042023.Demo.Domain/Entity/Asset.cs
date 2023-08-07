@@ -48,6 +48,26 @@ public class Asset : BaseEntity
     public string? DepartmentName { get; set; }
 
     /// <summary>
+    ///  Tên bộ phận sử dụng sau khi thêm chứng từ
+    /// </summary>
+    public string? DepartmentReceipt { get; set; }
+
+    /// <summary>
+    ///  Id bộ phận sử dụng sau khi thêm chứng từ
+    /// </summary>
+    public Guid? DepartmentReceiptId { get; set; }
+
+    /// <summary>
+    /// Id bộ phận sử dụng cũ
+    /// </summary>
+    public Guid? OldDepartmentId { get; set; }
+
+    /// <summary>
+    /// Tên bộ phận sử dụng cũ
+    /// </summary>
+    public string? OldDepartmentName { get; set; }
+
+    /// <summary>
     /// Tỷ lệ hao mòn
     /// </summary>
     [ExcelColumn("DepreciationRate")]
@@ -125,5 +145,10 @@ public class Asset : BaseEntity
     /// </summary>
     [ExcelColumn("ProductionYear")]
     public DateTime? ProductionYear { get; set; }
+
+    /// <summary>
+    /// Lý dó điều chuyển
+    /// </summary>
+    public string? Reason { get; set; }
 
 }

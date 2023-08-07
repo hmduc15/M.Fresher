@@ -1,10 +1,13 @@
 import axios from "axios";
 
 
+
 const request = axios.create({
     baseURL: process.env.VUE_APP_API_URL,
 })
 
+
+/**Api Asset */
 /**
  * Funcion call api get data
  * Author: HMDUC (01/06/2023)
@@ -27,6 +30,8 @@ export const deleteProperty = async (id) => {
     const res = await request.delete(`/Assets/${id}`);
     return res;
 }
+
+
 
 /**
  * Function add asset 
@@ -88,6 +93,68 @@ export const paggingTable = async (pageNumber, pageSize, searchInput, department
 }
 
 /**
+ * Function Call Api check Exist Receipt By AssetId
+ * @param {*} listId 
+ * @returns 
+ */
+export const checkExistReceipt = async (listId) => {
+    const res = await request.post(`/Assets/CheckExistReceipt`, listId);
+    return res.data;
+}
+
+
+/**Api Tranfer */
+
+export const checkDeleteAssetReceipt = async (assetId, receiptId) => {
+    const res = await request.get(`/Receipt/CheckExistReceipt?assetId=${assetId}&receiptId=${receiptId}`);
+    return res.data;
+}
+
+
+
+/**
+ * Function delete Receipt
+ * @param {*} receiptId 
+ * @returns 
+ */
+export const deleteReceipt = async (receiptId) => {
+    const res = await request.delete(`/Receipt/ReceiptId/${receiptId}`);
+    return res;
+}
+
+/**
+ * Function check Delete List Receipt
+ * @param {*} listId 
+ * @returns 
+ */
+export const checkDeleteList = async (listId) => {
+    const res = await request.post(`Receipt/CheckDeleteListReceipt`, listId);
+    return res.data;
+}
+
+
+
+/**
+ * Function get List Asset By ReceiptId
+ * @param {*} receiptId 
+ * @returns data
+ */
+export const getAssetEdit = async (receiptId) => {
+    const res = await request.get(`Assets/Receipt/${receiptId}`);
+    return res.data;
+}
+
+/**
+ * Function get list CurrentMember By ReceiptId
+ * @param {*} receiptId 
+ * @returns 
+ */
+export const getCurrentMember = async (receiptId) => {
+    const res = await request.get(`Member/ReceiptId/${receiptId}`);
+    return res.data;
+}
+
+/**
  * Function pagging table receipt
  * @param {*} pageNumber 
  * @param {*} pageSize 
@@ -128,13 +195,42 @@ export const paggingTableTranferAsset = async (id, pageNumber, pageSize,) => {
  * @param {*} ids 
  * @param {*} pageNumber 
  * @param {*} pageSize 
- * @returns 
+ *  Author: HMDUC (27/07/2023) 
  */
 export const paggingAssetChose = async (ids, pageSize, pageNumber) => {
     const res = await request.post(`Assets/PaggingAssetChose`, { ids: ids, pageSize: pageSize, pageNumber: pageNumber });
     return res.data;
 }
 
+/**
+ * Function add Receipt
+ * @param {*} data 
+ * Author: HMDUC (27/07/2023) 
+ */
+export const postReceipt = async (data) => {
+    const res = await request.post(`Receipt/InsertReceipt`, data);
+    return res;
+}
+
+/**
+ * Function call Api update Receipt
+ * @param {*} data 
+ * @returns 
+ */
+export const updateNewReceipt = async (data) => {
+    const res = await request.post(`Receipt/UpdateReceipt`, data);
+    return res;
+}
+
+/**
+ * Function check Accured
+ * @param {*} receiptId 
+ * @returns 
+ */
+export const checkAccured = async (receiptId) => {
+    const res = await request.get(`Receipt/CheckReference?id=${receiptId}`);
+    return res.data;
+}
 
 
 export * as request from "@/services/request"

@@ -5,7 +5,10 @@
         v-if="
           type === 'success' ||
           type === 'success__add' ||
-          type === 'success__update'
+          type === 'success__update' ||
+          type === 'success__receipt' ||
+          type === 'success__add_receipt' ||
+          type === 'success__update_receipt'
         "
       >
         <div class="icon__circle">
@@ -36,9 +39,25 @@ export default {
           icon: "icon__check",
           content: this.$_MISAResources.toast__content.UpdateSuccess,
         },
+        success__update_receipt: {
+          icon: "icon__check",
+          content: this.$_MISAResources.toast__content.UpdateReceiptSuccess,
+        },
         success: {
           icon: "icon__check",
           content: this.$_MISAResources.toast__content.DeleteSuccess,
+        },
+        success__receipt: {
+          icon: "icon__check",
+          content: this.$_MISAResources.toast__content.DeleteReceiptSuccess,
+        },
+        err__receipt: {
+          icon: "icon__delete--red",
+          content: this.$_MISAResources.toast__content.DeleteReceiptError,
+        },
+        success__add_receipt: {
+          icon: "icon__check",
+          content: this.$_MISAResources.toast__content.InsertReceiptSuccess,
         },
         success__add: {
           icon: "icon__check",
@@ -67,6 +86,10 @@ export default {
         no__edit: {
           icon: "icon__notice--b",
           content: this.$_MISAResources.toast__content.NoEdit,
+        },
+        no__edit_receipt: {
+          icon: "icon__notice--b",
+          content: this.$_MISAResources.toast__content.NoEditReceipt,
         },
       },
     };

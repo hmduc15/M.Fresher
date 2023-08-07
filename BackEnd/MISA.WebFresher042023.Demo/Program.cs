@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MISA.WebFresher042023.Demo.Middleware;
-using MISA.WebFresher042023.Demo.Domain.Interface;
 using MISA.WebFresher042023.Demo.Core.Service;
 using MISA.WebFresher042023.Demo.Infrastructure.Repository;
 using MISA.WebFresher042023.Demo.Application.Interface;
@@ -8,29 +7,27 @@ using MISA.WebFresher042023.Demo.Application.Service;
 using MISA.WebFresher042023.Demo.Domain;
 using MISA.WebFresher042023.Demo.Infrastructure.UnitOfWork;
 using MISA.WebFresher042023.Demo.Domain.Service;
+using MISA.WebFresher042023.Demo.Domain.Interface.Repository;
+using MISA.WebFresher042023.Demo.Domain.Interface.Manager;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 
-
 // Add services to the container.
 
 
-builder.Services.AddCors(options =>
+builder.Services.AddCors(p => p.AddPolicy("cors", build =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
-                      });
-});
-
+    build.WithOrigins("http://localhost:8080").AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+}));
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
 });
 
 
@@ -62,9 +59,13 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddScoped<IReceiptService, ReceiptService>();
-builder.Services.AddScoped<IReceiptRepository,ReceiptRepository>();
+builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
+
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IMemberService, MemberService>();
 
 builder.Services.AddScoped<IAssetManager, AssetManager>();
+builder.Services.AddScoped<IReceiptManager, ReceiptManager>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -85,6 +86,6 @@ app.MapControllers();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors("cors");
 
 app.Run();

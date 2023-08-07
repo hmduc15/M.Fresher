@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MISA.WebFresher042023.Demo.Application.Interface;
-using MISA.WebFresher042023.Demo.Application;
 using MySqlConnector;
+using MISA.WebFresher042023.Demo.Application.Dto.DepartmentDto;
 
 namespace MISA.WebFresher042023.Demo.Controllers
 {
@@ -13,7 +13,7 @@ namespace MISA.WebFresher042023.Demo.Controllers
     /// </summary>
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class DepartmentsController : BaseController<DepartmentDto,DepartmentInsertDto,DepartmentUpdateDto>
+    public class DepartmentsController : BaseController<DepartmentDto, DepartmentInsertDto, DepartmentUpdateDto, DepartmentTranferDto>
     {
         #region Field
         private readonly IDepartmentService _departmentService;

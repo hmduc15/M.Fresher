@@ -1,8 +1,19 @@
-﻿namespace MISA.WebFresher042023.Demo.Application.Interface
+﻿using MISA.WebFresher042023.Demo.Domain.Entity;
+
+namespace MISA.WebFresher042023.Demo.Application.Interface
 {
 
-    public interface IAssetService : IBaseService<AssetDto, AssetInsertDto, AssetUpdateDto>
+    public interface IAssetService : IBaseService<AssetDto, AssetInsertDto, AssetUpdateDto,AssetTranferDto>
     {
+        /// <summary>
+        /// Hàm lấy tất cả các tài sản theo mã chứng từ
+        /// </summary>
+        /// <param name="receiptId">Mã chứng từ</param>
+        /// <returns>
+        /// Danh sách tài sản
+        /// </returns>
+        /// Author: HMDUC (28/07/2023)
+        Task<List<AssetTranferDto>> GetAssetAllByReceipId(Guid receiptId);
 
         /// <summary>
         /// Hàm lấy mã tài sản
@@ -40,6 +51,13 @@
         /// Author: HMDUC (29/06/2023)
         Task<Stream> ExportExcel();
 
+        /// <summary>
+        /// Hàm check tài sản có chứng từ hay không
+        /// </summary>
+        /// <param name="ids">Danh sách Id của tài sản</param>
+        /// <returns>Danh sách chứng từ</returns>
+        ///  Author: HMDUC (29/07/2023)
+       Task<Object> CheckExistReceipt(List<Guid> ids);
 
     }
 

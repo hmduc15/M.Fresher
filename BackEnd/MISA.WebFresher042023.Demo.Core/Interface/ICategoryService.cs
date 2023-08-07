@@ -11,7 +11,7 @@ namespace MISA.WebFresher042023.Demo.Application.Interface
     /// Interface Category Service
     /// </summary>
     /// Author: HMDUC (17/06/2023)
-    public interface ICategoryService : IBaseService<CategoryDto, CategoryInsertDto, CategoryUpdateDto>
+    public interface ICategoryService : IBaseService<CategoryDto, CategoryInsertDto, CategoryUpdateDto,CategoryTranferDto>
     {
 
     }

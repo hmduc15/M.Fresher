@@ -126,6 +126,15 @@
   <data name="Empty_Name" xml:space="preserve">
     <value>Tên tài sản không được phép để trống.</value>
   </data>
+  <data name="Empty_ReceiptCode" xml:space="preserve">
+    <value>Mã chứng từ không được phép để trống.</value>
+  </data>
+  <data name="Empty_ReceiptDate" xml:space="preserve">
+    <value>Ngày chứng từ không được để trống.</value>
+  </data>
+  <data name="Empty_TranferDate" xml:space="preserve">
+    <value>Ngày điều chuyển không được để trống.</value>
+  </data>
   <data name="Error_DepreciationRate" xml:space="preserve">
     <value>Tỷ lệ hao mòn phải bằng 1/Số năm sử dụng.</value>
   </data>
@@ -153,11 +162,29 @@
   <data name="Error_PurchaseDateAndProductionYear" xml:space="preserve">
     <value>Ngày mua phải nhỏ hơn ngày sử dụng. Vui lòng nhập lại.</value>
   </data>
+  <data name="Error_ReceiptCode_Dupli" xml:space="preserve">
+    <value>đã tồn tại. Vui lòng nhập lại mã chứng từ. </value>
+  </data>
+  <data name="Error_TranferDate" xml:space="preserve">
+    <value>Ngày điều chuyển phải lớn hơn hoặc ngày chứng từ.</value>
+  </data>
   <data name="Error_Validate" xml:space="preserve">
     <value>Dữ liệu không hợp lệ. Vui lòng nhập lại.</value>
   </data>
   <data name="Error_Validate_Dev" xml:space="preserve">
     <value>Lỗi nhập dữ liệu do người dùng.</value>
+  </data>
+  <data name="Err_Accrued" xml:space="preserve">
+    <value>Phát sinh chứng từ</value>
+  </data>
+  <data name="Err_Length_ReceiptCode" xml:space="preserve">
+    <value>Mã chứng từ không được vượt quá 20 kí tự.</value>
+  </data>
+  <data name="Err_NotExit_Receipt" xml:space="preserve">
+    <value>Chứng từ không tồn tại. Vui lòng thử lại.</value>
+  </data>
+  <data name="ReceiptCode" xml:space="preserve">
+    <value>Mã chứng từ</value>
   </data>
   <data name="Title_Excel" xml:space="preserve">
     <value>Danh sách tài sản</value>

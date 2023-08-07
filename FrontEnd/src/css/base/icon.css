@@ -26,10 +26,10 @@
 }
 
 .icon__ques {
-    background-image: url(../../assets/icon/ques.svg);
-    width: 24px;
-    height: 24px;
-    background-repeat: no-repeat;
+    background: url(../../assets/icon/icon-v3.svg) no-repeat -242px -110px;
+    width: 20px;
+    height: 20px;
+
 }
 
 .icon__menu {
@@ -40,10 +40,10 @@
 }
 
 .icon__avatar {
-    background-image: url(../../assets/icon/avatar.svg);
-    width: 24px;
-    height: 24px;
-    background-repeat: no-repeat;
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -23px -23px;
+    width: 18px;
+    height: 18px;
+    transform: scale(1.2);
 }
 
 
@@ -315,12 +315,12 @@
     height: 21px;
     position: absolute;
     left: 50%;
-    top: -10px;
-    display: none;
+    top: -11px;
+    transform: scale(0.85);
 }
 
 .resize--active {
-    top: 47px;
+    top: 44px;
 }
 
 .icon__collapse--down {
@@ -332,7 +332,7 @@
 .icon__collapse--up {
     background: url(../../assets/icon/qlts-icon.svg) no-repeat -290px -293px;
     width: 12px;
-    height: 7px;
+    height: 10px;
 }
 
 .icon__close-v2 {
@@ -345,6 +345,24 @@
 
 .icon__chose {
     background: url(../../assets/icon/icon-v3.svg)no-repeat -903px -111px;
+    width: 18px;
+    height: 18px;
+}
+
+.icon__detail-up {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -332px -331px;
+    width: 17px;
+    height: 18px;
+}
+
+.icon__detail-down {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -420px -330px;
+    width: 16px;
+    height: 19px;
+}
+
+.icon__detail-add {
+    background: url(../../assets/icon/qlts-icon.svg) no-repeat -375px -419px;
     width: 18px;
     height: 18px;
 }

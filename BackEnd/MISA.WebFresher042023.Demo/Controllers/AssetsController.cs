@@ -5,6 +5,7 @@ using MISA.WebFresher042023.Demo.Application.Interface;
 using MISA.WebFresher042023.Demo.Domain.Enum;
 using Newtonsoft.Json.Linq;
 using System.Text.Json.Serialization;
+using MISA.WebFresher042023.Demo.Application.Service;
 
 namespace MISA.WebFresher042023.Demo.Controllers
 {
@@ -14,7 +15,7 @@ namespace MISA.WebFresher042023.Demo.Controllers
     /// </summary>
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class AssetsController : BaseController<AssetDto, AssetInsertDto, AssetUpdateDto>
+    public class AssetsController : BaseController<AssetDto, AssetInsertDto, AssetUpdateDto, AssetTranferDto>
     {
 
         #region Field
@@ -27,8 +28,37 @@ namespace MISA.WebFresher042023.Demo.Controllers
         {
             _assetService = assetService;
         }
-
         #endregion
+
+
+        /// <summary>
+        /// Hàm check xem tài sản có chứng từ không theo Id phục vụ nghiệp vụ xóa
+        /// </summary>
+        /// <param name="ids">Danh sách chứng từ cần xóa</param>
+        /// <returns>Danh sách chứng từ</returns>
+        /// Author: HMDUC (05/08/2023)
+        [HttpPost("CheckExistReceipt")]
+        public async Task<IActionResult> CheckExistReceipt(List<Guid> ids)
+        {
+            var result = await _assetService.CheckExistReceipt(ids);
+
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Hàm lấy ra tất cả tài sản theo mã chứng từ
+        /// </summary>
+        /// <param name="receiptId">Id của chứng từ</param>
+        /// <returns>Danh sách tài sản</returns>
+        [HttpGet("Receipt/{receiptId}")]
+        public async Task<IActionResult> GetAssetByReceiptId(Guid receiptId)
+        {
+            var result = await _assetService.GetAssetAllByReceipId(receiptId);
+
+            return Ok(result);
+        }
+
 
         /// <summary>
         /// API lấy ra mã tài sản mới

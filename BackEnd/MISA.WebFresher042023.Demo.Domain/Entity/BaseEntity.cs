@@ -22,7 +22,7 @@ namespace MISA.WebFresher042023.Demo.Domain.Entity
         /// <summary>
         ///  Người sửa tài sản
         /// </summary>
-        public string? ModifiedBY { get; set; }
+        public string? ModifiedBy { get; set; }
 
         /// <summary>
         /// Thời gian sửa tài sản

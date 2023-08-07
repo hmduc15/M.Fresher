@@ -3,22 +3,25 @@ using MISA.WebFresher042023.Demo.Application.Interface;
 using MISA.WebFresher042023.Demo.Domain.Enum;
 using MISA.WebFresher042023.Demo.Domain.MISAException;
 using MISA.WebFresher042023.Demo.Domain.Resources;
-using MISA.WebFresher042023.Demo.Domain.Interface;
+using MISA.WebFresher042023.Demo.Domain.Interface.Repository;
+using MISA.WebFresher042023.Demo.Domain;
 
 namespace MISA.WebFresher042023.Demo.Application.Service
 {
-    public abstract class BaseService<TEntity, TEntityDto, TEntityInsertDto, TEntityUpdateDto> : IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto>
+    public abstract class BaseService<TEntity, TEntityDto, TEntityInsertDto, TEntityUpdateDto,TEntityTranferDto> : IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto, TEntityTranferDto>
     {
         #region Field
         protected readonly IBaseRepository<TEntity> _baseRepository;
         protected readonly IMapper _mapper;
+        protected readonly IUnitOfWork _unitOfWork;
         #endregion
 
         #region Constructor
-        protected BaseService(IBaseRepository<TEntity> baseRepository, IMapper mapper)
+        protected BaseService(IBaseRepository<TEntity> baseRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _baseRepository = baseRepository;
+            _unitOfWork = unitOfWork;
         }
         #endregion
 
@@ -165,14 +168,14 @@ namespace MISA.WebFresher042023.Demo.Application.Service
         ///  Row Affected: Số dòng bị ảnh hưởng
         /// </returns>
         /// Author: HMDUC (19/06/2023)
-        public async Task<int> DeleteAsync(Guid id)
+        public  async Task<int> DeleteAsync(Guid id)
         {
             var res = await _baseRepository.GetByIdAsync(id);
 
             //check Exist Entity
             if (res == null)
             {
-                throw new NotFoundException(ResourceVN.Error_NotExit_Asset, 404);
+                throw new NotFoundException(ResourceVN.Error_NotExit_Asset, (int)MISACode.Validate);
             }
 
             var rowAffected = await _baseRepository.DeleteEntityAsync(id);

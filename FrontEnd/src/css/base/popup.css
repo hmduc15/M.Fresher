@@ -26,7 +26,7 @@
 }
 
 .popup__icon {
-    margin-top: 8px;
+    margin-top: 5px;
 }
 
 
@@ -47,8 +47,12 @@
 .popup__content {
     display: flex;
     flex-direction: column;
-    gap: 44px 0;
+    gap: 40px 0;
     align-items: flex-end;
+}
+
+.popup--detail {
+    gap: 25px 0;
 }
 
 .popup__btn {
@@ -63,6 +67,30 @@
     max-width: 345px;
 }
 
+.mwidth--380 {
+    max-width: 380px;
+}
+
 .property>b {
     word-wrap: break-word;
+}
+
+.view__detail, .detail {
+    margin-top: 5px;
+}
+
+
+.view__detail>p, .detail>p {
+    font-family: RobotoRegular;
+    user-select: none;
+}
+
+.text__action {
+    font-size: 14px;
+    color: #00afdc;
+    cursor: pointer;
+}
+
+.text__action:hover {
+    color: #2292af;
 }

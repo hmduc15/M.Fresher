@@ -4,18 +4,21 @@
      width: 1492px;
 }
 
-/* .table__content--header {
-     position: relative;
-     z-index: 100;
-} */
+
+.table--tranfer>.table--master {
+     width: 1304px;
+}
+
+.table--tranfer-expand>.table--master {
+     width: 1434px;
+}
+
+
 
 .table--modal {
      width: 1492px;
 }
 
-.table--tranfer>.table--master {
-     width: 1304px;
-}
 
 .table--tranfer>.table--fw {
      width: 100%;

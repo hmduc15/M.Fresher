@@ -372,7 +372,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { format } from "@/utils/format";
+import { format, formatDate } from "@/utils/format";
 import Enum from "@/utils/enum";
 import { request } from "@/services/request";
 
@@ -441,8 +441,9 @@ export default {
       debounce: null,
       currentPage: this.numberPage,
       newAssetCode: null,
-      widthContextMenu: 200,
+      widthContextMenu: 160,
       heightContextMenu: 146,
+      isDeleteError: null,
     };
   },
 
@@ -581,6 +582,7 @@ export default {
     ...mapActions("formDialog", ["setIsShow", "setDataForm", "setFormMode"]),
     ...mapActions("contextMenu", ["setShowMenu", "setDataMenu", "setPos"]),
     ...mapActions("asset", ["getAssetList", "deleteAsset", "setListSelected"]),
+    ...mapActions("receipt", ["setReceiptError"]),
 
     /**
      * Function call Api Get NewAssetCode
@@ -591,6 +593,24 @@ export default {
         const res = await request.get(`/Assets/NewCode`);
         this.newAssetCode = res.toString();
         this.$refs.AssetCode.s;
+      } catch (err) {
+        this.$emit(
+          "showToast",
+          "notice",
+          this.$_MISAResources.toast__content.ErrorServer
+        );
+      }
+    },
+
+    /**
+     * Function check Exist Receipt By AssetId
+     * Author: HMDUC (05/08/2023)
+     */
+    async checkExistReceiptById(id) {
+      try {
+        const res = await request.checkExistReceipt(id);
+        this.isDeleteError = res;
+        return res;
       } catch (err) {
         this.$emit(
           "showToast",
@@ -891,9 +911,25 @@ export default {
      * Author: HMDUC (27/05/2023)
      * @param {*} data
      */
-    handleDelete(data) {
+    async handleDelete(data) {
       var arr = [data];
-      this.$emit("showPopup", arr, "confirm");
+      await this.checkExistReceiptById([data.AssetId]);
+      var response = this.isDeleteError;
+      switch (Object.keys(response).length) {
+        case 0:
+          this.$emit("showPopup", arr, "confirm");
+          break;
+        default:
+          var receiptError = [];
+          response[data.AssetId].map((item) => {
+            receiptError.push({
+              receiptCode: item.ReceiptCode,
+              receiptDate: formatDate(item.ReceiptDate),
+            });
+          });
+          this.setReceiptError(receiptError);
+          this.$emit("showPopup", response[data.AssetId][0], "dele__error");
+      }
     },
 
     /**

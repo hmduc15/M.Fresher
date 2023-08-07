@@ -12,12 +12,6 @@ namespace MISA.WebFresher042023.Demo.Application;
 public class ReceiptInsertDto
 {
     /// <summary>
-    /// Id của chứng từ
-    /// </summary>
-    [Required]
-    public Guid ReceiptId { get; set; }
-
-    /// <summary>
     /// Mã chứng từ
     /// </summary>
     public string? ReceiptCode { get; set; }

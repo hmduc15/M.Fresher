@@ -11,12 +11,11 @@ namespace MISA.WebFresher042023.Demo.Application;
 /// </summary>
 public class ReceiptUpdateDto
 {
-    /// <summary>
-    /// Id của chứng từ
-    /// </summary>
-    [Required]
-    public Guid ReceiptId { get; set; }
 
+    /// <summary>
+    /// ID của chứng từ
+    /// </summary>
+    public Guid ReceiptId { get; set; }
     /// <summary>
     /// Mã chứng từ
     /// </summary>

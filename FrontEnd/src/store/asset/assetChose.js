@@ -5,7 +5,8 @@ const assetChose = {
      state: {
           listAssetChose: [],
           isLoadingTableChose: false,
-          listAssetChoseSelected: []
+          listAssetChoseSelected: [],
+          listSelectecAssetClick: []
      },
      mutations: {
           /**
@@ -36,6 +37,15 @@ const assetChose = {
            */
           setListChoseSelected(state, listAssetChoseSelected) {
                state.listAssetChoseSelected = listAssetChoseSelected
+          },
+
+          /**
+           * Mutations set list clickSelected
+           * @param {*} state 
+           * @param {*} listSelectecAssetClick 
+           */
+          setListSelectecAssetClick(state, listSelectecAssetClick) {
+               state.listSelectecAssetClick = listSelectecAssetClick;
           }
      },
      actions: {
@@ -47,9 +57,7 @@ const assetChose = {
                } catch (err) {
                     return err.response;
                } finally {
-                    setTimeout(() => {
-                         commit("setLoadingTableChose", false);
-                    });
+                    commit("setLoadingTableChose", false);
                }
           },
           /**
@@ -60,6 +68,15 @@ const assetChose = {
           */
           setListChoseSelected({ commit }, list) {
                commit("setListChoseSelected", list)
+          },
+
+          /**
+           * Function set List Selected Asset Click
+           * @param {*} param0 
+           * @param {*} list 
+           */
+          setListSelectecAssetClick({ commit }, list) {
+               commit("setListSelectecAssetClick", list)
           }
      },
      getters: {

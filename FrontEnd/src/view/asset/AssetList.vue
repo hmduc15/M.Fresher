@@ -142,10 +142,10 @@
     <asset-form
       :data="dataRecieved"
       :isShow="isShow"
-      :newCode="newAssetCode"
       @showToast="handleShowToast"
       @openPopup="showPopup"
       @loading="setLoading"
+      :newCode="newAssetCode"
     ></asset-form>
     <!-- Popup -->
     <m-dialog v-if="isShowPopup || isReload">
@@ -157,6 +157,7 @@
           :type="typePopup"
           :dataPopup="dataRecieved"
           :dataForm="dataFormAsset"
+          :assetError="dataAsset"
           :errMessage="listMessage"
           icon="icon__warning"
           @cancel="handleCancel"
@@ -179,6 +180,7 @@
 <script>
 import { request } from "@/services/request";
 import Enum from "@/utils/enum";
+import { formatDate } from "@/utils/format";
 import { mapActions, mapState } from "vuex";
 
 import MButton from "@/components/base/MButton.vue";
@@ -295,6 +297,8 @@ export default {
       assetClone: null,
       newAssetCode: null,
       arrDisplay: ["Summary", "Paging"],
+      dataAsset: null,
+      isDeleteError: null,
     };
   },
 
@@ -324,7 +328,7 @@ export default {
      * Function call api get new AssetCode;
      * Author: HMDUC (28/05/2023)
      */
-    this.getNewAssetCode();
+    // this.getNewAssetCode();
 
     this.setListDisplayed(this.arrDisplay);
   },
@@ -345,6 +349,7 @@ export default {
     ...mapActions("formDialog", ["setIsShow", "setDataForm", "setFormMode"]),
     ...mapActions("asset", ["deleteListSelected", "getAssetList"]),
     ...mapActions("displayTable", ["setListDisplayed"]),
+    ...mapActions("receipt", ["setReceiptError"]),
 
     /**
      * Function call Api Get NewAssetCode
@@ -415,6 +420,24 @@ export default {
     },
 
     /**
+     * Function check Exist Receipt By AssetId
+     * Author: HMDUC (05/08/2023)
+     */
+    async checkExistReceiptById(id) {
+      try {
+        const res = await request.checkExistReceipt(id);
+        this.isDeleteError = res;
+        return res;
+      } catch (err) {
+        this.$emit(
+          "showToast",
+          "notice",
+          this.$_MISAResources.toast__content.ErrorServer
+        );
+      }
+    },
+
+    /**
      * Function set Loading
      * Author: HMDUC (16/07/2023)
      */
@@ -473,6 +496,10 @@ export default {
       });
     },
 
+    /**
+     * Function handle clear textSearch
+     * Author: HMDUC (15/06/2023)
+     */
     clearSearch() {
       if (this.inputSearch.length === 0) {
         clearTimeout(this.debounce);
@@ -602,20 +629,41 @@ export default {
      * Function handle delete multiple asset is selected by chk
      * Author: HMDUC(27/05/2023)
      */
-    handleDelete() {
-      //delelte asset selected by checkbox
+    async handleDelete() {
+      //delete asset selected by checkbox
       let lengthList = this.listSelected.length;
-      switch (lengthList) {
+      var listAssetId = [];
+      this.listSelected.map((item) => {
+        listAssetId.push(item.AssetId);
+      });
+      await this.checkExistReceiptById(listAssetId);
+
+      switch (Object.keys(this.isDeleteError).length) {
         case 0:
-          this.typeToast = "warning";
-          this.isShowToast = true;
-          setTimeout(() => {
-            this.isShowToast = false;
-          }, 3200);
+          switch (lengthList) {
+            case 0:
+              this.typeToast = "warning";
+              this.isShowToast = true;
+              setTimeout(() => {
+                this.isShowToast = false;
+              }, 3200);
+              break;
+            default:
+              this.handleShowPopup(this.listSelected, "confirm");
+              break;
+          }
           break;
         default:
-          this.handleShowPopup(this.listSelected, "confirm");
-          break;
+          var receiptError = [];
+          var response = Object.values(this.isDeleteError)[0];
+          response.map((item) => {
+            receiptError.push({
+              receiptCode: item.ReceiptCode,
+              receiptDate: formatDate(item.ReceiptDate),
+            });
+          });
+          this.setReceiptError(receiptError);
+          this.handleShowPopup(response[0], "dele__error");
       }
     },
 
@@ -623,8 +671,9 @@ export default {
      * Function open form add
      * Author: HMDUC(27/05/2023)
      */
-    handleOpenForm() {
+    async handleOpenForm() {
       this.isReload = true;
+      await this.getNewAssetCode();
       setTimeout(() => {
         this.isReload = false;
         this.dataRecieved = null;
@@ -657,10 +706,15 @@ export default {
      * @param {*} type
      */
     handleShowPopup(data, type) {
-      let listJson = JSON.stringify(data);
       this.typePopup = type;
-      this.dataRecieved = JSON.parse(listJson);
       this.isShowPopup = true;
+      if (type === "dele__error") {
+        this.dataAsset = data;
+      } else {
+        let listJson = JSON.stringify(data);
+
+        this.dataRecieved = JSON.parse(listJson);
+      }
     },
 
     /**

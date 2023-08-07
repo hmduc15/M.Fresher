@@ -31,7 +31,7 @@
                     :isLabel="true"
                     :isFocus="true"
                     :placeHolder="this.$_MISAResources.placeholder.AssetCode"
-                    :maxLength="100"
+                    :maxLength="20"
                     v-model="asset.AssetCode"
                     @keydown.shift.prevent.tab="moveFocus"
                   >
@@ -57,7 +57,9 @@
                   <m-combobox
                     ref="DepartmentCode"
                     iconPrefix="icon__arrow--xl"
-                    placeholder="Chọn mã bộ phận sử dụng"
+                    :placeholder="
+                      this.$_MISAResources.placeholder.DepartmentCode
+                    "
                     iconPos="right"
                     name="DepartmentCode"
                     :isFilter="true"
@@ -87,7 +89,7 @@
                   <m-combobox
                     ref="CategoryCode"
                     iconPrefix="icon__arrow--xl"
-                    placeholder="Chọn mã loại tài sản"
+                    :placeholder="this.$_MISAResources.placeholder.CategoryCode"
                     iconPos="right"
                     name="CategoryCode"
                     :listOptions="listAssetCategory"
@@ -319,12 +321,14 @@ export default {
       listAssetCategory: null,
       selectedOption: null,
       inputRefs: [],
+      newAssetCode: null,
     };
   },
 
   created() {
     this.getDepartmentList();
     this.getCategory();
+    this.getNewAssetCode();
   },
 
   updated() {
@@ -378,6 +382,20 @@ export default {
     ...mapActions("formDialog", ["setIsShow"]),
     ...mapActions("asset", ["postAsset", "updateAsset"]),
     ...mapActions("inputError", ["setListError"]),
+
+    async getNewAssetCode() {
+      try {
+        const res = await request.get(`/Assets/NewCode`);
+        this.newAssetCode = res.toString();
+      } catch (err) {
+        this.$emit(
+          "showToast",
+          "notice",
+          this.$_MISAResources.toast__content.ErrorServer
+        );
+      }
+    },
+
     /**
      * Function move focus when shift+tab
      * Author: HMDUC (19/07/2023)
@@ -796,21 +814,17 @@ export default {
         case Enum.REQ__CODE.BAD_REQUEST:
           var arrMessage = [];
           var inputError = [];
-
           for (var key in dataErr) {
             if (Object.hasOwnProperty.call(dataErr, key)) {
               const message = dataErr[key];
               arrMessage.push(message);
-
               if (key == "ProductionAndPurchaseDate") {
                 key = "PurchaseDate";
               }
-
               inputError.push(this.$refs[key]);
               this.setListError(inputError);
             }
           }
-
           this.$emit("openPopup", "error", arrMessage);
           break;
 

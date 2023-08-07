@@ -16,6 +16,7 @@
         :name="name"
         :value="modelValue"
         :disabled="isDisabled"
+        @input="handleInput($event)"
       />
     </template>
     <!-- Input Text -->
@@ -26,9 +27,11 @@
         :type="type"
         :class="[
           className,
+          requiredNot ? 'input--white' : '',
           required ? '' : 'input--gray',
           number ? 'input__number--r' : '',
           isError ? 'input--error' : '',
+          isBorder ? 'input--border-focus' : '',
         ]"
         :placeholder="placeHolder"
         :id="id"
@@ -41,6 +44,7 @@
         :maxlength="maxLength"
         :isFocus="isFocus"
         :tabindex="tabIndex"
+        autocomplete="off"
       />
       <div v-show="isError" class="input__text--err">
         {{ this.errMesage }}
@@ -55,18 +59,22 @@
         :day-names="this.$_MISAResources.listDay"
         locale="vi"
         @update:model-value="handleDate"
-        auto-apply
         text-input
+        auto-apply
         :enable-time-picker="false"
+        clearable
+        @clickDate="log"
+        @focus="focusDate"
       >
         <template #input-icon>
           <div class="date__input_icon icon__date"></div
         ></template>
-        <template #dp-input="{ value, onEnter, onInput }">
+        <template #dp-input="{ value, onEnter, onBlur, onFocus }">
           <input
             ref="inputRef"
             :class="[
               className,
+
               required ? '' : 'input--gray',
               number ? 'input__number--r' : '',
               isError ? 'input--error' : '',
@@ -74,9 +82,10 @@
             type="text"
             :value="value"
             :isFocus="isFocus"
-            @blur="required ? validate() : ''"
+            @blur="onBlur"
             @keydown.enter="onEnter"
-            @input="onInput"
+            @focus="onFocus"
+            @click="handeleMoveError"
           />
         </template>
       </VueDatePicker>
@@ -117,8 +126,10 @@ export default {
     "isDisabled",
     "isFocus",
     "maxLength",
+    "requiredNot",
+    "isNo",
   ],
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "clickDate"],
 
   data() {
     return {
@@ -127,6 +138,7 @@ export default {
       isError: false,
       labelError: null,
       errMesage: null,
+      isBorder: false,
     };
   },
 
@@ -158,9 +170,19 @@ export default {
 
   methods: {
     ...mapActions("toastMessage", ["setIsShowToast", "setContentToast"]),
+    handeleMoveError() {
+      if (this.isError) {
+        this.isError = false;
+      }
+    },
+    onFocus() {
+      if (this.isError) {
+        this.isError = false;
+      }
+    },
 
-    onInput(event) {
-      this.handleDate(event.target.value);
+    handleChecked(value) {
+      this.updateModelValue(value);
     },
 
     /**
@@ -192,6 +214,9 @@ export default {
     handleInput(e) {
       this.$emit("update:modelValue", e.target.value);
       if (e.target.value) {
+        this.isError = false;
+      }
+      if (this.type === "date") {
         this.isError = false;
       }
     },

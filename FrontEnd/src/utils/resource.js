@@ -1,3 +1,4 @@
+
 /**
  * Declare resource project
  * Author: HMDUC(01/06/2023)
@@ -30,6 +31,7 @@ export const MISAResources = {
         EditTitle: "Sửa tài sản",
         DuplicateTitle: "Nhân bản tài sản",
         AddReceipt: "Thêm chứng từ điều chuyển",
+        EditReceipt: "Sửa chứng từ điều chuyển",
         ComonInfor: "Thông tin chung",
         TranferInfor: "Thông tin tài sản điều chuyển",
         AddReceiptAsset: "Chọn tài sản điều chuyển"
@@ -40,7 +42,12 @@ export const MISAResources = {
         AssetCode: "Nhập mã tài sản",
         AssetName: "Nhập tên tài sản",
         DepartmentCode: "Chọn mã bộ phận sử dụng",
-        CategoryCode: "Chọn mã loại tài sản"
+        CategoryCode: "Chọn mã loại tài sản",
+        Note: "Nhập ghi chú",
+        FullName: "Nhập họ và tên",
+        Representation: "Nhập đại diện",
+        PositionName: "Nhập chức vụ",
+        SearchInput: "Tìm kiếm tài sản"
     },
 
     //form mode text:
@@ -57,18 +64,23 @@ export const MISAResources = {
 
     //content toast message
     toast__content: {
-        DeleteSuccess: "Xóa tài sản thành công",
-        DeleteError: "Xóa tài sản thất bại",
-        EditSuccess: "Lưu tài sản thành công",
-        EditError: "Lưu tài sản thất bại",
-        RequireNotice: "Cần phải nhập thông tin",
-        InsertSuccess: "Thêm mới tài sản thành công",
-        InsertError: "Thêm mới tài sản thất bại",
-        NotAsset: "Bạn chưa chọn tài sản để xóa",
-        UpdateSuccess: "Cập nhật tài sản thành công",
-        UpdateError: "Cập nhật tài sản thất bại",
-        ErrorServer: "Có lỗi xảy ra vui lòng liên MISA để được hỗ trợ",
-        NoEdit: "Tài sản chưa được thay đổi",
+        DeleteSuccess: "Xóa tài sản thành công.",
+        DeleteReceiptSuccess: "Xóa chứng từ thành công.",
+        DeleteError: "Xóa tài sản thất bại.",
+        DeleteReceiptError: "Xóa chứng từ thất bại.",
+        EditSuccess: "Lưu tài sản thành công.",
+        EditError: "Lưu tài sản thất bại.",
+        RequireNotice: "Cần phải nhập thông tin.",
+        InsertSuccess: "Thêm mới tài sản thành công.",
+        InsertReceiptSuccess: "Thêm mới chứng từ thành công.",
+        InsertError: "Thêm mới tài sản thất bại.",
+        NotAsset: "Bạn chưa chọn tài sản để xóa.",
+        UpdateSuccess: "Cập nhật tài sản thành công.",
+        UpdateReceiptSuccess: "Cập nhật chứng từ thành công.",
+        UpdateError: "Cập nhật tài sản thất bại.",
+        ErrorServer: "Có lỗi xảy ra vui lòng liên MISA để được hỗ trợ.",
+        NoEdit: "Tài sản chưa được thay đổi.",
+        NoEditReceipt: "Chứng từ chưa được thay đổi."
 
     },
 
@@ -95,11 +107,18 @@ export const MISAResources = {
         Note: "Ghi chú",
         DepartmentCodeNew: "Bộ phận sử dụng mới",
         UserNew: "Người sử dụng mới",
+        ckboxSelectDepartment: "Chọn ban giao nhận",
+        ckboxDepartmentBefore: "Thêm ban giao nhận từ lần nhập trước",
+        Stt: "STT",
+        FullName: "Họ và tên",
+        Representation: "Đại diện",
+        PositionName: "Chức vụ"
     },
 
     //error message input
     text__error: {
-        inputErr: "không được để trống."
+        inputErr: "không được để trống.",
+        tranferDate: "Ngày điều chuyển phải lớn hơn ngày chứng từ."
     },
 
     //text combobox
@@ -114,7 +133,20 @@ export const MISAResources = {
         deleteMore: "tài sản đã được chọn. Bạn có muốn xóa các tài sản này khỏi danh sách ?",
         addCancel: "Bạn có muốn hủy khai báo tài sản này?",
         editCancel: "Thông tin thay đổi sẽ không được cập nhật nếu bạn không lưu. Bạn có muốn lưu các thay đổi này?",
-        addReceipt: "Dữ liệu đã thay đổi bạn có muốn lưu không?"
+        addReceipt: "Dữ liệu đã thay đổi bạn có muốn lưu không?",
+        choseAsset: "Bạn chưa thêm tài sản điều chuyển.",
+        noDepartmentReceipt: "Vui lòng chọn bộ phận sử dụng mới.",
+        existDepartment: "Vui lòng chọn bộ phận sử dụng mới khác bộ phận sử dụng tài sản.",
+        deleteOnlyRecipt: "Bạn có muốn xóa chứng từ ",
+        deleteMoreReceipt: "chứng từ đã được chọn. Bạn có muốn xóa các chứng từ này khỏi danh sách ?",
+        noFreeText: "không ?",
+        dupliDepart: "Vui lòng chọn bộ phận điều chuyển đến khác bộ phận đang sử dụng.",
+        receiptDate: "Ngày điều chuyển phải lớn hơn hoặc bằng ngày chứng từ.",
+        asset: "Tài sản",
+        accuredReceipt: " đã có phát sinh chứng từ. Bạn không thể xóa chứng từ này.",
+        receipt: "- Chứng từ điều chuyển ",
+        noMember: "Ban giao nhận không được phép để trống.",
+        assetReceipt: " đã có phát sinh chứng từ. Bạn không thể thực hiện chức năng này.",
     },
 
     //content buton
@@ -135,7 +167,10 @@ export const MISAResources = {
         receive: "Tiếp nhận tài sản",
         addReceipt: "Thêm chứng từ",
         infor: "Thông tin chi tiết",
-        choseAsset: "Chọn tài sản"
+        choseAsset: "Chọn tài sản",
+        clearSelected: "Bỏ chọn",
+        viewDetail: "Xem chi tiết phát sinh",
+        hideDetail: "Ẩn chi tiết phát sinh"
     },
 
     //tooltip button
@@ -157,7 +192,10 @@ export const MISAResources = {
         close: "Đóng (ESC)",
         reload: "Nạp",
         print: "In",
-        feedBack: "Phản hồi"
+        feedBack: "Phản hồi",
+        up: "Di chuyển lên",
+        down: "Di chuyển xuống",
+        add: "Thêm"
     },
     //table paging
     paging: {
@@ -190,7 +228,8 @@ export const MISAResources = {
             departmentNameNew: "Bộ phận điều chuyển đến",
             reason: "Lý do",
             userAsset: "Người đang sử dụng",
-            newUserAsset: "Người sử dụng mới"
+            newUserAsset: "Người sử dụng mới",
+            oldDepartment: "Bộ phận sử dụng"
         },
 
         key: {
@@ -208,12 +247,13 @@ export const MISAResources = {
             receiptCode: "ReceiptCode",
             receiptDate: "ReceiptDate",
             tranferDate: "TranferDate",
-            receiptNote: "ReceiptNote",
+            receiptNote: "Note",
             orgPrice: "OrgPrice",
-            departmentNameNew: "DepartmentReciept",
-            reason: "reason",
+            departmentNameNew: "DepartmentReceipt",
+            reason: "Reason",
             userAsset: "UserAsset",
-            newUserAsset: "NewUserAsset"
+            newUserAsset: "NewUserAsset",
+            oldDepartment: "OldDepartmentName"
 
         }
     },
@@ -254,7 +294,119 @@ export const MISAResources = {
     //title tab view
     title__tab: {
         tranfer: "Điều chuyển"
-    }
+    },
+
+    //free text
+    free__text: {
+        selected: "Đã chọn: ",
+        stt: "Số thứ tự"
+    },
+
+    colTableAssetChoseEdit: [
+        {
+            title: "",
+            checkbox: true,
+            key: "checkbox",
+        },
+        {
+            title: "STT",
+            key: "order",
+            tooltip: "Số thứ tự",
+        },
+        {
+            title: "Mã tài sản",
+            posLeft: true,
+            key: "AssetCode",
+        },
+        {
+            title: "Tên tài sản",
+            posLeft: true,
+            width: 200,
+            key: "AssetName",
+        },
+        {
+            title: "Nguyên giá",
+            posLeft: false,
+            key: "Cost",
+        },
+        {
+            title: "Giá trị còn lại",
+            posLeft: false,
+            key: "ResidualPrice",
+        },
+        {
+            title: "Bộ phận sử dụng",
+            posLeft: true,
+            width: 200,
+            key: "OldDepartmentName",
+        },
+        {
+            title: "Bộ phận điều chuyển đến",
+            posLeft: true,
+            width: 200,
+            key: "DepartmentReceipt",
+        },
+        {
+            title: "Lý do",
+            posLeft: true,
+            width: 200,
+            key: "Reason",
+        },
+    ],
+
+    colTableAssetChoseAdd: [
+        {
+            title: "",
+            checkbox: true,
+            key: "checkbox",
+        },
+        {
+            title: "STT",
+            key: "order",
+            tooltip: "Số thứ tự",
+        },
+        {
+            title: "Mã tài sản",
+            posLeft: true,
+            key: "AssetCode",
+        },
+        {
+            title: "Tên tài sản",
+            posLeft: true,
+            width: 200,
+            key: "AssetName",
+        },
+        {
+            title: "Nguyên giá",
+            posLeft: false,
+            key: "Cost",
+        },
+        {
+            title: "Giá trị còn lại",
+            posLeft: false,
+            key: "ResidualPrice",
+        },
+        {
+            title: "Bộ phận sử dụng",
+            posLeft: true,
+            width: 200,
+            key: "DepartmentName",
+        },
+        {
+            title: "Bộ phận điều chuyển đến",
+            posLeft: true,
+            width: 200,
+            key: "DepartmentReceipt",
+        },
+        {
+            title: "Lý do",
+            posLeft: true,
+            width: 200,
+            key: "Reason",
+        },
+    ],
+
+
 }
 
 

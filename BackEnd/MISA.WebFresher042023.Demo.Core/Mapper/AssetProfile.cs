@@ -20,6 +20,7 @@ namespace MISA.WebFresher042023.Demo.Application.Mapper
         public AssetProfile() 
         {
             CreateMap<Asset, AssetDto>();
+            CreateMap<Asset, AssetTranferDto>();
             CreateMap<AssetInsertDto, Asset>();
             CreateMap<AssetUpdateDto, Asset>();
         }   

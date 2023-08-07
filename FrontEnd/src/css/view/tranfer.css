@@ -10,6 +10,7 @@
      height: 46px;
 }
 
+
 .header__tab {
      height: 52px;
      display: flex;
@@ -22,6 +23,38 @@
      display: flex;
      align-items: center;
      width: 50%;
+}
+
+.tab__left--btn {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+}
+
+.selected--checkbox {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 0 10px;
+     font-family: RobotoRegular;
+     font-size: 14px;
+}
+
+.clear__selected {
+     font-size: 13px;
+     font-family: RobotoMedium;
+     cursor: pointer;
+     padding-top: 2px;
+}
+
+.btn--delete:hover {
+     background-color: rgba(236, 65, 65, .15)
+}
+
+
+.clear__selected:hover {
+     color: var(--blue-color-primary);
+     text-decoration: underline;
 }
 
 .header__tab--right {
@@ -37,7 +70,7 @@
 
 /* css common */
 .tab__view {
-     height: calc(100% - 46px);
+     height: 100%;
 }
 
 .tab__content {
@@ -65,7 +98,7 @@
      position: absolute;
      cursor: row-resize;
      z-index: 99;
-     bottom: -43px;
+     bottom: -45px;
 }
 
 .ui--resiable:hover>.icon__row--resize {
@@ -87,6 +120,8 @@
      display: flex;
      align-items: center;
      padding-left: 8px;
+     padding-top: 1px;
+     padding-bottom: 2px;
 }
 
 .border__detail {

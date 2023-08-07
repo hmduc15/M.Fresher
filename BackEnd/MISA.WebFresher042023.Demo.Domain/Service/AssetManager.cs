@@ -1,6 +1,7 @@
 ﻿using MISA.WebFresher042023.Demo.Domain.Entity;
 using MISA.WebFresher042023.Demo.Domain.Enum;
-using MISA.WebFresher042023.Demo.Domain.Interface;
+using MISA.WebFresher042023.Demo.Domain.Interface.Manager;
+using MISA.WebFresher042023.Demo.Domain.Interface.Repository;
 using MISA.WebFresher042023.Demo.Domain.MISAException;
 using MISA.WebFresher042023.Demo.Domain.Resources;
 using System;

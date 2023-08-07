@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MISA.WebFresher042023.Demo.Application.Interface
 {
-    public interface IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto>
+    public interface IBaseService<TEntityDto, TEntityInsertDto, TEntityUpdateDto,TEntityTranferDto>
     {
         /// <summary>
         ///  Hàm lấy tất cả Entity có trong Db

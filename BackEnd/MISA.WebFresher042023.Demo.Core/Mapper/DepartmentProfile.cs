@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MISA.WebFresher042023.Demo.Application;
+using MISA.WebFresher042023.Demo.Application.Dto.DepartmentDto;
 using MISA.WebFresher042023.Demo.Domain.Entity;
 using System;
 using System.Collections.Generic;

@@ -4,7 +4,6 @@ using MySqlConnector;
 using Dapper;
 using MISA.WebFresher042023.Demo.Domain.Resources;
 using System.Data;
-using MISA.WebFresher042023.Demo.Domain.Interface;
 using static Dapper.SqlMapper;
 using OfficeOpenXml;
 using static MISA.WebFresher042023.Demo.Domain.MISAAttribute.CustomAttribute;
@@ -14,6 +13,8 @@ using System.Reflection;
 using System.Drawing;
 using MISA.WebFresher042023.Demo.Domain;
 using Newtonsoft.Json;
+using MISA.WebFresher042023.Demo.Application;
+using MISA.WebFresher042023.Demo.Domain.Interface.Repository;
 
 namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 {
@@ -55,6 +56,25 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
 
         }
         #endregion
+
+        /// <summary>
+        /// Hàm check ds tài sản có chứng từ hay không phục vụ nghiệp vụ xóa tài sản
+        /// </summary>
+        /// <param name="ids">danh sách tài sản</param>
+        /// <returns>Danh sách chứng từ của tài sản nếu có</returns>
+        /// Author: HMDUC (05/08/2023)
+        public async Task<List<ReceiptAssetCommon>> GetReceiptByAssetId(List<Guid> ids)
+        {
+            var sqlCommand = "Proc_Asset_CheckExistReceipt";
+
+            DynamicParameters parameters = new DynamicParameters();
+            var param = string.Join(",", ids);
+            parameters.Add("@ids", param);
+
+            var result = await _uow.Connection.QueryAsync<ReceiptAssetCommon>(sqlCommand, parameters, commandType: System.Data.CommandType.StoredProcedure, transaction: _uow.Transaction);
+
+            return result.ToList();
+        }
 
         /// <summary>
         /// Hàm phân trang va tìm kiếm
@@ -143,6 +163,28 @@ namespace MISA.WebFresher042023.Demo.Infrastructure.Repository
             };
 
             return response;
+        }
+
+
+        /// <summary>
+        /// Hàm lấy tất cả các tài sản theo mã chứng từ
+        /// </summary>
+        /// <param name="receiptId">Mã chứng từ</param>
+        /// <returns>
+        /// Danh sách tài sản
+        /// </returns>
+        /// Author: HMDUC (28/07/2023)
+        public async Task<List<Asset>> GetAssetAllByReceipId(Guid receiptId)
+        {
+            var sqlCommand = "Proc_ReceipAssett_GetAll";
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@receiptId", receiptId);
+
+            var listAsset = await _uow.Connection.QueryAsync<Asset>(sqlCommand, parameters, commandType: System.Data.CommandType.StoredProcedure, transaction: _uow.Transaction);
+
+
+            return listAsset.ToList();
         }
 
         /// <summary>

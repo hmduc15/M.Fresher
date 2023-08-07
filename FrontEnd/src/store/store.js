@@ -11,6 +11,8 @@ import receipt from './receipt';
 import assetTranfer from './asset/assetTranfer';
 import assetTranferChose from './asset/assetTranferChose';
 import assetChose from './asset/assetChose';
+import modalDialog from './modalDialog';
+import loading from './loading';
 
 
 /**
@@ -29,7 +31,9 @@ const store = createStore({
         receipt,
         assetTranfer,
         assetTranferChose,
-        assetChose
+        assetChose,
+        modalDialog,
+        loading
     }
 
 })

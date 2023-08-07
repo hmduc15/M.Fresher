@@ -31,7 +31,7 @@
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
                 `${column.key === 'ReceiptNote' ? 'flex-1' : ''}`,
-                `${column.key === 'reason' ? 'flex-1' : ''}`,
+                `${column.key === 'Reason' ? 'flex-1' : ''}`,
                 `${column.type === 'date' ? 'align--center' : ''}`,
               ]"
             >
@@ -100,6 +100,9 @@
               'table__body--row',
               {
                 'table--selected': isSelected(data),
+              },
+              {
+                'row--hovered': this.indexRowHover === indexRow,
               },
             ]"
             @contextmenu.prevent="showContextMenu($event, data, indexRow)"
@@ -313,33 +316,14 @@
             :class="[
               {
                 'table--selected': isSelected(data),
-                'row--hovered':
-                  this.indexRowHover === indexRow || isContextMenu(indexRow),
-              },
-              {
-                'table--click': isSelectedClick(data),
+                'row--hovered': this.indexRowHover === indexRow,
               },
             ]"
             @click="handleClickRow(data, indexRow, $event)"
             @mouseenter.stop="handleHoverStart(indexRow)"
             @mouseleave="handleHoverEnd"
           >
-            <div class="fixed__ceil--item">
-              <m-button
-                className="btn__row btn__edit"
-                iconButton="icon__edit"
-                @click="handleEdit(data, $event)"
-                :title="this.$_MISAResources.tooltip__btn.edit"
-                posTooltip="left"
-              ></m-button>
-              <m-button
-                className="btn__row btn__delete--table"
-                iconButton="icon__delete--red"
-                :title="this.$_MISAResources.tooltip__btn.delete"
-                posTooltip="top"
-                @click="handleDelete(data)"
-              ></m-button>
-            </div>
+            <div class="fixed__ceil--item"></div>
           </div>
         </div>
         <!-- Summary -->
@@ -599,6 +583,7 @@ export default {
     this.$nextTick(() => {
       this.widthSkeleton = this.$refs.tableRef?.offsetWidth;
     });
+    this.setListChoseSelected([]);
   },
 
   watch: {
@@ -643,7 +628,6 @@ export default {
 
   computed: {
     ...mapState("asset", ["assetList", "listSelected", "reLoad"]),
-
     ...mapState("displayTable", ["listDisplayed"]),
     ...mapState("sideBar", ["isCollapsed"]),
     ...mapState("assetChose", [
@@ -701,7 +685,10 @@ export default {
   methods: {
     ...mapActions("formDialog", ["setIsShow", "setDataForm", "setFormMode"]),
     ...mapActions("asset", ["getAssetList", "deleteAsset", "setListSelected"]),
-    ...mapActions("assetChose", ["setListChoseSelected"]),
+    ...mapActions("assetChose", [
+      "setListChoseSelected",
+      "setListSelectecAssetClick",
+    ]),
     ...mapActions("receipt", ["setListSelectClick", "setListReceiptSelected"]),
 
     /**
@@ -830,29 +817,36 @@ export default {
             (item) => item.AssetId !== data.AssetId
           );
         }
+        console.log(this.arrSelected);
         this.setListChoseSelected(this.arrSelected);
       } else if (event.shiftKey) {
         this.handleShiftClick(index, event);
       } else {
         //  normal click
         this.isCtrlClick = true;
-        this.handleSelected(data);
+        this.handleSelected(data, index);
       }
     },
+
     /**
      * function handle event ctrl  + click // click
      * Author: HMDUC (08/06/2023)
      * @param {*} data
      */
-    handleSelected(data) {
-      if (this.listSelectClick.some((item) => item.AssetId === data.AssetId)) {
-        return;
+    handleSelected(data, index) {
+      this.indexCtrlClick = index;
+      if (!this.arrSelected.some((item) => item.AssetCode == data.AssetCode)) {
+        if (!this.isCtrlClick) {
+          this.arrSelected.length = 0;
+        }
+        this.arrSelected.push(data);
       } else {
-        this.arrClick.length = 0;
-        this.arrClick.push(data);
-        this.setListChoseSelected(this.arrClick);
-        this.$emit("clickRow", this.listSelectClick);
+        this.arrSelected = this.arrSelected.filter(
+          (item) => item.AssetCode !== data.AssetCode
+        );
       }
+      this.setListChoseSelected(this.arrSelected);
+      this.setListSelectecAssetClick(this.arrSelected);
     },
 
     /**
@@ -1055,16 +1049,17 @@ export default {
 .flex-1 {
   flex: 1;
 }
+.loading__container {
+  height: calc(100% - 45px);
+  z-index: 999;
+}
 
 .table__view {
   user-select: none;
 }
-
-/* .table__content--body,
-.table__content--header,
-.table__content--summary {
-  width: 1304px;
-} */
+.table__content--header {
+  z-index: 999;
+}
 
 .table__content--summary {
   height: 37px;
@@ -1078,6 +1073,11 @@ export default {
 
 .fixed__content {
   height: calc(100% - 43px);
+  width: 7px;
+}
+
+.fixed__row--item {
+  border-left: none;
 }
 
 .table__content--summary {

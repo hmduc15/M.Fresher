@@ -1,34 +1,40 @@
 <template>
   <div class="container__fluid">
     <div class="content__tranfer">
-      <div class="container__header">
-        <div class="select__tab">
-          <m-button
-            :content="this.$_MISAResources.content__button.tranferIn"
-            className="btn__tab-view active__tab"
-          ></m-button>
-          <m-button
-            :content="this.$_MISAResources.content__button.tranferOut"
-            className="btn__tab-view "
-          ></m-button>
-          <m-button
-            :content="this.$_MISAResources.content__button.receive"
-            className="btn__tab-view "
-          ></m-button>
-        </div>
-      </div>
       <div class="tab__view">
         <div class="header__tab">
           <div class="header__tab--left">
-            <h4 class="title__tab">
-              {{ this.$_MISAResources.title__tab.tranfer }}
-            </h4>
-            <m-button
-              iconButton="icon__reload"
-              className="btn__reload"
-              :title="this.$_MISAResources.tooltip__btn.reload"
-              posTooltip="top"
-            ></m-button>
+            <div class="tab__left--btn">
+              <div class="text" v-if="this.listReceiptSelected.length === 0">
+                <h4 class="title__tab">
+                  {{ this.$_MISAResources.title__tab.tranfer }}
+                </h4>
+                <m-button
+                  iconButton="icon__reload"
+                  className="btn__reload"
+                  :title="this.$_MISAResources.tooltip__btn.reload"
+                  posTooltip="top"
+                  @click="handleReload"
+                ></m-button>
+              </div>
+              <div class="selected--checkbox" v-else>
+                <div>
+                  {{ this.$_MISAResources.free__text.selected }}
+                  <strong class="selected__row">{{
+                    this.listReceiptSelected.length
+                  }}</strong>
+                </div>
+                <div class="clear__selected" @click="handleClearSelected">
+                  {{ this.$_MISAResources.content__button.clearSelected }}
+                </div>
+                <m-button
+                  className="btn__text btn__delete--outline btn--delete"
+                  :content="this.$_MISAResources.content__button.delete"
+                  type="button"
+                  @click="handleDelete"
+                ></m-button>
+              </div>
+            </div>
           </div>
           <div class="header__tab--right">
             <m-button
@@ -36,11 +42,6 @@
               iconButton="icon__add--receipt"
               :content="this.$_MISAResources.content__button.addReceipt"
               @click="openModal"
-            ></m-button>
-            <m-button
-              iconButton="icon__print"
-              :title="this.$_MISAResources.tooltip__btn.print"
-              posTooltip="top"
             ></m-button>
             <m-button
               iconButton="icon__feedBack"
@@ -68,10 +69,14 @@
               :isShowSummary="true"
               :isFixedAction="true"
               :isTableMaster="true"
-              @nextPage="nextPage"
-              @prevPage="prevPage"
-              @pageSize="chosePageSize"
+              @nextPage="nextPageTranfer"
+              @prevPage="prevPageTranfer"
+              @pageSize="chosePageSizeTranfer"
               @clickRow="handleClickRow"
+              @getDataAsset="handleDataAsset"
+              @getMember="handleGetMember"
+              @showPopup="handleShowPopup"
+              @loading="setLoading"
             ></m-table-tranfer>
             <div
               class="ui--resiable"
@@ -95,7 +100,11 @@
                   :content="this.$_MISAResources.content__button.infor"
                 ></m-button>
                 <m-button
-                  iconButton="icon__collapse--down"
+                  :iconButton="
+                    this.isCollapse
+                      ? 'icon__collapse--up'
+                      : 'icon__collapse--down'
+                  "
                   className="btn__collapse-detail"
                   @click="handleCollapse"
                 ></m-button>
@@ -106,7 +115,11 @@
                 :widthDefault="widthColAsset"
                 :isShowPagging="true"
                 :isTableMaster="true"
-                :numberPage="currentPage"
+                :isFixedAction="true"
+                :numberPage="currentPageAsset"
+                @nextPage="nextPageAsset"
+                @prevPage="prevPageAsset"
+                @pageSize="chosePageSizeAsset"
               ></m-table-asset>
             </div>
           </div>
@@ -114,23 +127,67 @@
       </div>
     </div>
   </div>
-  <m-modal :isShow="isShowModal" @closeModal="closeModal"></m-modal>
+  <m-modal
+    :data="dataRecieved"
+    v-if="isShow"
+    :newReceiptCode="newReceiptCode"
+    :currentMemberEdit="memberEdit"
+    @closeModal="closeModal"
+    @loading="setLoading"
+    @showToast="handleShowToast"
+  ></m-modal>
+  <m-dialog v-if="isShowPopup || isLoading || onLoading">
+    <template #content v-if="isLoading || onLoading">
+      <m-loading></m-loading>
+    </template>
+    <template #content v-else>
+      <m-popup
+        icon="icon__warning"
+        @cancel="handleCancelPopup"
+        :type="typePopup"
+        :isShow="isShowPopup"
+        @showToast="handleShowToast"
+        :dataPopup="dataRecieved"
+        :assetError="dataAsset"
+        :receiptError="dataReceipt"
+      ></m-popup>
+    </template>
+  </m-dialog>
+  <m-toast
+    icon="icon__check"
+    :type="typeToast"
+    :content="contentToast"
+    :isShow="isShowToast"
+  ></m-toast>
 </template>
 
 <script>
+import Enum from "@/utils/enum";
+import { request } from "@/services/request";
 import { mapActions, mapState } from "vuex";
+import { formatDate } from "@/utils/format";
 
 import MButton from "@/components/base/MButton.vue";
 import MTableTranfer from "@/components/table/MTableTranfer.vue";
 import MTableAssetTranfer from "@/components/table/MTableAssetTranfer";
 import MModal from "@/components/base/MModal";
+import MPopup from "@/components/base/MPopup";
+import MDiaglog from "@/components/base/MDiaglog";
+import MToast from "@/components/base/MToast";
+import MLoading from "@/components/base/MLoading";
 
 export default {
   name: "AssetTranferList",
   data() {
     return {
+      isShowPopup: false,
+      typePopup: null,
+      isLoading: false,
       isShowModal: false,
       isCollapse: false,
+      typeToast: null,
+      isShowToast: false,
+      contentToast: null,
       heightDetail: 231,
       startY: 0,
       startX: 0,
@@ -202,18 +259,6 @@ export default {
           key: this.$_MISAResources.table.key.assetName,
         },
         {
-          title: this.$_MISAResources.table.title.departmentName,
-          posLeft: true,
-          width: 200,
-          key: this.$_MISAResources.table.key.departmentName,
-        },
-        {
-          title: this.$_MISAResources.table.title.departmentNameNew,
-          posLeft: true,
-          width: 200,
-          key: this.$_MISAResources.table.key.departmentNameNew,
-        },
-        {
           title: this.$_MISAResources.table.title.cost,
           posLeft: false,
           width: 200,
@@ -225,6 +270,18 @@ export default {
           key: this.$_MISAResources.table.key.residualPrice,
         },
         {
+          title: this.$_MISAResources.table.title.oldDepartment,
+          posLeft: true,
+          width: 200,
+          key: this.$_MISAResources.table.key.oldDepartment,
+        },
+        {
+          title: this.$_MISAResources.table.title.departmentNameNew,
+          posLeft: true,
+          width: 200,
+          key: this.$_MISAResources.table.key.departmentNameNew,
+        },
+        {
           title: this.$_MISAResources.table.title.reason,
           posLeft: true,
           width: 200,
@@ -232,7 +289,7 @@ export default {
         },
       ],
       widthColReipt: [45, 50, 130, 140, 140, 140, 140, 180],
-      widthColAsset: [50, 100, 200, 150, 200, 140, 140],
+      widthColAsset: [50, 100, 200, 140, 140, 180, 200],
       dataList: {
         data: [
           {
@@ -245,8 +302,17 @@ export default {
         ],
         totalRow: 0,
       },
+      receiptAssetId: null,
       currentPageTranfer: 1,
       pageSizeTranfer: 20,
+      currentPageAsset: 1,
+      newReceiptCode: null,
+      pageSizeAsset: 20,
+      dataRecieved: "",
+      dataAsset: "",
+      dataReceipt: "",
+      memberEdit: null,
+      isDeleteError: null,
     };
   },
   components: {
@@ -254,6 +320,10 @@ export default {
     "m-table-tranfer": MTableTranfer,
     "m-modal": MModal,
     "m-table-asset": MTableAssetTranfer,
+    "m-popup": MPopup,
+    "m-dialog": MDiaglog,
+    "m-toast": MToast,
+    "m-loading": MLoading,
   },
   mounted() {
     window.addEventListener("mousemove", this.handleResize);
@@ -265,6 +335,7 @@ export default {
   },
 
   created() {
+    this.getNewAssetCode();
     this.getReceiptList({
       pageNumber: this.currentPageTranfer,
       pageSize: this.pageSizeTranfer,
@@ -272,20 +343,172 @@ export default {
   },
 
   computed: {
-    ...mapState("receipt", ["receiptList", "listSelectClick"]),
+    ...mapState("receipt", [
+      "receiptList",
+      "listSelectClick",
+      "receiptEdit",
+      "listReceiptSelected",
+    ]),
     ...mapState("assetTranfer", ["listAssetTRanfer"]),
+    ...mapState("modalDialog", ["isShow", "modalMode"]),
+    ...mapState("receipt", ["listAssetEdit", "listReceiptSelected"]),
+    ...mapState("loading", ["onLoading"]),
   },
 
   methods: {
-    ...mapActions("receipt", ["getReceiptList"]),
+    ...mapActions("receipt", [
+      "getReceiptList",
+      "setListReceiptSelected",
+      "setReceiptError",
+    ]),
     ...mapActions("assetTranfer", ["getAssetTranferList"]),
+    ...mapActions("modalDialog", ["setIsShow", "setModalMode"]),
+    ...mapActions("assetTranferChose", [
+      "setListAssetTranferChose",
+      "setLoadingTableTranfer",
+      "setListAssetFirst",
+    ]),
+    ...mapActions("assetChose", ["setListChoseSelected"]),
+
+    /**
+     * Function check Delete List Receipt
+     * Author: HMDUC (06/08/2023)
+     */
+    async checkDeleteListReceipt(listId) {
+      try {
+        const res = await request.checkDeleteList(listId);
+        this.isDeleteError = res;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    /**
+     * Function get new Code
+     * Author: HMDUC (06/08/2023)
+     */
+    async getNewAssetCode() {
+      try {
+        const res = await request.get(`Receipt/NewCode`);
+        this.newReceiptCode = res.toString();
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async handleDelete() {
+      var listId = this.listReceiptSelected.map((item) => {
+        return item.ReceiptId;
+      });
+      await this.checkDeleteListReceipt(listId);
+
+      switch (Object.keys(this.isDeleteError).length) {
+        case 0:
+          this.isShowPopup = true;
+          this.typePopup = "confirm__receipt";
+          this.dataRecieved = this.listReceiptSelected;
+          break;
+        default:
+          var receiptError = [];
+          var response = Object.values(this.isDeleteError)[0];
+          response.map((item) => {
+            receiptError.push({
+              receiptCode: item.ReceiptCode,
+              receiptDate: formatDate(item.ReceiptDate),
+            });
+          });
+          this.setReceiptError(receiptError);
+          this.isShowPopup = true;
+          this.typePopup = "dele__error";
+          this.dataAsset = response[0];
+          break;
+      }
+    },
+
+    /**
+     * Function handle Reload
+     * Author: HMDUC (06/08/2023)
+     */
+    handleReload() {
+      this.getReceiptList({
+        pageNumber: this.currentPageTranfer,
+        pageSize: this.pageSizeTranfer,
+      });
+    },
+
+    /**
+     * Function get Current Member list
+     * Author: HMDUC (06/08/2023)
+     */
+    handleGetMember(data) {
+      this.memberEdit = data;
+    },
+
+    /**
+     * Function clear selected
+     * Author: HMDUC (06/08/2023)
+     */
+    handleClearSelected() {
+      this.listReceiptSelected.length = 0;
+      this.setListReceiptSelected([]);
+    },
+
+    /**
+     * Function set Loading
+     * Author: HMDUC (31/07/2023)
+     */
+    setLoading(isLoading) {
+      if (isLoading) {
+        this.isLoading = isLoading;
+      } else {
+        setTimeout(() => {
+          this.isLoading = isLoading;
+        }, 300);
+      }
+    },
 
     /**
      * Function handle click row Table Master
      * Author: HMDUC (27/07/2023)
      */
     handleClickRow(value) {
-      this.getAssetTranferList({ id: value[0].ReceiptId });
+      this.receiptAssetId = value[0].ReceiptId;
+      this.getAssetTranferList({
+        id: this.receiptAssetId,
+        pageNumber: this.currentPageAsset,
+        pageSize: this.pageSizeAsset,
+      });
+    },
+
+    /**
+     * Function showPopup
+     * Author: HMDUC (31/07/2023)
+     */
+    handleShowPopup(data, type) {
+      this.typePopup = type;
+      this.dataRecieved = data;
+      this.isShowPopup = true;
+      this.dataAsset = data;
+    },
+
+    /**
+     * Function cancel and close popup
+     * Author: HMDUC (31/07/2023)
+     */
+    handleCancelPopup() {
+      this.isShowPopup = false;
+      this.listReceiptSelected.length = 0;
+      this.setListReceiptSelected([]);
+    },
+
+    handleShowToast(type, content) {
+      this.typeToast = type;
+      this.contentToast = content;
+      this.isShowToast = true;
+      this.isShowPopup = false;
+      setTimeout(() => {
+        this.isShowToast = false;
+      }, 3200);
     },
 
     /**
@@ -295,12 +518,11 @@ export default {
     handleCollapse() {
       this.isCollapse = !this.isCollapse;
       if (this.isCollapse) {
-        this.heightDetail = 31;
+        this.heightDetail = 33;
       } else {
         this.heightDetail = 231;
       }
     },
-
     /**
      * Function handle Start ReSize Form detail
      * Author: HMDUC (26/07/2023)
@@ -328,6 +550,12 @@ export default {
       }
       const heightDiff = event.pageY - this.startY;
       this.heightDetail -= heightDiff;
+      if (this.heightDetail > 533) {
+        this.heightDetail = 532;
+      } else if (this.heightDetail < 33) {
+        this.heightDetail = 32;
+      }
+
       this.startY = event.pageY;
       document.body.style.cursor = "row-resize";
     },
@@ -345,22 +573,44 @@ export default {
      * Author: HMDUC (26/07/2023)
      */
     closeModal() {
-      this.isShowModal = false;
+      this.setIsShow(false);
     },
 
     /**
      * Function open modal
      * Author: HMDUC (26/07/2023)
      */
-    openModal() {
-      this.isShowModal = true;
+    async openModal() {
+      await this.getNewAssetCode();
+      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.setIsShow(true);
+        this.setModalMode(Enum.FORM__MODE.ADD);
+        this.dataRecieved = null;
+      }, 300);
+      this.$emit("changeMode", this.modalMode);
+    },
+
+    handleDataReceipt(data) {
+      console.log(data);
+      console.log(this.receiptEdit);
+    },
+
+    handleDataAsset(data) {
+      var dataEdit = {
+        data: data,
+        totalRow: data.length,
+      };
+      this.setListChoseSelected(data);
+      this.setListAssetTranferChose(dataEdit);
     },
 
     /**
      * Function nextPage Table Receipt
      * Author: HMDUC (26/07/2023)
      */
-    nextPage(page) {
+    nextPageTranfer(page) {
       this.currentPageTranfer = page;
       this.getReceiptList({
         pageNumber: this.currentPageTranfer,
@@ -369,14 +619,65 @@ export default {
     },
 
     /**
-     * Function prevPage Table Receipt
+     * Function prevPage table Receipt
      * Author: HMDUC (26/07/2023)
      */
-    prevPage(page) {
+    prevPageTranfer(page) {
       this.currentPageTranfer = page;
       this.getReceiptList({
         pageNumber: this.currentPageTranfer,
         pageSize: this.pageSizeTranfer,
+      });
+    },
+
+    /**
+     * Function chosePage Size Table Receipt
+     * Author: HMDUC  (28/07/2023)
+     */
+    chosePageSizeTranfer(pageSize) {
+      this.pageSizeTranfer = pageSize;
+      this.getReceiptList({
+        pageNumber: this.currentPageTranfer,
+        pageSize: this.pageSizeTranfer,
+      });
+    },
+
+    /**
+     * Function nextPage Table Asset Receipt
+     * Author: HMDUC  (28/07/2023)
+     */
+    nextPageAsset(page) {
+      this.currentPageAsset = page;
+      this.getAssetTranferList({
+        id: this.receiptAssetId,
+        pageNumber: this.currentPageAsset,
+        pageSize: this.pageSizeAsset,
+      });
+    },
+
+    /**
+     * Function nextPage Table Asset Receipt
+     * Author: HMDUC  (28/07/2023)
+     */
+    prevPageAsset(page) {
+      this.currentPageAsset = page;
+      this.getAssetTranferList({
+        id: this.receiptAssetId,
+        pageNumber: this.currentPageAsset,
+        pageSize: this.pageSizeAsset,
+      });
+    },
+
+    /**
+     * Function chosePage Size  Table Asset Receipt
+     * Author: HMDUC  (28/07/2023)
+     */
+    chosePageSizeAsset(pageSize) {
+      this.pageSizeAsset = pageSize;
+      this.getAssetTranferList({
+        id: this.receiptAssetId,
+        pageNumber: this.currentPageAsset,
+        pageSize: this.pageSizeAsset,
       });
     },
   },
@@ -386,6 +687,13 @@ export default {
 <style scoped>
 @import "@/css/base/content.css";
 @import "@/css/view/tranfer.css";
+
+.text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0 5px;
+}
 
 .grid__detail > .table__view {
   border-bottom: none;

@@ -88,6 +88,60 @@ namespace MISA.WebFresher042023.Demo.Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mã chứng từ không được phép để trống..
+        /// </summary>
+        public static string Empty_ReceiptCode {
+            get {
+                return ResourceManager.GetString("Empty_ReceiptCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ngày chứng từ không được để trống..
+        /// </summary>
+        public static string Empty_ReceiptDate {
+            get {
+                return ResourceManager.GetString("Empty_ReceiptDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ngày điều chuyển không được để trống..
+        /// </summary>
+        public static string Empty_TranferDate {
+            get {
+                return ResourceManager.GetString("Empty_TranferDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phát sinh chứng từ.
+        /// </summary>
+        public static string Err_Accrued {
+            get {
+                return ResourceManager.GetString("Err_Accrued", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mã chứng từ không được vượt quá 20 kí tự..
+        /// </summary>
+        public static string Err_Length_ReceiptCode {
+            get {
+                return ResourceManager.GetString("Err_Length_ReceiptCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chứng từ không tồn tại. Vui lòng thử lại..
+        /// </summary>
+        public static string Err_NotExit_Receipt {
+            get {
+                return ResourceManager.GetString("Err_NotExit_Receipt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tỷ lệ hao mòn phải bằng 1/Số năm sử dụng..
         /// </summary>
         public static string Error_DepreciationRate {
@@ -169,6 +223,24 @@ namespace MISA.WebFresher042023.Demo.Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to đã tồn tại. Vui lòng nhập lại mã chứng từ. .
+        /// </summary>
+        public static string Error_ReceiptCode_Dupli {
+            get {
+                return ResourceManager.GetString("Error_ReceiptCode_Dupli", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ngày điều chuyển phải lớn hơn hoặc ngày chứng từ..
+        /// </summary>
+        public static string Error_TranferDate {
+            get {
+                return ResourceManager.GetString("Error_TranferDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dữ liệu không hợp lệ. Vui lòng nhập lại..
         /// </summary>
         public static string Error_Validate {
@@ -183,6 +255,15 @@ namespace MISA.WebFresher042023.Demo.Domain.Resources {
         public static string Error_Validate_Dev {
             get {
                 return ResourceManager.GetString("Error_Validate_Dev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mã chứng từ.
+        /// </summary>
+        public static string ReceiptCode {
+            get {
+                return ResourceManager.GetString("ReceiptCode", resourceCulture);
             }
         }
         

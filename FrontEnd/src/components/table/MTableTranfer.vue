@@ -9,7 +9,10 @@
       @mouseup.capture="handleStopResize"
       class="table__container"
     >
-      <div class="table__content table--tranfer">
+      <div
+        class="table__content table--tranfer"
+        :class="[`${!isCollapsed ? 'table--tranfer-expand' : ''}`]"
+      >
         <!-- Table Header -->
         <div
           class="table__content--header"
@@ -30,7 +33,7 @@
                 `${column.action ? 'align--center' : ''}`,
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
-                `${column.key === 'ReceiptNote' ? 'flex-1' : ''}`,
+                `${column.key === 'Note' ? 'flex-1' : ''}`,
                 `${column.key === 'reason' ? 'flex-1' : ''}`,
                 `${column.type === 'date' ? 'align--center' : ''}`,
               ]"
@@ -71,7 +74,6 @@
                   </template>
                 </m-tooltip>
               </template>
-              <template v-else> </template>
               <div
                 class="resize--handle"
                 @mousedown.stop="handleStartResize(index)"
@@ -124,7 +126,7 @@
                 `${column.action ? ' align--center' : ''}`,
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
-                `${column.key === 'ReceiptNote' ? 'flex-1' : ''}`,
+                `${column.key === 'Note' ? 'flex-1' : ''}`,
                 `${column.key === 'reason' ? 'flex-1' : ''}`,
                 `${column.type === 'date' ? 'align--center' : ''}`,
               ]"
@@ -154,10 +156,10 @@
                 <span>{{ indexRow + 1 }}</span>
               </template>
               <template v-else-if="column.key === 'OrgPrice'">
-                <span>{{ this.formatValue(data[column.key]) }}</span>
+                <span>{{ data[column.key] }}</span>
               </template>
               <template v-else-if="column.type === 'date'">{{
-                this.formatDateData(data[column.key])
+                data[column.key]
               }}</template>
               <template v-else>
                 <span>{{ data[column.key] }}</span>
@@ -195,7 +197,7 @@
                 this.formatValue(this.dataSummary.total_quantity)
               }}</span>
             </template>
-            <template v-if="column.key === 'Cost'">
+            <template v-if="column.key === 'OrgPrice'">
               <span>{{ this.formatValue(this.dataSummary.total_cost) }}</span>
             </template>
             <template v-if="column.key === 'DepreciationAmount'">
@@ -203,11 +205,11 @@
                 this.formatValue(this.dataSummary.total_depreciation)
               }}</span>
             </template>
-            <!-- <template v-if="column.key === 'ResidualPrice'">
+            <template v-if="column.key === 'ResidualPrice'">
               <span>{{
                 this.formatValue(this.dataSummary.total_residual_price)
               }}</span>
-            </template> -->
+            </template>
           </div>
         </div>
       </div>
@@ -297,7 +299,10 @@
       <!-- Table Empty -->
       <div
         class="empty__data empty__data--sm icon--empty"
-        v-if="dataTable.data?.length === 0"
+        v-if="
+          (dataTable.data?.length === 0 && !isLoading) ||
+          (dataTable.length === 0 && !isLoading)
+        "
       ></div>
       <!-- Table Fixed Content -->
       <div class="fixed__content" v-if="isFixedAction">
@@ -390,13 +395,6 @@
           @click="handleDelete(dataSelected)"
         >
         </m-button>
-        <m-button
-          className="btn__context"
-          iconButton="icon__ctm icon__duplicate"
-          content="Nhân bản"
-          @click="handleDuplicate(dataSelected)"
-        >
-        </m-button>
       </div>
     </div>
   </div>
@@ -404,7 +402,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { format } from "@/utils/format";
+import { format, formatDate } from "@/utils/format";
 import Enum from "@/utils/enum";
 import { request } from "@/services/request";
 
@@ -440,6 +438,7 @@ export default {
 
   data() {
     return {
+      assetTranfered: [],
       assetClone: [],
       dataSummary: {},
       posMenu: { x: 0, y: 0 },
@@ -486,8 +485,8 @@ export default {
       debounce: null,
       currentPage: this.numberPage,
       newAssetCode: null,
-      widthContextMenu: 200,
-      heightContextMenu: 146,
+      widthContextMenu: 160,
+      heightContextMenu: 108,
       // data test
       dataTest: {
         data: [
@@ -634,6 +633,8 @@ export default {
         ],
         totalRow: 1,
       },
+      isDeleteError: null,
+      memberById: null,
     };
   },
 
@@ -670,6 +671,7 @@ export default {
       this.assetClone = newData.data.map((item) => {
         return {
           ...item,
+          OrgPrice: this.formatValue(item.OrgPrice),
           Cost: this.formatValue(item.Cost),
           Quantity: this.formatValue(item.Quantity),
           DepreciationAmount: this.formatValue(
@@ -677,9 +679,14 @@ export default {
           ),
           DepreciationYear: this.formatValue(Math.round(item.DepreciationYear)),
           ResidualPrice: this.formatValue(Math.round(item.ResidualPrice)),
+          ReceiptDate: this.formatDateData(item.ReceiptDate),
+          TranferDate: this.formatDateData(item.TranferDate),
         };
       });
       this.dataSummary = newData.summaryData;
+    },
+    assetTranfered(value) {
+      this.setAssetEdit(value);
     },
   },
 
@@ -691,9 +698,12 @@ export default {
       "receiptList",
       "listSelectClick",
       "listReceiptSelected",
+      "assetEdit",
     ]),
     ...mapState("displayTable", ["listDisplayed"]),
     ...mapState("sideBar", ["isCollapsed"]),
+    ...mapState("modalDialog", ["isShow", "modalMode"]),
+    ...mapState("loading", ["onLoading"]),
 
     // /**
     //  * Function check show Summary
@@ -717,7 +727,7 @@ export default {
      */
     isSelected() {
       return (data) => {
-        return this.listReceiptSelected.find(
+        return this.listReceiptSelected?.find(
           (receipt) => receipt.ReceiptId === data.ReceiptId
         );
       };
@@ -729,7 +739,7 @@ export default {
      */
     isSelectedClick() {
       return (data) => {
-        return this.listSelectClick.find(
+        return this.listSelectClick?.find(
           (receipt) => receipt.ReceiptId === data.ReceiptId
         );
       };
@@ -768,38 +778,74 @@ export default {
      * Author: HMDUC(26/05/2023)
      */
     totalRecored() {
-      return this.dataTable.totalRow;
+      return this.dataTable.totalRow ? this.dataTable.totalRow : 0;
     },
     /**
      * Function return total page
      * Author: HMDUC(26/05/2023)
      */
     totalPage() {
-      return Math.ceil(this.dataTable.totalRow / this.pageSize);
+      return this.dataTable.totalRow
+        ? Math.ceil(this.dataTable.totalRow / this.pageSize)
+        : 1;
     },
   },
 
   methods: {
-    ...mapActions("formDialog", ["setIsShow", "setDataForm", "setFormMode"]),
+    ...mapActions("modalDialog", ["setIsShow", "setModalMode"]),
     ...mapActions("contextMenu", ["setShowMenu", "setDataMenu", "setPos"]),
     ...mapActions("asset", ["getAssetList", "deleteAsset", "setListSelected"]),
-    ...mapActions("receipt", ["setListSelectClick", "setListReceiptSelected"]),
+    ...mapActions("receipt", [
+      "setListSelectClick",
+      "setListReceiptSelected",
+      "setAssetEdit",
+      "getAssetListEdit",
+      "setReceiptEdit",
+      "setReceiptError",
+    ]),
+    ...mapActions("loading", ["setLoading"]),
+    ...mapActions("assetTranferChose", ["setListAssetFirst"]),
 
     /**
-     * Function call Api Get NewAssetCode
-     * Author: HMDUC(15/06/2023)
+     * Function get CurrentMember By ReceiptId
+     * Author: HMDUC (05/08/2023)
      */
-    async getNewAssetCode() {
+    async getCurrentMember(id) {
       try {
-        const res = await request.get(`/Assets/NewCode`);
-        this.newAssetCode = res.toString();
-        this.$refs.AssetCode.s;
+        const res = await request.getCurrentMember(id);
+        this.memberById = res;
+        return res;
       } catch (err) {
-        this.$emit(
-          "showToast",
-          "notice",
-          this.$_MISAResources.toast__content.ErrorServer
-        );
+        console.log(err);
+      }
+    },
+
+    /**
+     * Function get DataAsset Edit by ReceiptId
+     * HMDUC (02/08/2023)
+     */
+    async getList(id) {
+      try {
+        const res = await request.getAssetEdit(id);
+        var cloneJson = JSON.stringify(res);
+        this.setListAssetFirst(cloneJson);
+        this.$emit("getDataAsset", res);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    /**
+     * Function call Api check Delete
+     * HMDUC (02/08/2023)
+     */
+    async isCheckDelete(id) {
+      try {
+        const res = await request.checkAccured(id);
+        this.isDeleteError = res;
+        return res;
+      } catch (error) {
+        console.log(error);
       }
     },
 
@@ -928,6 +974,7 @@ export default {
             (item) => item.ReceiptCode !== data.ReceiptCode
           );
         }
+        console.log("d");
         this.setListReceiptSelected(this.arrSelected);
       } else if (event.shiftKey) {
         this.handleShiftClick(index, event);
@@ -1039,15 +1086,17 @@ export default {
      * Function open form when click btnEdit
      * Author: HMDUC (27/05/2023)
      */
-    handleEdit(data) {
+    async handleEdit(data) {
       this.$emit("loading", true);
-
+      await this.getCurrentMember(data.ReceiptId);
       setTimeout(() => {
+        this.$emit("getMember", this.memberById);
+        this.setReceiptEdit(data);
+        this.getList(data.ReceiptId);
+        this.$emit("getDataReceipt", data);
         this.setIsShow(true);
-        this.$emit("getData", data);
-        this.setFormMode(Enum.FORM__MODE.EDIT);
+        this.setModalMode(Enum.FORM__MODE.EDIT);
       }, 300);
-
       this.$emit("loading", false);
     },
 
@@ -1056,9 +1105,30 @@ export default {
      * Author: HMDUC (27/05/2023)
      * @param {*} data
      */
-    handleDelete(data) {
+    async handleDelete(data) {
       var arr = [data];
-      this.$emit("showPopup", arr, "confirm");
+      await this.isCheckDelete(data.ReceiptId);
+      var isError = this.isDeleteError[data.ReceiptId].length > 0;
+      switch (isError) {
+        case false:
+          this.$emit("showPopup", arr, "confirm__receipt");
+          break;
+        case true:
+          var assetError = this.isDeleteError[data.ReceiptId][0];
+          var assetFirstError = this.isDeleteError[data.ReceiptId][0].AssetName;
+          var receiptErrors = [];
+          this.isDeleteError[data.ReceiptId].map((item) => {
+            if (item.AssetName === assetFirstError) {
+              receiptErrors.push({
+                receiptCode: item.ReceiptCode,
+                receiptDate: formatDate(item.ReceiptDate),
+              });
+            }
+          });
+          this.setReceiptError(receiptErrors);
+          this.$emit("showPopup", assetError, "dele__error");
+          break;
+      }
     },
 
     /**
@@ -1067,26 +1137,30 @@ export default {
      */
     showContextMenu(e, data, index) {
       var temp = 0;
-      var browserHeight = window.innerHeight;
+
       var { clientX, clientY } = e;
+      console.log(clientX, clientY);
 
       this.dataSelected = data;
       this.indexContextMenu = index;
       this.setShowMenu(true);
 
-      //Check position context menu
-      if (clientX > browserHeight) {
-        clientX = clientX - this.widthContextMenu;
-      }
-      if (clientY > browserHeight - 141) {
-        clientY = clientY - this.heightContextMenu;
-      }
+      // //Check position context menu
+      // if (clientX > browserHeight) {
+      //   clientX = clientX - this.widthContextMenu;
+      // }
+      // if (clientY > browserHeight) {
+      //   clientY = clientY - this.heightContextMenu;
+      // }
 
       //check collapsed sidebar
-      if (this.isCollapsed) {
-        temp = 126;
+      if (!this.isCollapsed) {
+        temp = -130;
+      } else {
+        temp = 0;
       }
-      this.setPos({ x: clientX - temp - 60, y: clientY + 5 });
+
+      this.setPos({ x: clientX - temp - 200, y: clientY + 5 - 110 });
 
       //add event click mouse left
       document.addEventListener("click", this.hideContextMenu);
@@ -1200,7 +1274,9 @@ export default {
 .flex-1 {
   flex: 1;
 }
-
+.loading__container {
+  z-index: 100;
+}
 .table__view {
   user-select: none;
 }
@@ -1216,7 +1292,10 @@ export default {
   line-height: 37px;
 }
 
-.table__paging,
+.table__paging {
+  position: relative;
+  z-index: 99;
+}
 .fixed__content--header {
   user-select: none;
 }
@@ -1227,5 +1306,6 @@ export default {
 
 .table__content--summary {
   border-bottom: 1px solid #e9e9e9;
+  z-index: 99;
 }
 </style>

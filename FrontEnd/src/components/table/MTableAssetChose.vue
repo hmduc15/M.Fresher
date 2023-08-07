@@ -3,6 +3,23 @@
     ref="tableRef"
     :class="['table__view', { 'table--nopaging': !isShowPagging }]"
   >
+    <div class="input--wrapper">
+      <m-input
+        type="text"
+        name="inputSearch"
+        id=""
+        :placeHolder="this.$_MISAResources.placeholder.SearchInput"
+        className="input__text input__text--icon input--default"
+        :required="false"
+        :isLabel="false"
+        :requiredNot="true"
+        v-model="searchText"
+        @keydown.enter="handleSearch(searchText)"
+        @input="clearSearch(searchText)"
+      >
+      </m-input>
+      <div class="icon__search--sm btn__search"></div>
+    </div>
     <!-- Table Content -->
     <div
       @mousemove.stop="handleResize"
@@ -31,7 +48,7 @@
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
                 `${column.key === 'ReceiptNote' ? 'flex-1' : ''}`,
-                `${column.key === 'reason' ? 'flex-1' : ''}`,
+                `${column.key === 'Reason' ? 'flex-1' : ''}`,
                 `${column.type === 'date' ? 'align--center' : ''}`,
               ]"
             >
@@ -89,7 +106,6 @@
           class="table__content--body"
           ref="tBody"
           @scroll="hanldeScroll($event)"
-          v-move-row="{ moveRow }"
         >
           <div
             v-for="(data, indexRow) in assetClone"
@@ -102,9 +118,9 @@
               {
                 'table--selected': isSelected(data),
               },
-              {
-                'table--click': isSelectedClick(data),
-              },
+              // {
+              //   'table--click': isSelectedClick(data),
+              // },
               {
                 'row--hovered':
                   this.indexRowHover === indexRow || isContextMenu(indexRow),
@@ -114,11 +130,11 @@
             @click="handleClickRow(data, indexRow, $event)"
             @mouseenter.stop="handleHoverStart(indexRow)"
             @mouseleave.stop="handleHoverEnd"
-            @dblclick="handleOpenEdit(data)"
           >
             <div
               class="ceil--item"
               v-for="(column, index) in columns"
+              :data-index="index"
               :key="index"
               :class="[
                 `${column.posLeft ? 'align--left' : 'align--right'}`,
@@ -126,8 +142,13 @@
                 `${column.checkbox ? 'align--center' : ''}`,
                 `${column.key === 'order' ? 'align--center' : ''}`,
                 `${column.key === 'ReceiptNote' ? 'flex-1' : ''}`,
-                `${column.key === 'reason' ? 'flex-1' : ''}`,
+                `${column.key === 'Reason' ? 'flex-1' : ''}`,
                 `${column.type === 'date' ? 'align--center' : ''}`,
+                `${
+                  column.key === 'DepartmentReceipt'
+                    ? 'd-flex jus--center ali--item'
+                    : ''
+                }`,
               ]"
               :style="[`width: ${widthDefault[index]}px`]"
               :title="data[column.key]"
@@ -160,6 +181,34 @@
               <template v-else-if="column.type === 'date'">{{
                 this.formatDateData(data[column.key])
               }}</template>
+              <template v-else-if="column.key === 'DepartmentReceipt'">
+                <m-combobox
+                  :ref="`departmentReciept${indexRow}`"
+                  :placeholder="this.$_MISAResources.placeholder.DepartmentCode"
+                  name="DepartmentReciept"
+                  :isFilter="true"
+                  :required="true"
+                  :isLabel="false"
+                  :listOptions="listDepartment"
+                  v-model="data[column.key]"
+                  className="select--table"
+                  @change="changeDepartment"
+                  @click="handlClickCbk(data, indexRow)"
+                ></m-combobox>
+              </template>
+              <template v-else-if="column.key === 'Reason'">
+                <m-input
+                  :ref="`reason${indexRow}`"
+                  v-model="data[column.key]"
+                  type="text"
+                  className="input__text input--default input--ceil"
+                  :required="false"
+                  :requiredNot="true"
+                  :isLabel="false"
+                  @input="handleInput($event)"
+                  @click.stop="getIdRow(data)"
+                ></m-input>
+              </template>
               <template v-else>
                 <span>{{ data[column.key] }}</span>
               </template>
@@ -197,7 +246,9 @@
               }}</span>
             </template>
             <template v-if="column.key === 'Cost'">
-              <span>{{ this.formatValue(this.dataSummary.total_cost) }}</span>
+              <span>{{
+                this.dataSummary.total_cost ? this.dataSummary.total_cost : 0
+              }}</span>
             </template>
             <template v-if="column.key === 'DepreciationAmount'">
               <span>{{
@@ -206,7 +257,9 @@
             </template>
             <template v-if="column.key === 'ResidualPrice'">
               <span>{{
-                this.formatValue(this.dataSummary.total_residual_price)
+                this.dataSummary.total_residual_price
+                  ? this.dataSummary.total_residual_price
+                  : 0
               }}</span>
             </template>
           </div>
@@ -298,7 +351,7 @@
       <!-- Table Empty -->
       <div
         class="empty__data empty__data--sm icon--empty"
-        v-if="dataTable.data?.length === 0 && !isLoadingDetail"
+        v-if="dataTable.data?.length === 0 && !isLoadingTableTranfer"
       ></div>
       <!-- Table Fixed Content -->
       <div class="fixed__content" v-if="isFixedAction">
@@ -323,29 +376,12 @@
                 'row--hovered':
                   this.indexRowHover === indexRow || isContextMenu(indexRow),
               },
-              {
-                'table--click': isSelectedClick(data),
-              },
             ]"
             @click="handleClickRow(data, indexRow, $event)"
             @mouseenter.s="handleHoverStart(indexRow)"
             @mouseleave="handleHoverEnd"
           >
             <div class="fixed__ceil--item">
-              <m-button
-                className="btn__row btn__edit"
-                iconButton="icon__edit"
-                @click="handleEdit(data, $event)"
-                :title="this.$_MISAResources.tooltip__btn.edit"
-                posTooltip="left"
-              ></m-button>
-              <m-button
-                className="btn__row btn__message"
-                iconButton="icon__duplicate"
-                :title="this.$_MISAResources.tooltip__btn.duplicate"
-                posTooltip="top"
-                @click="handleDuplicate(data)"
-              ></m-button>
               <m-button
                 className="btn__row btn__delete--table"
                 iconButton="icon__delete--red"
@@ -365,57 +401,21 @@
         ></div>
       </div>
       <!-- Loading -->
-      <div class="loading__container" v-if="isLoadingDetail">
+      <div class="loading__container" v-if="isLoadingTableTranfer">
         <div class="row--item" v-for="index in rowLoading" :key="index">
           <m-skeleton :isLoading="true" :rows="0"></m-skeleton>
         </div>
-      </div>
-    </div>
-    <!-- Context Menu -->
-    <div
-      ref="contextmenu"
-      :style="{
-        top: pos.y + 'px',
-        left: pos.x + 'px',
-        width: widthContextMenu + 'px',
-        height: heightContextMenu + 'px',
-      }"
-      class="context__menu"
-      v-show="isShowMenu"
-    >
-      <div class="context__button">
-        <m-button
-          className="btn__context"
-          iconButton="icon__ctm icon__edit"
-          content="Sửa"
-          @click="handleEdit(dataSelected)"
-        >
-        </m-button>
-        <m-button
-          className="btn__context"
-          iconButton="icon__ctm icon__delete--red"
-          content="Xóa"
-          @click="handleDelete(dataSelected)"
-        >
-        </m-button>
-        <m-button
-          className="btn__context"
-          iconButton="icon__ctm icon__duplicate"
-          content="Nhân bản"
-          @click="handleDuplicate(dataSelected)"
-        >
-        </m-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-import { format } from "@/utils/format";
-import Enum from "@/utils/enum";
 import { request } from "@/services/request";
 
+import { mapActions, mapState } from "vuex";
+import { format, formatDate } from "@/utils/format";
+import Enum from "@/utils/enum";
 import MSkeleton from "../base/MSkeleton.vue";
 import MTooltip from "../base/MTooltip.vue";
 import MInput from "../base/MInput.vue";
@@ -464,6 +464,7 @@ export default {
       indexContextMenu: -1,
       indexActive: -1,
       indexRowClick: -1,
+      isToggle: false,
       indexShiftClick: -1,
       indexCtrlClick: -1,
       indexRowHover: -1,
@@ -496,152 +497,16 @@ export default {
       newAssetCode: null,
       widthContextMenu: 200,
       heightContextMenu: 146,
-      // data test
-      dataTest: {
-        data: [
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-          {
-            ReceiptCode: "DC0001",
-            ReceiptDate: "21/04/2023",
-            TranferDate: "21/04/2023",
-            ReceiptNote: "a",
-            OrgPrice: 10000000000,
-          },
-        ],
-        totalRow: 1,
-      },
+      listDepartment: null,
+      newDepartment: null,
+      selectedOption: null,
+      indexCbk: null,
+      rowChange: null,
+      totalCost: 0,
+      totalResidualPrice: 0,
+      isDeleteError: null,
+      searchText: null,
+      arrBeforeSearch: null,
     };
   },
 
@@ -649,6 +514,10 @@ export default {
     this.$nextTick(() => {
       this.widthSkeleton = this.$refs.tableRef?.offsetWidth;
     });
+  },
+
+  created() {
+    this.getDepartmentList();
   },
 
   watch: {
@@ -674,51 +543,64 @@ export default {
       }
     },
 
-    // listSelectClick(newValue) {
-    //   console.log(newValue[0].ReceiptId);
-    //   this.getAssetTranferList({ id: newValue[0].ReceiptId });
-    // },
-
     dataTable(newData) {
+      this.totalCost = 0;
+      this.totalResidualPrice = 0;
       this.assetClone = newData.data.map((item) => {
-        return {
-          ...item,
-          Cost: this.formatValue(item.Cost),
-          Quantity: this.formatValue(item.Quantity),
-          DepreciationAmount: this.formatValue(
-            Math.round(item.DepreciationAmount)
-          ),
-          DepreciationYear: this.formatValue(Math.round(item.DepreciationYear)),
-          ResidualPrice: this.formatValue(Math.round(item.ResidualPrice)),
-        };
+        if (this.modalMode === Enum.FORM__MODE.ADD) {
+          this.totalCost += parseInt(item.Cost.replace(/\./g, ""));
+          this.totalResidualPrice += parseInt(
+            item.ResidualPrice.replace(/\./g, "")
+          );
+          return {
+            ...item,
+            Quantity: this.formatValue(item.Quantity),
+            DepreciationAmount: this.formatValue(
+              Math.round(item.DepreciationAmount)
+            ),
+            DepreciationYear: this.formatValue(
+              Math.round(item.DepreciationYear)
+            ),
+          };
+        } else {
+          this.totalCost += item.Cost;
+          this.totalResidualPrice += Math.floor(item.ResidualPrice);
+          return {
+            ...item,
+            Cost: this.formatValue(item.Cost),
+            ResidualPrice: this.formatValue(Math.floor(item.ResidualPrice)),
+            Quantity: this.formatValue(item.Quantity),
+            DepreciationAmount: this.formatValue(
+              Math.round(item.DepreciationAmount)
+            ),
+            DepreciationYear: this.formatValue(
+              Math.round(item.DepreciationYear)
+            ),
+          };
+        }
       });
-      this.dataSummary = newData.summaryData;
+      this.dataSummary = {
+        total_cost: this.formatValue(this.totalCost),
+        total_residual_price: this.formatValue(this.totalResidualPrice),
+      };
+      let jsonBeforeSearch = JSON.stringify(this.assetClone);
+      this.arrBeforeSearch = JSON.parse(jsonBeforeSearch);
     },
   },
 
   computed: {
-    ...mapState("assetTranfer", ["listAssetTRanfer", "isLoadingDetail"]),
-    ...mapState("contextMenu", ["isShowMenu", "dataCMenu", "pos"]),
-    ...mapState("asset", ["assetList", "listSelected", "reLoad"]),
-    ...mapState("receipt", ["isLoading", "receiptList", "listSelectClick"]),
-    ...mapState("displayTable", ["listDisplayed"]),
-    ...mapState("sideBar", ["isCollapsed"]),
-
-    // /**
-    //  * Function check show Summary
-    //  * Author: HMDUC (18/07/2023)
-    //  */
-    // isShowSummary() {
-    //   return this.listDisplayed.some((item) => item === "Summary");
-    // },
-
-    // /**
-    //  * Function check show Paging
-    //  * Author: HMDUC (18/07/2023)
-    //  */
-    // isShowPagging() {
-    //   return this.listDisplayed.some((item) => item === "Paging");
-    // },
+    ...mapState("assetTranferChose", [
+      "listAssetTranferChose",
+      "isLoadingTableTranfer",
+      "listSelected",
+    ]),
+    ...mapState("modalDialog", ["isShow", "modalMode"]),
+    ...mapState("receipt", [
+      "listAssetEdit",
+      "receiptList",
+      "receiptEdit",
+      "listAssetDelete",
+    ]),
 
     /**
      * Function check selected row
@@ -728,18 +610,6 @@ export default {
       return (data) => {
         return this.listSelected.find(
           (asset) => asset.AssetId === data.AssetId
-        );
-      };
-    },
-
-    /**
-     * Function check selected row click
-     * Author: HMDUC (25/06/2023)
-     */
-    isSelectedClick() {
-      return (data) => {
-        return this.listSelectClick.find(
-          (receipt) => receipt.ReceiptId === data.ReceiptId
         );
       };
     },
@@ -777,39 +647,186 @@ export default {
      * Author: HMDUC(26/05/2023)
      */
     totalRecored() {
-      return this.dataTable.totalRow;
+      return this.assetClone.length ? this.assetClone.length : 0;
     },
     /**
      * Function return total page
      * Author: HMDUC(26/05/2023)
      */
     totalPage() {
-      return Math.ceil(this.dataTable.totalRow / this.pageSize);
+      return this.dataTable.totalRow
+        ? Math.ceil(this.dataTable.totalRow / this.pageSize)
+        : 1;
     },
   },
 
   methods: {
-    ...mapActions("formDialog", ["setIsShow", "setDataForm", "setFormMode"]),
-    ...mapActions("contextMenu", ["setShowMenu", "setDataMenu", "setPos"]),
-    ...mapActions("asset", ["getAssetList", "deleteAsset", "setListSelected"]),
     ...mapActions("assetTranfer", ["getAssetTranferList"]),
+    ...mapActions("assetTranferChose", [
+      "setListAssetTranferChose",
+      "setLoadingTableTranfer",
+      "setListSelected",
+    ]),
+    ...mapActions("assetChose", ["setListChoseSelected"]),
+    ...mapActions("receipt", ["setReceiptError", "setListAssetDelete"]),
 
     /**
-     * Function call Api Get NewAssetCode
-     * Author: HMDUC(15/06/2023)
+     * Function call Api check before Delete
+     * Author: HMDUC(06/08/2023)
      */
-    async getNewAssetCode() {
+    async checkDelete(assetId, receiptId) {
       try {
-        const res = await request.get(`/Assets/NewCode`);
-        this.newAssetCode = res.toString();
-        this.$refs.AssetCode.s;
+        const res = await request.checkDeleteAssetReceipt(assetId, receiptId);
+        this.isDeleteError = res;
+        return res;
       } catch (err) {
-        this.$emit(
-          "showToast",
-          "notice",
-          this.$_MISAResources.toast__content.ErrorServer
-        );
+        console.log(err);
       }
+    },
+
+    /**
+     * Function call Api get Department list
+     * Author: HMDUC (15/06/2023)
+     */
+    async getDepartmentList() {
+      try {
+        const res = await request.get(`/Departments`);
+        const mapData = res.map((item) => ({
+          id: item.DepartmentId,
+          value: item.DepartmentCode,
+          label: item.DepartmentName,
+        }));
+        this.listDepartment = mapData;
+      } catch (err) {
+        this.isShowToast = true;
+        this.typeToast = "notice";
+        this.contentToast = this.$_MISAResources.toast__content.ErrorServer;
+      }
+    },
+
+    /**
+     * Function handleSearch Asset
+     * Author: HMDUC (01/06/2023)
+     */
+    handleSearch(value) {
+      let totalCost = 0;
+      let totalResidualPrice = 0;
+      if (this.arrBeforeSearch.length > 0) {
+        const textLower = value.toLowerCase();
+        var result = this.arrBeforeSearch.filter((item) => {
+          const assetCodeLower = item.AssetCode.toLowerCase();
+          const assetNameLower = item.AssetName.toLowerCase();
+          return (
+            assetCodeLower.includes(textLower) ||
+            assetNameLower.includes(textLower)
+          );
+        });
+
+        result.map((item) => {
+          if (this.modalMode === Enum.FORM__MODE.ADD) {
+            totalCost += parseInt(item.Cost.replace(/\./g, ""));
+            totalResidualPrice += parseInt(
+              item.ResidualPrice.replace(/\./g, "")
+            );
+          } else {
+            totalCost += parseInt(item.Cost.replace(/\./g, ""));
+            totalResidualPrice += parseInt(
+              item.ResidualPrice.replace(/\./g, "")
+            );
+          }
+        });
+        this.dataSummary = {
+          total_cost: this.formatValue(totalCost),
+          total_residual_price: this.formatValue(totalResidualPrice),
+        };
+        this.assetClone = result;
+      }
+    },
+
+    /**
+     * Function clear search
+     * Author: HMDUC (01/06/2023)
+     */
+    clearSearch() {
+      if (this.searchText.length === 0) {
+        setTimeout(() => {
+          this.assetClone = this.arrBeforeSearch;
+          this.dataSummary = {
+            total_cost: this.formatValue(this.totalCost),
+            total_residual_price: this.formatValue(this.totalResidualPrice),
+          };
+        }, 500);
+      }
+    },
+
+    /**
+     * function handle select option
+     * Author: HMDUC (01/06/2023)
+     * @param {*} obj contain id and name department
+     *
+     */
+    changeDepartment(obj) {
+      this.selectedOption = obj;
+      const department = this.findOptionById(
+        this.listDepartment,
+        this.selectedOption
+      );
+      this.newDepartment = department;
+      var idChange = this.assetClone.find((item) => {
+        return item.DepartmentReceipt === this.newDepartment.value;
+      });
+      this.$emit("changed", this.newDepartment, idChange.AssetId);
+      this.handleFocusControl(this.indexCbk, false);
+    },
+
+    handlClickCbk(data, index) {
+      this.rowChange = data;
+      this.indexCbk = index;
+      this.isToggle = true;
+      //     this.handleFocusControl(index, true);
+    },
+
+    /**
+     * Function control focus
+     * Author: HMDUC (02/08/2023)
+     */
+    handleFocusControl(index, isFocus) {
+      if (isFocus) {
+        const elCombobox = this.$refs[`departmentReciept${index}`];
+        if (elCombobox) {
+          this.$nextTick(() => {
+            elCombobox[0].isBorder = true;
+          });
+        }
+      } else {
+        const elCombobox = this.$refs[`departmentReciept${index}`];
+        if (elCombobox) {
+          this.$nextTick(() => {
+            elCombobox[0].isBorder = false;
+          });
+        }
+      }
+    },
+
+    handleInput(e) {
+      this.$emit("inputReason", e.target.value, this.rowChange.AssetId);
+    },
+
+    getIdRow(data) {
+      this.rowChange = data;
+    },
+
+    /**
+     * function find option selected by id when select departmentID or  categoryID
+     * Author: HMDUC (01/06/2023)
+     * @param {*} arr
+     * @param {*} opt
+     * @return Id: BP001 -> Phòng kỹ thuật || TS001 -> Máy tính xách tay
+     */
+    findOptionById(arr, opt) {
+      return arr.find((item) => {
+        return item.value == opt;
+      });
     },
 
     /**
@@ -921,20 +938,45 @@ export default {
      * @param {*} event
      */
     handleClickRow(data, index, event) {
+      this.isToggle = !this.isToggle;
+      if (this.isToggle) {
+        const elCombobox = this.$refs[`departmentReciept${index}`];
+        const elInput = this.$refs[`reason${index}`];
+        if (elCombobox) {
+          this.$nextTick(() => {
+            elCombobox[0].isBorder = true;
+            elInput[0].isBorder = true;
+          });
+        }
+      } else {
+        const elInput = this.$refs[`reason${index}`];
+        const elCombobox = this.$refs[`departmentReciept${index}`];
+        if (elCombobox) {
+          this.$nextTick(() => {
+            elCombobox[0].isBorder = false;
+            elInput[0].isBorder = false;
+          });
+        }
+      }
+
       if (event.ctrlKey) {
         //  event ctrl + click
         this.isCtrlClick = true;
-        this.handleSelected(data, index, event);
+        this.indexCtrlClick = index;
+        if (!this.arrSelected.some((item) => item.AssetId == data.AssetId)) {
+          if (!this.isCtrlClick) {
+            this.arrSelected.length = 0;
+          }
+          this.arrSelected.push(data);
+        } else {
+          this.arrSelected = this.arrSelected.filter(
+            (item) => item.AssetId !== data.AssetId
+          );
+        }
+        this.setListSelected(this.arrSelected);
       } else if (event.shiftKey) {
         //event shift + click
         this.handleShiftClick(index, event);
-      } else if (this.isShiftClick && this.arrSelected.length > 1) {
-        this.arrSelected = this.arrSelected.filter(
-          (item) => item.AssetCode === data.AssetCode
-        );
-        this.setListSelected(this.arrSelected);
-        this.isShiftClick = false;
-        this.indexCtrlClick = index;
       } else {
         //normal click
         this.isCtrlClick = false;
@@ -948,11 +990,7 @@ export default {
      */
     handleSelected(data, index) {
       this.indexCtrlClick = index;
-
       if (!this.arrSelected.some((item) => item.AssetCode == data.AssetCode)) {
-        if (!this.isCtrlClick) {
-          this.arrSelected.length = 0;
-        }
         this.arrSelected.push(data);
       } else {
         this.arrSelected = this.arrSelected.filter(
@@ -985,48 +1023,6 @@ export default {
       this.arrSelected.push(...rows);
       this.setListSelected(this.arrSelected);
     },
-
-    /**
-     * Function handle dbClick open form edit
-     * Author: HMDUC (19/06/2023)
-     * @param {*} data
-     */
-    handleOpenEdit(data) {
-      this.isDbClick = true;
-      this.handleEdit(data);
-    },
-
-    /**
-     * fucntion move row up or down by keyboard
-     * Author: HMDUC (04/06/2023)
-     * @param {*} index
-     */
-    moveRow(index) {
-      var newIndex = 0;
-      if (this.indexActive < this.paginateTable.length - 1) {
-        newIndex = this.indexActive + index;
-      } else if (index > 0) {
-        newIndex = this.indexActive;
-      } else if (this.indexActive === 0) {
-        newIndex = 0;
-      }
-
-      this.listSelected.length = 0;
-      this.indexCtrlClick = newIndex;
-
-      if (newIndex >= 0 && newIndex < this.paginateTable.length) {
-        this.indexActive = newIndex;
-        this.$refs.rowItem[this.indexActive].scrollIntoView({
-          block: "nearest",
-          inline: "start",
-        });
-      }
-      if (this.assetClone[newIndex]) {
-        this.arrSelected.push(this.assetClone[newIndex]);
-        this.setListSelected(this.arrSelected);
-      }
-    },
-
     /**
      * Function handle button Check All
      * Author: HMDUC (04/06/2023)
@@ -1036,7 +1032,6 @@ export default {
       this.arrSelected = [...this.assetClone];
       this.setListSelected(this.arrSelected);
     },
-
     /**
      * Function handle button UnCheck All
      * Author: HMDUC (04/06/2023)
@@ -1046,7 +1041,6 @@ export default {
       this.arrSelected.length = 0;
       this.setListSelected([]);
     },
-
     /**
      * function checked property to delete
      * Author: HMDUC (02/06/2023)
@@ -1091,84 +1085,54 @@ export default {
     },
 
     /**
-     * Function handle btn Duplicate
-     * Author: HMDUC (27/05/2023)
-     * @param {*} data
-     */
-    async handleDuplicate(data) {
-      this.$emit("loading", true);
-      await this.getNewAssetCode();
-
-      setTimeout(() => {
-        var dataDuplicate = { ...data, AssetCode: this.newAssetCode };
-        this.setIsShow(true);
-        this.$emit("getData", dataDuplicate);
-        this.setFormMode(Enum.FORM__MODE.DUPLICATE);
-      }, 300);
-
-      this.$emit("loading", false);
-    },
-
-    /**
      * Function handle btn delete on row
      * Author: HMDUC (27/05/2023)
      * @param {*} data
      */
-    handleDelete(data) {
-      var arr = [data];
-      this.$emit("showPopup", arr, "confirm");
-    },
-
-    /**
-     * Function show context menu on row
-     * Author: HMDUC (27/05/2023)
-     */
-    showContextMenu(e, data, index) {
-      var temp = 0;
-      var browserHeight = window.innerHeight;
-      var { clientX, clientY } = e;
-
-      this.dataSelected = data;
-      this.indexContextMenu = index;
-      this.setShowMenu(true);
-
-      //Check position context menu
-      if (clientX > browserHeight) {
-        clientX = clientX - this.widthContextMenu;
+    async handleDelete(data) {
+      var arrAssetId = this.listAssetTranferChose.data.map((item) => {
+        return item.AssetId;
+      });
+      var index = arrAssetId.indexOf(data.AssetId);
+      if (this.modalMode === Enum.FORM__MODE.ADD) {
+        this.assetClone.splice(index, 1);
+        this.listAssetDelete.push(data);
+      } else {
+        await this.checkDelete(data.AssetId, this.receiptEdit.ReceiptId);
+        var response = this.isDeleteError;
+        switch (Object.keys(response).length) {
+          case 0:
+            this.listAssetDelete.push(data);
+            this.assetClone.splice(index, 1);
+            break;
+          default:
+            var receiptError = [];
+            response[data.AssetCode].map((item) => {
+              receiptError.push({
+                receiptCode: item.ReceiptCode,
+                receiptDate: formatDate(item.ReceiptDate),
+              });
+            });
+            this.setReceiptError(receiptError);
+            this.$emit(
+              "showPopup",
+              response[data.AssetCode][0],
+              "asset__dele-err"
+            );
+        }
       }
-      if (clientY > browserHeight - 141) {
-        clientY = clientY - this.heightContextMenu;
-      }
-
-      //check collapsed sidebar
-      if (this.isCollapsed) {
-        temp = 126;
-      }
-      this.setPos({ x: clientX - temp - 60, y: clientY + 5 });
-
-      //add event click mouse left
-      document.addEventListener("click", this.hideContextMenu);
-
-      // add event wheel mouse
-      document.addEventListener("wheel", this.hideContextMenu);
-    },
-    /**
-     * Function hidden context menu
-     * Author: HMDUC (27/05/2023)
-     */
-    hideContextMenu() {
-      this.setShowMenu(false);
-      this.indexContextMenu = -1;
-
-      //add event click mouse right
-      document.removeEventListener("click", this.hideContextMenu);
-    },
-    /**
-     * Function handle cancel popup
-     * Author: HMDUC (28/05/2/2023)
-     */
-    handleCancel() {
-      this.isShowPopup = false;
+      this.assetClone.forEach((item) => {
+        (item.Cost = parseInt(item.Cost.replace(/\./g, ""))),
+          (item.ResidualPrice = parseInt(
+            item.ResidualPrice.replace(/\./g, "")
+          ));
+      });
+      var dataUpdate = {
+        data: this.assetClone,
+        totalRow: this.assetClone.length,
+      };
+      this.setListAssetTranferChose(dataUpdate);
+      this.setListChoseSelected(this.assetClone);
     },
 
     /**
@@ -1255,6 +1219,28 @@ export default {
 @import "@/css/base/contextmenu.css";
 @import "@/css/base/layout.css";
 @import "@/css/view/table.css";
+
+.table__view {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.table__container {
+  flex: 1;
+}
+
+.wrap--left {
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
+}
+
+.input--wrapper {
+  z-index: 99;
+  position: absolute;
+  top: -44px;
+  left: 200px;
+}
 .table__content--header {
   z-index: 60;
 }
@@ -1267,27 +1253,26 @@ export default {
   user-select: none;
 }
 
-/* .table__content--body,
-.table__content--header,
-.table__content--summary {
-  width: 1304px;
-} */
-
 .table__content--summary {
   height: 37px;
   line-height: 37px;
 }
 
-.table__paging,
 .fixed__content--header {
   user-select: none;
 }
 
 .fixed__content {
   height: calc(100% - 43px);
+  width: 90px;
+  z-index: 82;
 }
 
 .table__content--summary {
   border-bottom: 1px solid #e9e9e9;
+}
+
+.empty__data--sm {
+  background-size: 135px;
 }
 </style>

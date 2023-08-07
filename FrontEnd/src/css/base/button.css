@@ -7,6 +7,18 @@
     display: block;
 }
 
+.btn__delete--outline {
+    color: #ec4141;
+    background-color: #fff;
+    border: 1px solid #ec4141;
+    width: 54px;
+    height: 32px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: RobotoRegular;
+    font-weight: 600;
+}
+
 .btn__sub:focus {
     outline: 2px solid #a5c6ea;
 }
@@ -300,7 +312,7 @@
     gap: 0 12px;
     display: flex;
     align-items: center;
-    padding: 0 26px;
+    padding: 0 16px;
     font-family: RobotoRegular;
     font-size: 13px;
     line-height: 38px;
@@ -371,7 +383,7 @@
     height: 44px;
     padding: 0 16px;
     font-family: RobotoRegular;
-    font-weight: 700;
+
     color: var(--gray--noactive);
     border-radius: 3px;
 }
@@ -379,6 +391,7 @@
 .active__tab {
     color: var(--black-color);
     border-bottom: 3px solid #1aa4c8;
+    font-weight: 700;
 }
 
 .btn__tab-view>.text__btn {
@@ -393,7 +406,7 @@
 
 .btn__collapse-detail {
     position: absolute;
-    top: 6px;
+    top: 8px;
     right: 10px;
     background-color: #e4e4e4;
     border-radius: 50%;
@@ -429,4 +442,10 @@
     font-size: 13px;
     color: #4f4f4f;
 
+}
+
+.btn--primary-modal {
+    width: 100px;
+    padding: 8px 16px;
+    font-size: 13px;
 }

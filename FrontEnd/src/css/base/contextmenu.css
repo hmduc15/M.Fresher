@@ -5,7 +5,7 @@
     overflow: hidden;
     transition: opacity 0.2s linear;
     animation: animateOpen 0.25s ease;
-    z-index: 50;
+    z-index: 100;
     padding: 16px 0;
     background-color: var(--white-color);
 }

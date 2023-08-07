@@ -9,7 +9,7 @@ namespace MISA.WebFresher042023.Demo.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class CategoryController : BaseController<CategoryDto, CategoryInsertDto, CategoryUpdateDto>
+    public class CategoryController : BaseController<CategoryDto, CategoryInsertDto, CategoryUpdateDto, CategoryTranferDto>
     {
         #region Field
         private readonly ICategoryService _categoryService;

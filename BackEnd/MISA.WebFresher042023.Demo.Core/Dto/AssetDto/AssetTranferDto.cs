@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using static MISA.WebFresher042023.Demo.Domain.MISAAttribute.CustomAttribute;
@@ -33,10 +34,26 @@ namespace MISA.WebFresher042023.Demo.Application
         /// </summary>
         public string? DepartmentName { get; set; }
 
+
+        /// <summary>
+        /// Id của bộ phận điều chuyển
+        /// </summary>
+        public Guid? DepartmentReceiptId { get; set; }
+
         /// <summary>
         /// Tên bộ phận điều chuyển
         /// </summary>
-        public string? DepartmentReciept { get; set; }
+        public string? DepartmentReceipt { get; set; }
+
+        /// <summary>
+        /// Bộ phận sử dụng cũ của chứng từ
+        /// </summary>
+        public string? OldDepartmentName { get; set; }
+      
+        /// <summary>
+        /// Id của bộ phận cũ
+        /// </summary>
+        public Guid? OldDepartmentId { get; set; }
 
         /// <summary>
         /// Nguyên giá của tài sản
@@ -72,6 +89,11 @@ namespace MISA.WebFresher042023.Demo.Application
         /// Số năm sử dụng của tài sản
         /// </summary>
         public int LifeTime { get; set; }
+
+        /// <summary>
+        /// Lý do điều chuyển
+        /// </summary>
+        public string?  Reason { get; set; }
     }
 
 }

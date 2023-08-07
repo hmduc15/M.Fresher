@@ -9,6 +9,8 @@
     :class="[
       'select__wrapper',
       { 'select--focus': isFocus, 'input--error': isError },
+      className,
+      isBorder ? 'select--focus' : '',
     ]"
     :placeholder="placeholder"
     :name="name"
@@ -16,7 +18,8 @@
     @update:model-value="handleDate"
     :filterable="isFilter"
     @focus="handleFocus"
-    @blur="required ? validate() : handleBlur()"
+    @blur="handleBlur"
+    @click.stop="handleClick"
     :tabindex="tabIndex"
     :placement="placement"
   >
@@ -71,6 +74,8 @@ export default {
     "isFilter",
     "required",
     "placement",
+    "className",
+    "",
   ],
   data() {
     return {
@@ -78,6 +83,8 @@ export default {
       isError: false,
       labelError: null,
       errMesage: null,
+      isBlurHandled: false,
+      isBorder: false,
     };
   },
   setup() {
@@ -86,13 +93,17 @@ export default {
       value,
     };
   },
+
   components: {
     "m-select": ElSelect,
     "m-option": ElOption,
   },
-  emits: ["change", "update:modelValue", "updateOptions"],
+  emits: ["change", "update:modelValue", "updateOptions", "focus", "click"],
 
   methods: {
+    handleClick() {
+      this.$emit("click");
+    },
     /**
      * function handle Focus Combobox
      * Author: HMDUC (01/06/2023)
@@ -107,6 +118,7 @@ export default {
      * Author: HMDUC (01/06/2023)
      */
     handleBlur() {
+      console.log("d");
       this.isFocus = false;
     },
 
@@ -157,7 +169,7 @@ export default {
      * Author: HMDUC (01/06/2023)
      */
     validate() {
-      this.isFocus = !this.isFocus;
+      this.isFocus = false;
       const self = this;
       const value = self.modelValue;
       const nameLabel = this.$_MISAResources.label__input[self.name];

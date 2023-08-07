@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MISA.WebFresher042023.Demo.Application;
+namespace MISA.WebFresher042023.Demo.Application.Dto.DepartmentDto;
 
 public class DepartmentDto
 {

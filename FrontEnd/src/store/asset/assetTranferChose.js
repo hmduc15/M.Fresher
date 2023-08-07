@@ -4,6 +4,8 @@ const assetTranferChose = {
      state: {
           listAssetTranferChose: [],
           isLoadingTableTranfer: false,
+          listSelected: [],
+          listAssetFirst: []
      },
      mutations: {
           /**
@@ -16,6 +18,10 @@ const assetTranferChose = {
                state.listAssetTranferChose = listAssetTranferChose;
           },
 
+          setListAssetFirst(state, listAssetFirst) {
+               state.listAssetFirst = listAssetFirst;
+          },
+
           /**
            * Function set loading table
            * @param {*} state 
@@ -24,6 +30,16 @@ const assetTranferChose = {
            */
           setLoadingTableTranfer(state, isLoadingTableTranfer) {
                state.loadingTableTranfer = isLoadingTableTranfer;
+          },
+
+          /**
+           * Mutations set listSelected
+           * @param {*} state 
+           * @param {*} listSelected 
+           * Author: HMDUC (28/07/2023)
+           */
+          setListSelected(state, listSelected) {
+               state.listSelected = listSelected;
           }
      },
      actions: {
@@ -41,6 +57,18 @@ const assetTranferChose = {
           */
           setLoadingTableTranfer({ commit }, isLoading) {
                commit("setLoadingTableTranfer", isLoading)
+          },
+
+          /**
+           * Function set listSelected
+           * Author: HMDUC (28/07/2023)
+           */
+          setListSelected({ commit }, listSelected) {
+               commit("setListSelected", listSelected)
+          },
+
+          setListAssetFirst({ commit }, listAssetFirst) {
+               commit("setListAssetFirst", listAssetFirst)
           }
      },
      getters: {
@@ -58,8 +86,21 @@ const assetTranferChose = {
            */
           isLoadingTableTranfer(state) {
                return state.isLoadingTableTranfer;
+          },
+
+          /**
+           * Get listSelected
+           * Author: HMDUC (28/07/2023)  
+           */
+          listSelected(state) {
+               return state.listSelected;
+          },
+
+          listAssetFirst(state) {
+               return state.listAssetFirst;
           }
      }
+
 }
 
 export default assetTranferChose;

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MISA.WebFresher042023.Demo.Application.Interface;
+using MISA.WebFresher042023.Demo.Domain;
 using MISA.WebFresher042023.Demo.Domain.Entity;
 using MISA.WebFresher042023.Demo.Domain.Enum;
-using MISA.WebFresher042023.Demo.Domain.Interface;
+using MISA.WebFresher042023.Demo.Domain.Interface.Manager;
+using MISA.WebFresher042023.Demo.Domain.Interface.Repository;
 using MISA.WebFresher042023.Demo.Domain.MISAException;
 using MISA.WebFresher042023.Demo.Domain.Resources;
 using Newtonsoft.Json.Linq;
@@ -11,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace MISA.WebFresher042023.Demo.Application.Service
 {
-    public class AssetService : BaseService<Asset, AssetDto, AssetInsertDto, AssetUpdateDto>, IAssetService
+    public class AssetService : BaseService<Asset, AssetDto, AssetInsertDto, AssetUpdateDto, AssetTranferDto>, IAssetService
     {
         #region Field
         private readonly IAssetRepository _assetRepository;
@@ -19,12 +21,41 @@ namespace MISA.WebFresher042023.Demo.Application.Service
         #endregion
 
         #region Constructor
-        public AssetService(IAssetRepository assetRepository, IMapper mapper, IAssetManager assetManager) : base(assetRepository, mapper)
+        public AssetService(IAssetRepository assetRepository, IMapper mapper, IAssetManager assetManager, IUnitOfWork unitOfWork) : base(assetRepository, mapper, unitOfWork)
         {
             _assetRepository = assetRepository;
             _assetManager = assetManager;
         }
         #endregion
+
+
+        /// <summary>
+        /// Hàm check ds tài sản có chứng từ hay không
+        /// </summary>
+        /// <param name="ids">danh sách tài sản</param>
+        /// <returns>Danh sách chứng từ của tài sản nếu có</returns>
+        /// Author: HMDUC (05/08/2023)
+        public async Task<object> CheckExistReceipt(List<Guid> ids)
+        {
+            var result = await _assetRepository.GetReceiptByAssetId(ids);
+
+            //Obj  respone trả về cho client
+            var response = new Dictionary<Guid, List<ReceiptAssetCommon>>();
+
+            foreach(var item in result)
+            {
+                if (!response.ContainsKey(item.AssetId))
+                {
+                    response[item.AssetId] = new List<ReceiptAssetCommon>();
+                }
+                response[item.AssetId].Add(item);
+            }
+
+
+            return response;
+
+        }
+
 
         /// <summary>
         /// Hàm check null
@@ -160,7 +191,7 @@ namespace MISA.WebFresher042023.Demo.Application.Service
         /// Author: HMDUC (28/07/2023)
         public async Task<object> GetPaggingAssetChose(List<Guid> ids, int pageSize, int pageNumber)
         {
-            var respone = await _assetRepository.GetPaggingAssetChose(ids,pageSize, pageNumber);
+            var respone = await _assetRepository.GetPaggingAssetChose(ids, pageSize, pageNumber);
 
             //Parse response to JSON
             JObject jObject = JObject.FromObject(respone);
@@ -268,8 +299,6 @@ namespace MISA.WebFresher042023.Demo.Application.Service
         /// <summary>
         /// hàm generate mã tài sản mới nhất
         /// </summary>
-        /// <param name="prefixCode"></param>
-        /// <param name="suffixCode"></param>
         /// <returns>AssetCode</returns>
         #region GenerateCode
         private string GenerateCode(string code)
@@ -296,6 +325,28 @@ namespace MISA.WebFresher042023.Demo.Application.Service
                 return prefixCode + suffixTemp.ToString();
             }
         }
+
+        /// <summary>
+        /// Hàm lấy tất cả các tài sản theo mã chứng từ
+        /// </summary>
+        /// <param name="receiptId">Mã chứng từ</param>
+        /// <returns>
+        /// Danh sách tài sản
+        /// </returns>
+        /// Author: HMDUC (28/07/2023)
+        public async Task<List<AssetTranferDto>> GetAssetAllByReceipId(Guid receiptId)
+        {
+            var response = await _assetRepository.GetAssetAllByReceipId(receiptId);
+
+            var result = _mapper.Map<List<AssetTranferDto>>(response);
+
+            return result;
+        }
+
+
+
+
+
         #endregion
 
 
